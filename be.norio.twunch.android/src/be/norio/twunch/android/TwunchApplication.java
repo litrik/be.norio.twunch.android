@@ -1,0 +1,60 @@
+/**
+ *	Copyright 2010 Norio bvba
+ *
+ *	This program is free software: you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation, either version 3 of the License, or
+ *	(at your option) any later version.
+ *	
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *	
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package be.norio.twunch.android;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Application;
+import be.norio.twunch.android.core.Twunch;
+import be.norio.twunch.android.core.TwunchParser;
+
+/**
+ * 
+ */
+public class TwunchApplication extends Application {
+
+	private final String URL = "http://twunch.be/events.xml?when=future";
+
+	private List<Twunch> twunches = new ArrayList<Twunch>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Application#onCreate()
+	 */
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		try {
+			loadTwunches();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void loadTwunches() throws Exception {
+		TwunchParser tp = new TwunchParser(URL);
+		twunches = tp.parse();
+	}
+
+	public List<Twunch> getTwunches() {
+		return twunches;
+	}
+}
