@@ -155,7 +155,7 @@ public class TwunchesActivity extends ListActivity {
 		}
 		builder.setTitle(R.string.app_name);
 		builder.setCancelable(true);
-		builder.setIcon(R.drawable.alert);
+		builder.setIcon(R.drawable.ic_dialog_info);
 		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				// Do nothing
