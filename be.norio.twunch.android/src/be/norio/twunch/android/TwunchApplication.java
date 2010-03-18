@@ -33,22 +33,6 @@ public class TwunchApplication extends Application {
 
 	private List<Twunch> twunches = new ArrayList<Twunch>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Application#onCreate()
-	 */
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		try {
-			loadTwunches();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public void loadTwunches() throws Exception {
 		TwunchParser tp = new TwunchParser(URL);
 		twunches = tp.parse();

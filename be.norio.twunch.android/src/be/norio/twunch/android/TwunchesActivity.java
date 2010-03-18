@@ -48,9 +48,8 @@ public class TwunchesActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.twunches);
-		setListAdapter(new TwunchArrayAdapter(this, R.layout.twunchheadline, R.id.twunchTitle,
-				((TwunchApplication) getApplication()).getTwunches()));
 		setTitle(R.string.activity_twunches);
+		refreshTwunches();
 	}
 
 	class TwunchArrayAdapter extends ArrayAdapter<Twunch> {
@@ -124,19 +123,7 @@ public class TwunchesActivity extends ListActivity {
 			showAbout();
 			return true;
 		case MENU_REFRESH:
-			try {
-				((TwunchApplication) getApplication()).loadTwunches();
-			} catch (Exception e) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(R.string.error_network);
-				builder.setCancelable(false);
-				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// Do nothing
-					}
-				});
-				builder.create().show();
-			}
+			refreshTwunches();
 			return true;
 		}
 		return false;
@@ -163,6 +150,25 @@ public class TwunchesActivity extends ListActivity {
 		});
 		builder.setMessage(String.format(getString(R.string.about_text), version));
 		builder.create().show();
+	}
+
+	public void refreshTwunches() {
+		try {
+			((TwunchApplication) getApplication()).loadTwunches();
+			setListAdapter(new TwunchArrayAdapter(this, R.layout.twunchheadline, R.id.twunchTitle,
+					((TwunchApplication) getApplication()).getTwunches()));
+		} catch (Exception e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.error_network);
+			builder.setCancelable(false);
+			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// Do nothing
+				}
+			});
+			builder.create().show();
+		}
+
 	}
 
 }
