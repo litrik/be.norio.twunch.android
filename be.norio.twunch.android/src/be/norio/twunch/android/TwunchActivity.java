@@ -17,11 +17,14 @@
 
 package be.norio.twunch.android;
 
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -46,7 +49,9 @@ public class TwunchActivity extends Activity {
 				twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(this,
 				twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
 		((Button) findViewById(R.id.ButtonMap)).setText(twunch.getAddress());
-		((TextView) findViewById(R.id.twunchParticipants)).setText(twunch.getParticipants());
+		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
+		participantsView.setText(twunch.getParticipants());
+		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");
 		((Button) findViewById(R.id.ButtonMap)).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
