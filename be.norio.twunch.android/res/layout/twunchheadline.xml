@@ -17,4 +17,9 @@
 		android:layout_below="@id/twunchTitle" android:textColor="#999999"
 		android:textSize="14sp" />
 
+	<TextView android:id="@+id/twunchNumParticipants"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/twunchIcon" android:layout_below="@id/twunchDate"
+		android:textColor="#999999" android:textSize="14sp" />
+
 </RelativeLayout>

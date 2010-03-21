@@ -77,6 +77,13 @@ public class Twunch implements Comparable<Twunch> {
 	}
 
 	/**
+	 * @return the number of participants
+	 */
+	public int getNumberOfParticipants() {
+		return participants.size();
+	}
+
+	/**
 	 * @return the participants
 	 */
 	public String getParticipants() {

@@ -16,6 +16,8 @@
 	<string name="send">Send tweet</string>
 	<string name="tweet">I\'ll be at the @twunch in %1$s: %2$s</string>
 	<string name="date">%1$s at %2$s</string>
+	<string name="participants_one">1 participant</string>
+	<string name="participants">%1$s participants</string>
 
 	<string name="download">Downloading Twunch data...</string>
 	<string name="download_error">There was an error downloading Twunch data. Please

@@ -86,6 +86,9 @@ public class TwunchesActivity extends ListActivity {
 			((TextView) convertView.findViewById(R.id.twunchDate)).setText(String.format(getString(R.string.date), DateUtils
 					.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
 					DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
+			((TextView) convertView.findViewById(R.id.twunchNumParticipants))
+					.setText(twunch.getNumberOfParticipants() == 1 ? getString(R.string.participants_one) : String.format(
+							getString(R.string.participants), twunch.getNumberOfParticipants()));
 			return convertView;
 		}
 	}
