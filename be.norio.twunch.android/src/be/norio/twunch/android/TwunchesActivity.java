@@ -21,6 +21,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -153,22 +155,37 @@ public class TwunchesActivity extends ListActivity {
 	}
 
 	public void refreshTwunches() {
-		try {
-			((TwunchApplication) getApplication()).loadTwunches();
-			setListAdapter(new TwunchArrayAdapter(this, R.layout.twunchheadline, R.id.twunchTitle,
-					((TwunchApplication) getApplication()).getTwunches()));
-		} catch (Exception e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.error_network);
-			builder.setCancelable(false);
-			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					// Do nothing
+		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.download), true);
+		final ListActivity thisActivity = this;
+		final Handler handler = new Handler();
+		final Runnable onTwunchesDownloaded = new Runnable() {
+			@Override
+			public void run() {
+				thisActivity.setListAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunchheadline, R.id.twunchTitle,
+						((TwunchApplication) getApplication()).getTwunches()));
+				progress.dismiss();
+			}
+		};
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					((TwunchApplication) getApplication()).loadTwunches();
+					handler.post(onTwunchesDownloaded);
+				} catch (Exception e) {
+					progress.dismiss();
+					AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+					builder.setMessage(R.string.download_error);
+					builder.setCancelable(false);
+					builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// Do nothing
+						}
+					});
+					builder.create().show();
 				}
-			});
-			builder.create().show();
-		}
-
+			}
+		}.start();
 	}
 
 }

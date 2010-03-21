@@ -21,7 +21,8 @@
 	<string name="tweet">I\'ll be at the @twunch in %1$s: %2$s</string>
 	<string name="date">%1$s at %2$s</string>
 
-	<string name="error_network">There was an error downnloading Twunch data. Please
-		try again later...</string>
+	<string name="download">Downloading Twunch data...</string>
+	<string name="download_error">There was an error downloading Twunch data. Please
+		try again later.</string>
 
 </resources>
