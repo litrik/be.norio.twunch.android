@@ -11,6 +11,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".TwunchActivity" android:label="@string/activity_twunch" />
+		<activity android:name=".AboutActivity" android:label="@string/activity_about" />
 
 	</application>
 

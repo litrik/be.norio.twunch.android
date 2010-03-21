@@ -26,8 +26,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.DateUtils;
@@ -122,36 +120,15 @@ public class TwunchesActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ABOUT:
-			showAbout();
+			Intent intent = new Intent();
+			intent.setComponent(new ComponentName(this, AboutActivity.class));
+			startActivity(intent);
 			return true;
 		case MENU_REFRESH:
 			refreshTwunches();
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Shows the about dialog.
-	 */
-	private void showAbout() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		String version = "";
-		try {
-			version = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionName;
-		} catch (NameNotFoundException e) {
-			// Do nothing
-		}
-		builder.setTitle(R.string.app_name);
-		builder.setCancelable(true);
-		builder.setIcon(R.drawable.ic_dialog_info);
-		builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				// Do nothing
-			}
-		});
-		builder.setMessage(String.format(getString(R.string.about_text), version));
-		builder.create().show();
 	}
 
 	public void refreshTwunches() {

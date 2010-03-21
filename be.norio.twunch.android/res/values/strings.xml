@@ -5,14 +5,10 @@
 
 	<string name="menu_refresh">Refresh</string>
 	<string name="menu_about">About</string>
-	<string name="about_text">Version: %1$s\n&#169; 2010 Norio BVBA\n\nTwunch is
-		an initiative by @atog, @inferis and @tomklaasen. User interface based
-		on the original webdesign by @maxvoltar. Twunch logo photography by
-		lilcrabbygal.
-	</string>
 
 	<string name="activity_twunches">Upcoming Twunches</string>
 	<string name="activity_twunch">Twunch</string>
+	<string name="activity_about">About Twunch %1$s</string>
 
 	<string name="button_map">Map</string>
 	<string name="button_register">Register</string>
