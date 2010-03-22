@@ -34,12 +34,13 @@ public class Twunch implements Comparable<Twunch> {
 	String id;
 	String title;
 	Date date;
-	String latitude;
-	String longitude;
+	double latitude;
+	double longitude;
 	String address;
 	String map;
 	String link;
-	List<String> participants = new ArrayList<String>();;
+	List<String> participants = new ArrayList<String>();
+	boolean hasLatLon = false;
 
 	/**
 	 * @return the id
@@ -65,14 +66,14 @@ public class Twunch implements Comparable<Twunch> {
 	/**
 	 * @return the latitude
 	 */
-	public String getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public String getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
@@ -133,7 +134,10 @@ public class Twunch implements Comparable<Twunch> {
 	 *          the latitude to set
 	 */
 	public void setLatitude(String latitude) {
-		this.latitude = latitude;
+		if (latitude.length() > 0) {
+			this.latitude = Double.parseDouble(latitude);
+			hasLatLon = true;
+		}
 	}
 
 	/**
@@ -164,7 +168,10 @@ public class Twunch implements Comparable<Twunch> {
 	 *          the longitude to set
 	 */
 	public void setLongitude(String longitude) {
-		this.longitude = longitude;
+		if (longitude.length() > 0) {
+			this.longitude = Double.parseDouble(longitude);
+			hasLatLon = true;
+		}
 	}
 
 	/*
@@ -205,6 +212,13 @@ public class Twunch implements Comparable<Twunch> {
 	 */
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	/**
+	 * @return the hasLatLon
+	 */
+	public boolean hasLatLon() {
+		return hasLatLon;
 	}
 
 }

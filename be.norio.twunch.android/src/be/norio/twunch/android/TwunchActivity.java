@@ -20,7 +20,11 @@ package be.norio.twunch.android;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -44,10 +48,7 @@ public class TwunchActivity extends Activity {
 
 		setContentView(R.layout.twunch);
 
-		((TextView) findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-		((TextView) findViewById(R.id.twunchDate)).setText(String.format(getString(R.string.date), DateUtils.formatDateTime(this,
-				twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(this,
-				twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
+		renderHeadline(twunch, findViewById(R.id.twunchHeadLine));
 		((Button) findViewById(R.id.ButtonMap)).setText(twunch.getAddress());
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(twunch.getParticipants());
@@ -70,5 +71,29 @@ public class TwunchActivity extends Activity {
 				startActivity(Intent.createChooser(intent, "Send tweet"));
 			}
 		});
+	}
+
+	static void renderHeadline(Twunch twunch, View view) {
+		Context context = view.getContext();
+		((TextView) view.findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
+		((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(context.getString(R.string.date), DateUtils
+				.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
+				DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
+		StringBuffer extra = new StringBuffer();
+		if (twunch.hasLatLon()) {
+			LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+			String p = locationManager.getBestProvider(new Criteria(), true);
+			if (p.length() > 0) {
+				Location location = locationManager.getLastKnownLocation(p);
+				float[] distance = new float[1];
+				Location.distanceBetween(location.getLatitude(), location.getLongitude(), twunch.getLatitude(), twunch.getLongitude(),
+						distance);
+				extra.append(String.format(context.getString(R.string.distance), distance[0] / 1000));
+				extra.append(" - ");
+			}
+		}
+		extra.append(twunch.getNumberOfParticipants() == 1 ? context.getString(R.string.participants_one) : String.format(context
+				.getString(R.string.participants), twunch.getNumberOfParticipants()));
+		((TextView) view.findViewById(R.id.twunchExtra)).setText(extra);
 	}
 }

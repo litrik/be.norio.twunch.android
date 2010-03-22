@@ -28,7 +28,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +35,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import be.norio.twunch.android.core.Twunch;
 
 public class TwunchesActivity extends ListActivity {
@@ -82,13 +80,7 @@ public class TwunchesActivity extends ListActivity {
 				convertView = inflater.inflate(R.layout.twunchheadline, null);
 			}
 			Twunch twunch = twunches.get(position);
-			((TextView) convertView.findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-			((TextView) convertView.findViewById(R.id.twunchDate)).setText(String.format(getString(R.string.date), DateUtils
-					.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
-					DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
-			((TextView) convertView.findViewById(R.id.twunchNumParticipants))
-					.setText(twunch.getNumberOfParticipants() == 1 ? getString(R.string.participants_one) : String.format(
-							getString(R.string.participants), twunch.getNumberOfParticipants()));
+			TwunchActivity.renderHeadline(twunch, convertView);
 			return convertView;
 		}
 	}

@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/twunch_item_root" android:layout_width="wrap_content"
-	android:layout_height="wrap_content" android:paddingTop="4sp" android:paddingBottom="4sp">
+	android:layout_height="wrap_content" android:paddingTop="4sp"
+	android:paddingBottom="4sp">
 
 	<ImageView android:id="@+id/twunchIcon" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_alignParentTop="true"
@@ -17,9 +18,9 @@
 		android:layout_below="@id/twunchTitle" android:textColor="#999999"
 		android:textSize="14sp" />
 
-	<TextView android:id="@+id/twunchNumParticipants"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/twunchIcon" android:layout_below="@id/twunchDate"
-		android:textColor="#999999" android:textSize="14sp" />
+	<TextView android:id="@+id/twunchExtra" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
+		android:layout_below="@id/twunchDate" android:textColor="#999999"
+		android:textSize="14sp" android:paddingRight="10sp" />
 
 </RelativeLayout>
