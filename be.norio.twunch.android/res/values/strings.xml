@@ -14,6 +14,7 @@
 	<string name="button_map">Map</string>
 	<string name="button_register">Register</string>
 
+	<string name="no_twunches">No Twunches found.</string>
 	<string name="register_title">Register via Twitter</string>
 	<string name="register_text">I\'ll be at the @twunch in %1$s: %2$s</string>
 	<string name="date">%1$s at %2$s</string>

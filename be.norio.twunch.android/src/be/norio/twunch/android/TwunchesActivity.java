@@ -130,7 +130,7 @@ public class TwunchesActivity extends ListActivity {
 		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.download), true);
 		final ListActivity thisActivity = this;
 		final Handler handler = new Handler();
-		final Runnable onTwunchesDownloaded = new Runnable() {
+		final Runnable onDownloadSuccess = new Runnable() {
 			@Override
 			public void run() {
 				thisActivity.setListAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunchheadline, R.id.twunchTitle,
@@ -138,23 +138,29 @@ public class TwunchesActivity extends ListActivity {
 				progress.dismiss();
 			}
 		};
+		final Runnable onDownloadFailure = new Runnable() {
+			@Override
+			public void run() {
+				progress.dismiss();
+				AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+				builder.setMessage(R.string.download_error);
+				builder.setCancelable(false);
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// Do nothing
+					}
+				});
+				builder.create().show();
+			}
+		};
 		new Thread() {
 			@Override
 			public void run() {
 				try {
 					((TwunchApplication) getApplication()).loadTwunches();
-					handler.post(onTwunchesDownloaded);
+					handler.post(onDownloadSuccess);
 				} catch (Exception e) {
-					progress.dismiss();
-					AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-					builder.setMessage(R.string.download_error);
-					builder.setCancelable(false);
-					builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// Do nothing
-						}
-					});
-					builder.create().show();
+					handler.post(onDownloadFailure);
 				}
 			}
 		}.start();
