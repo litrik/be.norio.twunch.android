@@ -1,11 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/twunch_item_root" android:layout_width="wrap_content"
-	android:layout_height="wrap_content" android:paddingTop="4sp"
-	android:paddingBottom="4sp">
+	android:layout_height="wrap_content" android:padding="6sp">
 
 	<ImageView android:id="@+id/twunchIcon" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_alignParentTop="true"
-		android:paddingTop="0px" android:paddingRight="10px" android:src="@drawable/icon" />
+		android:paddingTop="4sp" android:paddingRight="10px" android:src="@drawable/icon" />
 
 	<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
@@ -15,12 +14,11 @@
 
 	<TextView android:id="@+id/twunchDate" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
-		android:layout_below="@id/twunchTitle" android:textColor="#999999"
-		android:textSize="14sp" />
+		android:layout_below="@id/twunchTitle" android:textColor="#999999" />
 
 	<TextView android:id="@+id/twunchExtra" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
 		android:layout_below="@id/twunchDate" android:textColor="#999999"
-		android:textSize="14sp" android:paddingRight="10sp" />
+		android:paddingBottom="3sp" />
 
 </RelativeLayout>
