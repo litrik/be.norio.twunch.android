@@ -6,15 +6,19 @@
 
 	<Button android:layout_height="wrap_content" android:id="@+id/ButtonMap"
 		android:layout_below="@+id/twunchHeadLine" android:layout_width="fill_parent"
-		android:text="@string/button_map" android:layout_margin="6sp" />
+		android:text="@string/button_map" android:layout_margin="6sp"
+		android:drawableLeft="@drawable/ic_menu_mapmode" android:gravity="center_vertical" />
 
 	<TextView android:layout_below="@+id/ButtonMap"
 		android:layout_height="wrap_content" android:id="@+id/twunchParticipants"
-		android:layout_width="wrap_content" android:padding="10sp" />
+		android:layout_width="wrap_content" android:paddingLeft="10sp"
+		android:paddingRight="10sp" android:lineSpacingMultiplier="1.5"
+		android:textSize="15sp" />
 
 	<Button android:layout_height="wrap_content" android:id="@+id/ButtonJoin"
 		android:layout_below="@id/twunchParticipants" android:layout_width="fill_parent"
 		android:text="@string/button_register" android:layout_margin="6sp"
-		android:textSize="24sp" />
+		android:textSize="24sp" android:drawableLeft="@drawable/ic_menu_add"
+		android:gravity="center_vertical" />
 
 </RelativeLayout>

@@ -91,7 +91,7 @@ public class Twunch implements Comparable<Twunch> {
 		StringBuilder sb = new StringBuilder();
 		for (Iterator<String> it = participants.iterator(); it.hasNext();) {
 			if (sb.length() > 0) {
-				sb.append(" ");
+				sb.append("   ");
 			}
 			sb.append("@");
 			sb.append(it.next());
