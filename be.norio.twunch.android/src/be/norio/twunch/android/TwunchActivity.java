@@ -85,11 +85,13 @@ public class TwunchActivity extends Activity {
 			String p = locationManager.getBestProvider(new Criteria(), true);
 			if (p.length() > 0) {
 				Location location = locationManager.getLastKnownLocation(p);
-				float[] distance = new float[1];
-				Location.distanceBetween(location.getLatitude(), location.getLongitude(), twunch.getLatitude(), twunch.getLongitude(),
-						distance);
-				extra.append(String.format(context.getString(R.string.distance), distance[0] / 1000));
-				extra.append(" - ");
+				if (location != null) {
+					float[] distance = new float[1];
+					Location.distanceBetween(location.getLatitude(), location.getLongitude(), twunch.getLatitude(),
+							twunch.getLongitude(), distance);
+					extra.append(String.format(context.getString(R.string.distance), distance[0] / 1000));
+					extra.append(" - ");
+				}
 			}
 		}
 		extra.append(twunch.getNumberOfParticipants() == 1 ? context.getString(R.string.participants_one) : String.format(context
