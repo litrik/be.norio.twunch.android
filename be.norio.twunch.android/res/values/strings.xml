@@ -23,8 +23,7 @@
 	<string name="distance">%1$.1fkm</string>
 	<string name="share_title">Share Twunch via...</string>
 	<string name="share_subject">Twunch</string>
-	<string name="share_text">There's a Twunch in %1$s on %2$s at %3$s: %4$s
-	</string>
+	<string name="share_text">There\'s a Twunch in %1$s on %2$s at %3$s: %4$s</string>
 
 	<string name="download">Downloading Twunch data...</string>
 	<string name="download_error">There was an error downloading Twunch data. Please
