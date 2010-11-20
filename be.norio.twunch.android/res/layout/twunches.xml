@@ -4,7 +4,7 @@
 
 	<ListView android:id="@id/android:list" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:layout_weight="1"
-		android:drawSelectorOnTop="false" />
+		android:drawSelectorOnTop="false"  android:layoutAnimation="@anim/layout_fade_in" />
 	<TextView android:layout_height="fill_parent" android:id="@id/android:empty"
 		android:layout_width="fill_parent" android:text="@string/no_twunches"
 		android:gravity="center" android:textColor="#999999" />
