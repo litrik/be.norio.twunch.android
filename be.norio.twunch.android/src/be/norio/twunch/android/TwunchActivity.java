@@ -50,7 +50,11 @@ public class TwunchActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		twunch = ((TwunchApplication) getApplication()).getTwunches().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
+		try {
+			twunch = ((TwunchApplication) getApplication()).getTwunches().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
+		} catch (IndexOutOfBoundsException e) {
+			finish();
+		}
 
 		setContentView(R.layout.twunch);
 
@@ -76,8 +80,10 @@ public class TwunchActivity extends Activity {
 	static void renderHeadline(Twunch twunch, View view) {
 		Context context = view.getContext();
 		((TextView) view.findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-		((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(context.getString(R.string.date), DateUtils
-				.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
+		((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
+				context.getString(R.string.date),
+				DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY
+						| DateUtils.FORMAT_SHOW_DATE),
 				DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
 		StringBuffer extra = new StringBuffer();
 		if (twunch.hasLatLon()) {
@@ -94,8 +100,8 @@ public class TwunchActivity extends Activity {
 				}
 			}
 		}
-		extra.append(twunch.getNumberOfParticipants() == 1 ? context.getString(R.string.participants_one) : String.format(context
-				.getString(R.string.participants), twunch.getNumberOfParticipants()));
+		extra.append(twunch.getNumberOfParticipants() == 1 ? context.getString(R.string.participants_one) : String.format(
+				context.getString(R.string.participants), twunch.getNumberOfParticipants()));
 		((TextView) view.findViewById(R.id.twunchExtra)).setText(extra);
 	}
 
@@ -148,8 +154,8 @@ public class TwunchActivity extends Activity {
 	private void doRegister() {
 		final Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, "@twunch "
-				+ String.format(getString(R.string.register_text), twunch.getTitle(), twunch.getLink()));
+		intent.putExtra(Intent.EXTRA_TEXT,
+				"@twunch " + String.format(getString(R.string.register_text), twunch.getTitle(), twunch.getLink()));
 		startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
 	}
 
@@ -159,9 +165,14 @@ public class TwunchActivity extends Activity {
 	private void doShare() {
 		final Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), twunch.getTitle(), DateUtils
-				.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME), twunch.getLink()));
+		intent.putExtra(
+				Intent.EXTRA_TEXT,
+				String.format(
+						getString(R.string.share_text),
+						twunch.getTitle(),
+						DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY
+								| DateUtils.FORMAT_SHOW_DATE),
+						DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME), twunch.getLink()));
 		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_subject));
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
 	}
