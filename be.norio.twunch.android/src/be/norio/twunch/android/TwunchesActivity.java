@@ -50,7 +50,7 @@ public class TwunchesActivity extends ListActivity {
 		refreshTwunches();
 	}
 
-	class TwunchArrayAdapter extends ArrayAdapter<Twunch> {
+	static class TwunchArrayAdapter extends ArrayAdapter<Twunch> {
 
 		private final List<Twunch> twunches;
 		private final Context context;

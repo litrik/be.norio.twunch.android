@@ -68,7 +68,7 @@ public class TwunchParser {
 		return handler.getTwunches();
 	}
 
-	public class TwunchHandler extends DefaultHandler {
+	public static class TwunchHandler extends DefaultHandler {
 		private List<Twunch> twunches;
 		private Twunch currentTwunch;
 		private StringBuilder builder;

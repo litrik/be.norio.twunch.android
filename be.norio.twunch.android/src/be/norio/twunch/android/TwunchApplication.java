@@ -29,12 +29,10 @@ import be.norio.twunch.android.core.TwunchParser;
  */
 public class TwunchApplication extends Application {
 
-	private final String URL = "http://twunch.be/events.xml?when=future";
-
 	private List<Twunch> twunches = new ArrayList<Twunch>();
 
 	public void loadTwunches() throws Exception {
-		TwunchParser tp = new TwunchParser(URL);
+		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future");
 		twunches = tp.parse();
 	}
 
