@@ -50,15 +50,15 @@ public class TwunchActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.twunch);
+
 		try {
 			twunch = ((TwunchApplication) getApplication()).getTwunches().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
-		} catch (IndexOutOfBoundsException e) {
+			renderHeadline(twunch, findViewById(R.id.twunchHeadLine));
+		} catch (Exception e) {
 			finish();
 		}
 
-		setContentView(R.layout.twunch);
-
-		renderHeadline(twunch, findViewById(R.id.twunchHeadLine));
 		((Button) findViewById(R.id.ButtonMap)).setText(twunch.getAddress());
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(twunch.getParticipants());
