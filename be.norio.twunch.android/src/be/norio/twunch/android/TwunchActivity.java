@@ -154,8 +154,7 @@ public class TwunchActivity extends Activity {
 	private void doRegister() {
 		final Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT,
-				"@twunch " + String.format(getString(R.string.register_text), twunch.getTitle(), twunch.getLink()));
+		intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.register_text), twunch.getTitle(), twunch.getLink()));
 		startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
 	}
 
