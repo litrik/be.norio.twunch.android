@@ -1,24 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/twunch" android:layout_width="wrap_content"
-	android:layout_height="wrap_content">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/twunch"
+	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
 
 	<include android:id="@+id/twunchHeadLine" layout="@layout/twunchheadline" />
 
-	<Button android:layout_height="wrap_content" android:id="@+id/ButtonMap"
-		android:layout_below="@+id/twunchHeadLine" android:layout_width="fill_parent"
-		android:text="@string/button_map" android:layout_margin="6sp"
-		android:drawableLeft="@drawable/ic_menu_mapmode" android:gravity="center_vertical" />
-
-	<TextView android:layout_below="@+id/ButtonMap"
-		android:layout_height="wrap_content" android:id="@+id/twunchParticipants"
-		android:layout_width="wrap_content" android:paddingLeft="10sp"
-		android:paddingRight="10sp" android:lineSpacingMultiplier="1.5"
-		android:textSize="15sp" />
-
-	<Button android:layout_height="wrap_content" android:id="@+id/ButtonJoin"
-		android:layout_below="@id/twunchParticipants" android:layout_width="fill_parent"
-		android:text="@string/button_register" android:layout_margin="6sp"
-		android:textSize="24sp" android:drawableLeft="@drawable/ic_menu_add"
+	<Button android:layout_height="wrap_content" android:id="@+id/ButtonMap" android:layout_width="fill_parent"
+		android:text="@string/button_map" android:layout_margin="6sp" android:drawableLeft="@drawable/ic_menu_mapmode"
 		android:gravity="center_vertical" />
 
-</RelativeLayout>
+	<ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_weight="1">
+		<TextView android:layout_height="wrap_content" android:id="@+id/twunchParticipants" android:layout_width="wrap_content"
+			android:paddingLeft="10sp" android:paddingRight="10sp" android:lineSpacingMultiplier="1.5" android:textSize="15sp" />
+	</ScrollView>
+
+	<Button android:layout_height="wrap_content" android:id="@+id/ButtonJoin" android:layout_width="fill_parent"
+		android:text="@string/button_register" android:layout_margin="6sp" android:textSize="24sp" android:drawableLeft="@drawable/ic_menu_add"
+		android:gravity="center_vertical"/>
+
+</LinearLayout>
