@@ -37,6 +37,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import be.norio.twunch.android.core.Twunch;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 public class TwunchesActivity extends ListActivity {
 
 	private final static int MENU_ABOUT = 0;
@@ -45,9 +47,18 @@ public class TwunchesActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.TRACKER_ID, 60, this);
+		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
 		setContentView(R.layout.twunches);
 		setTitle(R.string.activity_twunches);
 		refreshTwunches();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		GoogleAnalyticsTracker.getInstance().dispatch();
+		GoogleAnalyticsTracker.getInstance().stop();
 	}
 
 	static class TwunchArrayAdapter extends ArrayAdapter<Twunch> {

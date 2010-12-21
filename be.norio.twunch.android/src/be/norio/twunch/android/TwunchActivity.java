@@ -37,6 +37,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import be.norio.twunch.android.core.Twunch;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 public class TwunchActivity extends Activity {
 
 	public static String PARAMETER_INDEX = "index";
@@ -50,6 +52,7 @@ public class TwunchActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
 		setContentView(R.layout.twunch);
 
 		try {

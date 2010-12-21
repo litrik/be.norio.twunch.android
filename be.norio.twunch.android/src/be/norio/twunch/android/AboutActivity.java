@@ -23,6 +23,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.webkit.WebView;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 /**
  * The Activity that shows 'About' information.
  */
@@ -36,6 +38,7 @@ public class AboutActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		GoogleAnalyticsTracker.getInstance().trackPageView("About");
 		setContentView(R.layout.about);
 		String version = "";
 		try {

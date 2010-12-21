@@ -29,6 +29,9 @@ import be.norio.twunch.android.core.TwunchParser;
  */
 public class TwunchApplication extends Application {
 
+	public static final String TRACKER_ID = "UA-1839065-15"; // DEV
+	// public static final String TRACKER_ID = "UA-1839065-14"; // PRD
+
 	private List<Twunch> twunches = new ArrayList<Twunch>();
 
 	public void loadTwunches() throws Exception {
