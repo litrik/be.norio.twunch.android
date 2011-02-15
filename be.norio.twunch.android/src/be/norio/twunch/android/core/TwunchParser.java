@@ -46,6 +46,7 @@ public class TwunchParser {
 	static final String LON_ELEMENT = "longitude";
 	static final String MAP_ELEMENT = "map";
 	static final String LINK_ELEMENT = "link";
+	static final String NOTE_ELEMENT = "note";
 	static final String PARTICIPANT_ELEMENT = "participant";
 
 	final URL feedUrl;
@@ -72,6 +73,7 @@ public class TwunchParser {
 		private List<Twunch> twunches;
 		private Twunch currentTwunch;
 		private StringBuilder builder;
+		private boolean doingHtml = false;
 
 		public List<Twunch> getTwunches() {
 			return this.twunches;
@@ -86,6 +88,10 @@ public class TwunchParser {
 		@Override
 		public void endElement(String uri, String localName, String name) throws SAXException {
 			super.endElement(uri, localName, name);
+			if (doingHtml && !localName.equalsIgnoreCase(NOTE_ELEMENT)) {
+				builder.append(' ');
+				return;
+			}
 			if (this.currentTwunch != null) {
 				if (localName.equalsIgnoreCase(ID_ELEMENT)) {
 					currentTwunch.setId(builder.toString());
@@ -103,6 +109,9 @@ public class TwunchParser {
 					currentTwunch.setLink(builder.toString());
 				} else if (localName.equalsIgnoreCase(MAP_ELEMENT)) {
 					currentTwunch.setMap(builder.toString());
+				} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
+					currentTwunch.setNote(builder.toString());
+					doingHtml = false;
 				} else if (localName.equalsIgnoreCase(PARTICIPANT_ELEMENT)) {
 					currentTwunch.addParticipant(builder.toString());
 				} else if (localName.equalsIgnoreCase(TWUNCH_ELEMENT)) {
@@ -126,9 +135,14 @@ public class TwunchParser {
 		@Override
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 			super.startElement(uri, localName, name, attributes);
+			if (doingHtml) {
+				return;
+			}
 			builder.setLength(0);
 			if (localName.equalsIgnoreCase(TWUNCH_ELEMENT)) {
 				this.currentTwunch = new Twunch();
+			} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
+				doingHtml = true;
 			}
 		}
 

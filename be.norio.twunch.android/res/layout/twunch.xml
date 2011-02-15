@@ -4,6 +4,9 @@
 
 	<include android:id="@+id/twunchHeadLine" layout="@layout/twunchheadline" />
 
+	<TextView android:layout_height="wrap_content" android:id="@+id/twunchNote" android:layout_width="fill_parent"
+		android:paddingLeft="10sp" android:paddingRight="10sp" android:textSize="15sp" />
+
 	<Button android:layout_height="wrap_content" android:id="@+id/ButtonMap" android:layout_width="fill_parent"
 		android:text="@string/button_map" android:layout_margin="6sp" android:drawableLeft="@drawable/ic_menu_mapmode"
 		android:gravity="center_vertical" />

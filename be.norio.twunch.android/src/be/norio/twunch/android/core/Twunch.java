@@ -39,6 +39,7 @@ public class Twunch implements Comparable<Twunch> {
 	String address;
 	String map;
 	String link;
+	String note;
 	List<String> participants = new ArrayList<String>();
 	boolean hasLatLon = false;
 
@@ -219,6 +220,21 @@ public class Twunch implements Comparable<Twunch> {
 	 */
 	public boolean hasLatLon() {
 		return hasLatLon;
+	}
+
+	/**
+	 * @return the note
+	 */
+	public String getNote() {
+		return note;
+	}
+
+	/**
+	 * @param note
+	 *          the note to set
+	 */
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }

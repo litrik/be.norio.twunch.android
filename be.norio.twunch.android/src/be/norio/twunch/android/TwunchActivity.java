@@ -62,6 +62,13 @@ public class TwunchActivity extends Activity {
 			finish();
 		}
 
+		TextView noteView = ((TextView) findViewById(R.id.twunchNote));
+		if (twunch.getNote().length() > 0) {
+			noteView.setText(twunch.getNote());
+			noteView.setVisibility(View.VISIBLE);
+		} else {
+			noteView.setVisibility(View.GONE);
+		}
 		((Button) findViewById(R.id.ButtonMap)).setText(twunch.getAddress());
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(twunch.getParticipants());
