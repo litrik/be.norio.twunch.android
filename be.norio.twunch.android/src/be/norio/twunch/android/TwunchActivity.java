@@ -57,6 +57,8 @@ public class TwunchActivity extends GDActivity {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
 		setActionBarContentView(R.layout.twunch);
+		addActionBarItem(Type.Add);
+		addActionBarItem(Type.Share);
 		addActionBarItem(Type.Locate);
 
 		try {
@@ -81,12 +83,6 @@ public class TwunchActivity extends GDActivity {
 			@Override
 			public void onClick(View v) {
 				doMap();
-			}
-		});
-		((Button) findViewById(R.id.ButtonJoin)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				doRegister();
 			}
 		});
 	}
@@ -126,9 +122,9 @@ public class TwunchActivity extends GDActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
 		menu.add(0, MENU_REGISTER, 0, R.string.button_register).setIcon(R.drawable.ic_menu_add);
 		menu.add(0, MENU_SHARE, 0, R.string.menu_share).setIcon(R.drawable.ic_menu_share);
+		menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -192,11 +188,20 @@ public class TwunchActivity extends GDActivity {
 
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		if (position == 0) {
+		switch (position) {
+		case 0:
+			doRegister();
+			break;
+		case 1:
+			doShare();
+			break;
+		case 2:
 			doMap();
-			return true;
+			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 }
