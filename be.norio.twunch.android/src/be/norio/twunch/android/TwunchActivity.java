@@ -145,8 +145,8 @@ public class TwunchActivity extends GDActivity {
 	 * Show the location of this Twunch on a map.
 	 */
 	private void doMap() {
-		String uri = twunch.getMap();
-		final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+		final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
+				+ twunch.getLatitude() + "," + twunch.getLongitude()));
 		startActivity(myIntent);
 	}
 
