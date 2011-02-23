@@ -17,20 +17,21 @@
 
 package be.norio.twunch.android;
 
+import greendroid.app.GDApplication;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Application;
 import be.norio.twunch.android.core.Twunch;
 import be.norio.twunch.android.core.TwunchParser;
 
 /**
  * 
  */
-public class TwunchApplication extends Application {
+public class TwunchApplication extends GDApplication {
 
-	public static final String TRACKER_ID = "UA-1839065-15"; // PRD
-	// public static final String TRACKER_ID = "UA-1839065-14"; // DEV
+	// public static final String TRACKER_ID = "UA-1839065-15"; // PRD
+	public static final String TRACKER_ID = "UA-1839065-14"; // DEV
 
 	private List<Twunch> twunches = new ArrayList<Twunch>();
 
@@ -42,4 +43,10 @@ public class TwunchApplication extends Application {
 	public List<Twunch> getTwunches() {
 		return twunches;
 	}
+
+	@Override
+	public Class<?> getHomeActivityClass() {
+		return TwunchesActivity.class;
+	}
+
 }

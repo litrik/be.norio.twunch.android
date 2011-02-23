@@ -17,9 +17,12 @@
 
 package be.norio.twunch.android;
 
+import greendroid.app.GDActivity;
+import greendroid.widget.ActionBarItem;
+import greendroid.widget.ActionBarItem.Type;
+
 import java.util.regex.Pattern;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -39,7 +42,7 @@ import be.norio.twunch.android.core.Twunch;
 
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchActivity extends Activity {
+public class TwunchActivity extends GDActivity {
 
 	public static String PARAMETER_INDEX = "index";
 
@@ -53,7 +56,8 @@ public class TwunchActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
-		setContentView(R.layout.twunch);
+		setActionBarContentView(R.layout.twunch);
+		addActionBarItem(Type.Locate);
 
 		try {
 			twunch = ((TwunchApplication) getApplication()).getTwunches().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
@@ -99,7 +103,7 @@ public class TwunchActivity extends Activity {
 		if (twunch.hasLatLon()) {
 			LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 			String p = locationManager.getBestProvider(new Criteria(), true);
-			if (p.length() > 0) {
+			if (p != null && p.length() > 0) {
 				Location location = locationManager.getLastKnownLocation(p);
 				if (location != null) {
 					float[] distance = new float[1];
@@ -184,6 +188,15 @@ public class TwunchActivity extends Activity {
 						DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME), twunch.getLink()));
 		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_subject));
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
+	}
+
+	@Override
+	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
+		if (position == 0) {
+			doMap();
+			return true;
+		}
+		return false;
 	}
 
 }

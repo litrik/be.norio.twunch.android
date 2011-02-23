@@ -17,10 +17,13 @@
 
 package be.norio.twunch.android;
 
+import greendroid.app.GDActivity;
+import greendroid.widget.ActionBarItem;
+import greendroid.widget.LoaderActionBarItem;
+
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,24 +36,40 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import be.norio.twunch.android.core.Twunch;
 
+import com.cyrilmottier.android.greendroid.R;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchesActivity extends ListActivity {
+public class TwunchesActivity extends GDActivity {
 
 	private final static int MENU_ABOUT = 0;
 	private final static int MENU_REFRESH = 1;
+
+	ListView mListView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.TRACKER_ID, 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
-		setContentView(R.layout.twunches);
-		setTitle(R.string.activity_twunches);
+		setActionBarContentView(R.layout.twunches);
+		addActionBarItem(greendroid.widget.ActionBarItem.Type.Refresh);
+		mListView = (ListView) findViewById(R.id.twunchesList);
+		mListView.setEmptyView(findViewById(R.id.noTwunches));
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView l, View v, int position, long id) {
+				Intent intent = new Intent();
+				intent.setComponent(new ComponentName(v.getContext(), TwunchActivity.class));
+				intent.putExtra(TwunchActivity.PARAMETER_INDEX, position);
+				startActivity(intent);
+			}
+		});
 		refreshTwunches();
 	}
 
@@ -96,15 +115,6 @@ public class TwunchesActivity extends ListActivity {
 		}
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-		Intent intent = new Intent();
-		intent.setComponent(new ComponentName(v.getContext(), TwunchActivity.class));
-		intent.putExtra(TwunchActivity.PARAMETER_INDEX, position);
-		startActivity(intent);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -139,20 +149,22 @@ public class TwunchesActivity extends ListActivity {
 
 	public void refreshTwunches() {
 		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.download), true);
-		final ListActivity thisActivity = this;
+		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
 		final Runnable onDownloadSuccess = new Runnable() {
 			@Override
 			public void run() {
-				thisActivity.setListAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunchheadline, R.id.twunchTitle,
+				mListView.setAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunchheadline, R.id.twunchTitle,
 						((TwunchApplication) getApplication()).getTwunches()));
 				progress.dismiss();
+				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 			}
 		};
 		final Runnable onDownloadFailure = new Runnable() {
 			@Override
 			public void run() {
 				progress.dismiss();
+				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 				AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
 				builder.setMessage(R.string.download_error);
 				builder.setCancelable(false);
@@ -175,6 +187,15 @@ public class TwunchesActivity extends ListActivity {
 				}
 			}
 		}.start();
+	}
+
+	@Override
+	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
+		if (position == 0) {
+			refreshTwunches();
+			return true;
+		}
+		return false;
 	}
 
 }

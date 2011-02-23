@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Twunch" parent="@style/Theme.GreenDroid.NoTitleBar">
+    
+			<item name="gdActionBarApplicationDrawable">@drawable/title</item>
+			<item name="gdActionBarHomeDrawable">@drawable/home</item>
+    	
+    </style>
+    
+</resources>
