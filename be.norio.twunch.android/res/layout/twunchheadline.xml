@@ -1,24 +1,13 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/twunch_item_root" android:layout_width="wrap_content"
-	android:layout_height="wrap_content" android:padding="6sp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/twunch_item_root"
+	android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="10dp" android:orientation="vertical">
 
-	<ImageView android:id="@+id/twunchIcon" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_alignParentTop="true"
-		android:paddingTop="4sp" android:paddingRight="10px" android:src="@drawable/icon" />
+	<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:textStyle="bold" android:textSize="19sp" android:textColor="#CC9999" />
 
-	<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
-		android:layout_alignParentRight="true" android:layout_alignParentTop="true"
-		android:gravity="center_vertical" android:textStyle="bold"
-		android:textSize="19sp" android:textColor="#CC9999" />
+	<TextView android:id="@+id/twunchDate" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:textColor="#999999" />
 
-	<TextView android:id="@+id/twunchDate" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
-		android:layout_below="@id/twunchTitle" android:textColor="#999999" />
+	<TextView android:id="@+id/twunchExtra" android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textColor="#999999" android:paddingBottom="3sp" />
 
-	<TextView android:id="@+id/twunchExtra" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_toRightOf="@id/twunchIcon"
-		android:layout_below="@id/twunchDate" android:textColor="#999999"
-		android:paddingBottom="3sp" />
-
-</RelativeLayout>
+</LinearLayout>
