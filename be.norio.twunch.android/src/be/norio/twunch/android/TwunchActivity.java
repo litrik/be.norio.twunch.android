@@ -60,7 +60,7 @@ public class TwunchActivity extends GDActivity {
 		addActionBarItem(Type.Locate);
 
 		try {
-			twunch = ((TwunchApplication) getApplication()).getTwunches().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
+			twunch = ((TwunchApplication) getApplication()).getTwunchList().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
 			renderHeadline(twunch, findViewById(R.id.twunchHeadLine));
 		} catch (Exception e) {
 			finish();

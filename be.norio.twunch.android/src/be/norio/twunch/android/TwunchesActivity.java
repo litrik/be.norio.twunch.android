@@ -70,7 +70,7 @@ public class TwunchesActivity extends GDActivity {
 				startActivity(intent);
 			}
 		});
-		refreshTwunches();
+		refreshTwunches(false);
 	}
 
 	@Override
@@ -141,13 +141,19 @@ public class TwunchesActivity extends GDActivity {
 			startActivity(intent);
 			return true;
 		case MENU_REFRESH:
-			refreshTwunches();
+			refreshTwunches(true);
 			return true;
 		}
 		return false;
 	}
 
-	public void refreshTwunches() {
+	public void refreshTwunches(boolean force) {
+		if (!force && ((TwunchApplication) getApplication()).isTwunchListCurrent()) {
+			mListView.setAdapter(new TwunchArrayAdapter(this, R.layout.twunchheadline, R.id.twunchTitle,
+					((TwunchApplication) getApplication()).getTwunchList()));
+			((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
+			return;
+		}
 		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.download), true);
 		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
@@ -155,7 +161,7 @@ public class TwunchesActivity extends GDActivity {
 			@Override
 			public void run() {
 				mListView.setAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunchheadline, R.id.twunchTitle,
-						((TwunchApplication) getApplication()).getTwunches()));
+						((TwunchApplication) getApplication()).getTwunchList()));
 				progress.dismiss();
 				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 			}
@@ -192,7 +198,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
 		if (position == 0) {
-			refreshTwunches();
+			refreshTwunches(true);
 			return true;
 		}
 		return false;
