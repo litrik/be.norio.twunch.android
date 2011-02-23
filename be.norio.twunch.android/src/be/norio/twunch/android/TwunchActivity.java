@@ -35,8 +35,6 @@ import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.TextView;
 import be.norio.twunch.android.core.Twunch;
 
@@ -75,16 +73,10 @@ public class TwunchActivity extends GDActivity {
 		} else {
 			noteView.setVisibility(View.GONE);
 		}
-		((Button) findViewById(R.id.ButtonMap)).setText(twunch.getAddress());
+		((TextView) findViewById(R.id.twunchAddress)).setText(twunch.getAddress());
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(twunch.getParticipants());
 		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");
-		((Button) findViewById(R.id.ButtonMap)).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				doMap();
-			}
-		});
 	}
 
 	static void renderHeadline(Twunch twunch, View view) {
