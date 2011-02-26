@@ -44,6 +44,7 @@ public class TwunchManager {
 	private List<Twunch> twunches = null;
 
 	public void loadTwunches() throws Exception {
+		// TODO: Prevent multiple simultaneous downloads
 		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future");
 		twunches = tp.parse();
 	}
