@@ -23,11 +23,7 @@ import greendroid.widget.ActionBarItem.Type;
 
 import java.util.regex.Pattern;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -38,6 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 import be.norio.twunch.android.core.Twunch;
 
+import com.cyrilmottier.android.greendroid.R;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class TwunchActivity extends GDActivity {
@@ -59,13 +56,14 @@ public class TwunchActivity extends GDActivity {
 		addActionBarItem(Type.Share);
 		addActionBarItem(Type.Locate);
 
-		try {
-			twunch = ((TwunchApplication) getApplication()).getTwunchList().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
-			renderHeadline(twunch, findViewById(R.id.twunchHeadLine));
-		} catch (Exception e) {
-			finish();
-		}
-
+		twunch = TwunchManager.getInstance().getTwunchList().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
+		((TextView) findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
+		((TextView) findViewById(R.id.twunchDate)).setText(String.format(getString(R.string.date),
+				DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
+				DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
+		((TextView) findViewById(R.id.twunchNumberParticipants)).setText(String.format(
+				getResources().getQuantityString(R.plurals.numberOfParticipants, twunch.getNumberOfParticipants()),
+				twunch.getNumberOfParticipants()));
 		TextView noteView = ((TextView) findViewById(R.id.twunchNote));
 		if (twunch.getNote().length() > 0) {
 			noteView.setText(twunch.getNote());
@@ -73,38 +71,17 @@ public class TwunchActivity extends GDActivity {
 		} else {
 			noteView.setVisibility(View.GONE);
 		}
-		((TextView) findViewById(R.id.twunchAddress)).setText(twunch.getAddress());
+		StringBuffer address = new StringBuffer();
+		String distance = TwunchManager.getInstance().getDistanceToTwunch(this, twunch);
+		if (distance != null) {
+			address.append(distance);
+			address.append(" - ");
+		}
+		address.append(twunch.getAddress());
+		((TextView) findViewById(R.id.twunchAddress)).setText(address);
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(twunch.getParticipants());
 		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");
-	}
-
-	static void renderHeadline(Twunch twunch, View view) {
-		Context context = view.getContext();
-		((TextView) view.findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-		((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
-				context.getString(R.string.date),
-				DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY
-						| DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
-		StringBuffer extra = new StringBuffer();
-		if (twunch.hasLatLon()) {
-			LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-			String p = locationManager.getBestProvider(new Criteria(), true);
-			if (p != null && p.length() > 0) {
-				Location location = locationManager.getLastKnownLocation(p);
-				if (location != null) {
-					float[] distance = new float[1];
-					Location.distanceBetween(location.getLatitude(), location.getLongitude(), twunch.getLatitude(),
-							twunch.getLongitude(), distance);
-					extra.append(String.format(context.getString(R.string.distance), distance[0] / 1000));
-					extra.append(" - ");
-				}
-			}
-		}
-		extra.append(twunch.getNumberOfParticipants() == 1 ? context.getString(R.string.participants_one) : String.format(
-				context.getString(R.string.participants), twunch.getNumberOfParticipants()));
-		((TextView) view.findViewById(R.id.twunchExtra)).setText(extra);
 	}
 
 	/*

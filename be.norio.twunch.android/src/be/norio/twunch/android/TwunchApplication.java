@@ -19,11 +19,6 @@ package be.norio.twunch.android;
 
 import greendroid.app.GDApplication;
 
-import java.util.List;
-
-import be.norio.twunch.android.core.Twunch;
-import be.norio.twunch.android.core.TwunchParser;
-
 /**
  * 
  */
@@ -31,21 +26,6 @@ public class TwunchApplication extends GDApplication {
 
 	// public static final String TRACKER_ID = "UA-1839065-15"; // PRD
 	public static final String TRACKER_ID = "UA-1839065-14"; // DEV
-
-	private List<Twunch> twunches = null;
-
-	public void loadTwunches() throws Exception {
-		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future");
-		twunches = tp.parse();
-	}
-
-	public List<Twunch> getTwunchList() {
-		return twunches;
-	}
-
-	public boolean isTwunchListCurrent() {
-		return twunches != null;
-	}
 
 	@Override
 	public Class<?> getHomeActivityClass() {

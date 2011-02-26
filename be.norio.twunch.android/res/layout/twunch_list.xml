@@ -7,6 +7,6 @@
 		android:drawSelectorOnTop="false"  android:layoutAnimation="@anim/layout_fade_in" />
 	<TextView android:layout_height="fill_parent" android:id="@+id/noTwunches"
 		android:layout_width="fill_parent" android:text="@string/no_twunches"
-		android:gravity="center" android:textColor="#999999"/>
+		android:gravity="center" style="@style/Theme.Twunch"/>
 
 </LinearLayout>

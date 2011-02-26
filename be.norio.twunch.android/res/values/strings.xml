@@ -18,8 +18,6 @@
 	<string name="register_title">Register via Twitter</string>
 	<string name="register_text">(%1$s) @twunch I\'ll be there! %2$s</string>
 	<string name="date">%1$s at %2$s</string>
-	<string name="participants_one">1 participant</string>
-	<string name="participants">%1$s participants</string>
 	<string name="distance">%1$.1fkm</string>
 	<string name="share_title">Share Twunch via...</string>
 	<string name="share_subject">Twunch</string>
@@ -28,5 +26,10 @@
 	<string name="download">Downloading Twunch data...</string>
 	<string name="download_error">There was an error downloading Twunch data. Please
 		try again later.</string>
+
+	<plurals name="numberOfParticipants">
+		<item quantity="one">1 participant</item>
+		<item quantity="other">%d participants</item>
+	</plurals>
 
 </resources>
