@@ -23,7 +23,7 @@
 	<string name="share_subject">Twunch</string>
 	<string name="share_text">There\'s a Twunch in %1$s on %2$s at %3$s: %4$s</string>
 
-	<string name="download">Downloading Twunch data...</string>
+	<string name="download_done">Twunch data is now up-to-date</string>
 	<string name="download_error">There was an error downloading Twunch data. Please
 		try again later.</string>
 

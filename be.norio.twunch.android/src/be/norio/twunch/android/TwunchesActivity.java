@@ -24,7 +24,6 @@ import greendroid.widget.LoaderActionBarItem;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import be.norio.twunch.android.core.Twunch;
 
 import com.cyrilmottier.android.greendroid.R;
@@ -166,13 +166,13 @@ public class TwunchesActivity extends GDActivity {
 	}
 
 	public void refreshTwunches(boolean force) {
+		((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
 		if (!force && TwunchManager.getInstance().isTwunchListCurrent()) {
 			mListView.setAdapter(new TwunchArrayAdapter(this, R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
 					.getInstance().getTwunchList()));
 			((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 			return;
 		}
-		final ProgressDialog progress = ProgressDialog.show(this, "", getString(R.string.download), true);
 		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
 		final Runnable onDownloadSuccess = new Runnable() {
@@ -180,14 +180,13 @@ public class TwunchesActivity extends GDActivity {
 			public void run() {
 				mListView.setAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
 						.getInstance().getTwunchList()));
-				progress.dismiss();
 				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
+				Toast.makeText(getApplicationContext(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
 			}
 		};
 		final Runnable onDownloadFailure = new Runnable() {
 			@Override
 			public void run() {
-				progress.dismiss();
 				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 				AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
 				builder.setMessage(R.string.download_error);
