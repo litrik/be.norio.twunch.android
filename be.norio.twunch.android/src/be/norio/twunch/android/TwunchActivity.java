@@ -24,28 +24,45 @@ import greendroid.widget.ActionBarItem.Type;
 import java.util.regex.Pattern;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.text.format.DateUtils;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import be.norio.twunch.android.core.Twunch;
 
 import com.cyrilmottier.android.greendroid.R;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class TwunchActivity extends GDActivity {
 
-	public static String PARAMETER_INDEX = "index";
+	public static String PARAMETER_ID = "id";
 
 	private final static int MENU_MAP = 0;
 	private final static int MENU_REGISTER = 1;
 	private final static int MENU_SHARE = 2;
 
-	private Twunch twunch;
+	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
+			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
+			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_PARTICIPANTS, TwunchManager.COLUMN_NOTE, TwunchManager.COLUMN_LINK };
+	private static final int COLUMN_DISPLAY_TITLE = 1;
+	private static final int COLUMN_DISPLAY_ADDRESS = 2;
+	private static final int COLUMN_DISPLAY_DATE = 3;
+	private static final int COLUMN_DISPLAY_NUMPARTICIPANTS = 4;
+	private static final int COLUMN_DISPLAY_LATITUDE = 5;
+	private static final int COLUMN_DISPLAY_LONGITUDE = 6;
+	private static final int COLUMN_DISPLAY_PARTICIPANTS = 7;
+	private static final int COLUMN_DISPLAY_NOTE = 8;
+	private static final int COLUMN_DISPLAY_LINK = 9;
+
+	DatabaseHelper dbHelper;
+	SQLiteDatabase db;
+	Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,31 +73,38 @@ public class TwunchActivity extends GDActivity {
 		addActionBarItem(Type.Share);
 		addActionBarItem(Type.Locate);
 
-		twunch = TwunchManager.getInstance().getTwunchList().get(getIntent().getIntExtra(PARAMETER_INDEX, 0));
-		((TextView) findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-		((TextView) findViewById(R.id.twunchDate)).setText(String.format(getString(R.string.date),
-				DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
-		((TextView) findViewById(R.id.twunchNumberParticipants)).setText(String.format(
-				getResources().getQuantityString(R.plurals.numberOfParticipants, twunch.getNumberOfParticipants()),
-				twunch.getNumberOfParticipants()));
-		TextView noteView = ((TextView) findViewById(R.id.twunchNote));
-		if (twunch.getNote().length() > 0) {
-			noteView.setText(twunch.getNote());
-			noteView.setVisibility(View.VISIBLE);
-		} else {
-			noteView.setVisibility(View.GONE);
-		}
+		dbHelper = new DatabaseHelper(this);
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		cursor = db.query(TwunchManager.TABLE_NAME, columns,
+				BaseColumns._ID + " = " + String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0)), null, null, null, null);
+		cursor.moveToFirst();
+		((TextView) findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
 		StringBuffer address = new StringBuffer();
-		String distance = TwunchManager.getInstance().getDistanceToTwunch(this, twunch);
+		String distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
+				cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
 		if (distance != null) {
 			address.append(distance);
 			address.append(" - ");
 		}
-		address.append(twunch.getAddress());
+		address.append(cursor.getString(COLUMN_DISPLAY_ADDRESS));
 		((TextView) findViewById(R.id.twunchAddress)).setText(address);
+		((TextView) findViewById(R.id.twunchDate)).setText(String.format(
+				getString(R.string.date),
+				DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+						| DateUtils.FORMAT_SHOW_DATE),
+				DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
+		TextView noteView = ((TextView) findViewById(R.id.twunchNote));
+		if (cursor.getString(COLUMN_DISPLAY_NOTE) == null || cursor.getString(COLUMN_DISPLAY_NOTE).length() == 0) {
+			noteView.setVisibility(View.GONE);
+		} else {
+			noteView.setText(cursor.getString(COLUMN_DISPLAY_NOTE));
+			noteView.setVisibility(View.VISIBLE);
+		}
+		((TextView) findViewById(R.id.twunchNumberParticipants)).setText(String.format(
+				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)),
+				cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)));
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
-		participantsView.setText(twunch.getParticipants());
+		participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
 		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");
 	}
 
@@ -123,7 +147,7 @@ public class TwunchActivity extends GDActivity {
 	 */
 	private void doMap() {
 		final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
-				+ twunch.getLatitude() + "," + twunch.getLongitude()));
+				+ cursor.getDouble(COLUMN_DISPLAY_LATITUDE) + "," + cursor.getDouble(COLUMN_DISPLAY_LONGITUDE)));
 		startActivity(myIntent);
 	}
 
@@ -133,7 +157,10 @@ public class TwunchActivity extends GDActivity {
 	private void doRegister() {
 		final Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.register_text), twunch.getTitle(), twunch.getLink()));
+		intent.putExtra(
+				Intent.EXTRA_TEXT,
+				String.format(getString(R.string.register_text), cursor.getString(COLUMN_DISPLAY_TITLE),
+						cursor.getString(COLUMN_DISPLAY_LINK)));
 		startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
 	}
 
@@ -147,11 +174,13 @@ public class TwunchActivity extends GDActivity {
 				Intent.EXTRA_TEXT,
 				String.format(
 						getString(R.string.share_text),
-						twunch.getTitle(),
-						DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY
+						cursor.getString(COLUMN_DISPLAY_TITLE),
+						DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 								| DateUtils.FORMAT_SHOW_DATE),
-						DateUtils.formatDateTime(this, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME), twunch.getLink()));
-		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_subject));
+						DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME),
+						cursor.getString(COLUMN_DISPLAY_LINK)));
+		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
+		intent.putExtra(Intent.EXTRA_EMAIL, "");
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
 	}
 

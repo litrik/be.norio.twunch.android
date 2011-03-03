@@ -20,29 +20,25 @@ package be.norio.twunch.android;
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.LoaderActionBarItem;
-
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.BaseColumns;
 import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import be.norio.twunch.android.core.Twunch;
 
 import com.cyrilmottier.android.greendroid.R;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
@@ -53,26 +49,81 @@ public class TwunchesActivity extends GDActivity {
 	private final static int MENU_REFRESH = 1;
 
 	ListView mListView;
+	DatabaseHelper dbHelper;
+	SQLiteDatabase db;
+	Cursor cursor;
+
+	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
+			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
+			TwunchManager.COLUMN_LONGITUDE };
+	private static final int COLUMN_DISPLAY_TITLE = 1;
+	private static final int COLUMN_DISPLAY_ADDRESS = 2;
+	private static final int COLUMN_DISPLAY_DATE = 3;
+	private static final int COLUMN_DISPLAY_NUMPARTICIPANTS = 4;
+	private static final int COLUMN_DISPLAY_LATITUDE = 5;
+	private static final int COLUMN_DISPLAY_LONGITUDE = 6;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.TRACKER_ID, 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
+
 		setActionBarContentView(R.layout.twunch_list);
 		addActionBarItem(greendroid.widget.ActionBarItem.Type.Refresh);
+
 		mListView = (ListView) findViewById(R.id.twunchesList);
 		mListView.setEmptyView(findViewById(R.id.noTwunches));
+
+		dbHelper = new DatabaseHelper(this);
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		cursor = db.query(TwunchManager.TABLE_NAME, columns, null, null, null, null, TwunchManager.COLUMN_DATE + ","
+				+ TwunchManager.COLUMN_NUMPARTICIPANTS + " DESC");
+		startManagingCursor(cursor);
+		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.twunch_list_item, cursor, columns, new int[] {
+				R.id.twunchTitle, R.id.twunchTitle, R.id.twunchAddress, R.id.twunchDate, R.id.twunchNumberParticipants });
+		mListView.setAdapter(adapter);
+		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				switch (columnIndex) {
+				case COLUMN_DISPLAY_ADDRESS:
+					StringBuffer address = new StringBuffer();
+					String distance = TwunchManager.getInstance().getDistanceToTwunch(view.getContext(),
+							cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
+					if (distance != null) {
+						address.append(distance);
+						address.append(" - ");
+					}
+					address.append(cursor.getString(COLUMN_DISPLAY_ADDRESS));
+					((TextView) view.findViewById(R.id.twunchAddress)).setText(address);
+					return true;
+				case COLUMN_DISPLAY_DATE:
+					((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
+							view.getContext().getString(R.string.date),
+							DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+									| DateUtils.FORMAT_SHOW_DATE),
+							DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
+					return true;
+				case COLUMN_DISPLAY_NUMPARTICIPANTS:
+					((TextView) view.findViewById(R.id.twunchNumberParticipants)).setText(String.format(view.getContext().getResources()
+							.getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)),
+							cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)));
+					return true;
+				default:
+					return false;
+				}
+			}
+		});
+
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView l, View v, int position, long id) {
 				Intent intent = new Intent();
 				intent.setComponent(new ComponentName(v.getContext(), TwunchActivity.class));
-				intent.putExtra(TwunchActivity.PARAMETER_INDEX, position);
+				intent.putExtra(TwunchActivity.PARAMETER_ID, ((Cursor) l.getAdapter().getItem(position)).getInt(0));
 				startActivity(intent);
 			}
 		});
-		refreshTwunches(false);
 	}
 
 	@Override
@@ -80,57 +131,7 @@ public class TwunchesActivity extends GDActivity {
 		super.onDestroy();
 		GoogleAnalyticsTracker.getInstance().dispatch();
 		GoogleAnalyticsTracker.getInstance().stop();
-	}
-
-	static class TwunchArrayAdapter extends ArrayAdapter<Twunch> {
-
-		private final List<Twunch> twunches;
-		private final Context context;
-
-		/**
-		 * @param context
-		 * @param resource
-		 * @param textViewResourceId
-		 * @param objects
-		 */
-		public TwunchArrayAdapter(Context context, int resource, int textViewResourceId, List<Twunch> twunches) {
-			super(context, resource, textViewResourceId, twunches);
-			this.context = context;
-			this.twunches = twunches;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.widget.Adapter#getView(int, android.view.View,
-		 * android.view.ViewGroup)
-		 */
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = inflater.inflate(R.layout.twunch_list_item, null);
-			}
-			Twunch twunch = twunches.get(position);
-			((TextView) convertView.findViewById(R.id.twunchTitle)).setText(twunch.getTitle());
-			StringBuffer address = new StringBuffer();
-			String distance = TwunchManager.getInstance().getDistanceToTwunch(context, twunch);
-			if (distance != null) {
-				address.append(distance);
-				address.append(" - ");
-			}
-			address.append(twunch.getAddress());
-			((TextView) convertView.findViewById(R.id.twunchAddress)).setText(address);
-			((TextView) convertView.findViewById(R.id.twunchDate)).setText(String.format(
-					context.getString(R.string.date),
-					DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_WEEKDAY
-							| DateUtils.FORMAT_SHOW_DATE),
-					DateUtils.formatDateTime(context, twunch.getDate().getTime(), DateUtils.FORMAT_SHOW_TIME)));
-			((TextView) convertView.findViewById(R.id.twunchNumberParticipants)).setText(String.format(context.getResources()
-					.getQuantityString(R.plurals.numberOfParticipants, twunch.getNumberOfParticipants()), twunch
-					.getNumberOfParticipants()));
-			return convertView;
-		}
+		dbHelper.close();
 	}
 
 	/*
@@ -159,27 +160,27 @@ public class TwunchesActivity extends GDActivity {
 			startActivity(intent);
 			return true;
 		case MENU_REFRESH:
-			refreshTwunches(true);
+			refreshTwunches();
 			return true;
 		}
 		return false;
 	}
 
-	public void refreshTwunches(boolean force) {
+	public void refreshTwunches() {
 		((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
-		if (!force && TwunchManager.getInstance().isTwunchListCurrent()) {
-			mListView.setAdapter(new TwunchArrayAdapter(this, R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
-					.getInstance().getTwunchList()));
-			((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
-			return;
-		}
+		// if (!force) {
+		// mListView.setAdapter(new TwunchArrayAdapter(this,
+		// R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
+		// .getInstance().getTwunchList()));
+		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
+		// return;
+		// }
 		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
 		final Runnable onDownloadSuccess = new Runnable() {
 			@Override
 			public void run() {
-				mListView.setAdapter(new TwunchArrayAdapter(thisActivity, R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
-						.getInstance().getTwunchList()));
+				cursor.requery();
 				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
 				Toast.makeText(getApplicationContext(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
 			}
@@ -203,9 +204,10 @@ public class TwunchesActivity extends GDActivity {
 			@Override
 			public void run() {
 				try {
-					TwunchManager.getInstance().loadTwunches();
+					TwunchManager.getInstance().loadTwunches(thisActivity);
 					handler.post(onDownloadSuccess);
 				} catch (Exception e) {
+					e.printStackTrace();
 					handler.post(onDownloadFailure);
 				}
 			}
@@ -215,7 +217,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
 		if (position == 0) {
-			refreshTwunches(true);
+			refreshTwunches();
 			return true;
 		}
 		return false;
