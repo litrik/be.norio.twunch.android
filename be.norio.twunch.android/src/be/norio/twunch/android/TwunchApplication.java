@@ -27,6 +27,8 @@ public class TwunchApplication extends GDApplication {
 	// public static final String TRACKER_ID = "UA-1839065-15"; // PRD
 	public static final String TRACKER_ID = "UA-1839065-14"; // DEV
 
+	public static final String LOG_TAG = "Twunch";
+
 	@Override
 	public Class<?> getHomeActivityClass() {
 		return TwunchesActivity.class;
