@@ -84,14 +84,12 @@ public class TwunchManager {
 		static final String PARTICIPANT_ELEMENT = "participant";
 
 		final URL feedUrl;
-		final Context context;
 		final SimpleDateFormat dateFormat;
 		final long timestamp = (new Date()).getTime();
 		private SQLiteDatabase db;
 
-		public TwunchParser(Context context, String feedUrl) {
+		public TwunchParser(String feedUrl) {
 			try {
-				this.context = context;
 				this.feedUrl = new URL(feedUrl);
 				dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
 				dateFormat.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
@@ -210,7 +208,7 @@ public class TwunchManager {
 	public void syncTwunches(Context context) throws Exception {
 		// FIXME: Prevent multiple simultaneous downloads
 		dbHelper = new DatabaseHelper(context);
-		TwunchParser tp = new TwunchParser(context, "http://twunch.be/events.xml?when=future");
+		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future");
 		tp.parse();
 	}
 
