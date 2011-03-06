@@ -107,7 +107,7 @@ public class TwunchManager {
 			db = dbHelper.getWritableDatabase();
 			TwunchHandler handler = new TwunchHandler();
 			Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, handler);
-			// TODO: Delete old twunches
+			db.delete(TABLE_NAME, COLUMN_ADDED + " != " + timestamp, null);
 			dbHelper.close();
 		}
 
