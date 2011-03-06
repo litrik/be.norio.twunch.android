@@ -45,7 +45,7 @@ public class TwunchManager {
 	static final String TABLE_NAME = "twunches";
 
 	static final String COLUMN_ID = "id";
-	static final String COLUMN_ADDED = "added";
+	static final String COLUMN_SYNCED = "synced";
 	static final String COLUMN_TITLE = "title";
 	static final String COLUMN_ADDRESS = "address";
 	static final String COLUMN_NOTE = "note";
@@ -55,6 +55,7 @@ public class TwunchManager {
 	static final String COLUMN_LONGITUDE = "longitude";
 	static final String COLUMN_PARTICIPANTS = "participants";
 	static final String COLUMN_NUMPARTICIPANTS = "numparticipants";
+	static final String COLUMN_NEW = "new";
 
 	protected TwunchManager() {
 	}
@@ -107,7 +108,7 @@ public class TwunchManager {
 			db = dbHelper.getWritableDatabase();
 			TwunchHandler handler = new TwunchHandler();
 			Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, handler);
-			db.delete(TABLE_NAME, COLUMN_ADDED + " != " + timestamp, null);
+			db.delete(TABLE_NAME, COLUMN_SYNCED + " != " + timestamp, null);
 			dbHelper.close();
 		}
 
@@ -162,10 +163,12 @@ public class TwunchManager {
 					} else if (localName.equalsIgnoreCase(TWUNCH_ELEMENT)) {
 						values.put(COLUMN_PARTICIPANTS, participants.toString());
 						values.put(COLUMN_NUMPARTICIPANTS, numParticipants);
+						values.put(COLUMN_NEW, true);
 						Log.d(TwunchApplication.LOG_TAG, "Inserting twunch " + values.getAsString(COLUMN_ID));
 						if (db.insert(TABLE_NAME, null, values) == -1) {
 							Log.d(TwunchApplication.LOG_TAG,
 									"Insert failed. Instead trying update of twunch " + values.getAsString(COLUMN_ID));
+							values.remove(COLUMN_NEW);
 							db.update(TABLE_NAME, values, COLUMN_ID + " = '" + values.getAsString(COLUMN_ID) + "'", null);
 						}
 					}
@@ -193,7 +196,7 @@ public class TwunchManager {
 					values = new ContentValues();
 					participants = new StringBuffer();
 					numParticipants = 0;
-					values.put(COLUMN_ADDED, timestamp);
+					values.put(COLUMN_SYNCED, timestamp);
 				} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
 					doingHtml = true;
 				}
@@ -204,7 +207,7 @@ public class TwunchManager {
 
 	private DatabaseHelper dbHelper;
 
-	public void loadTwunches(Context context) throws Exception {
+	public void syncTwunches(Context context) throws Exception {
 		// FIXME: Prevent multiple simultaneous downloads
 		dbHelper = new DatabaseHelper(context);
 		TwunchParser tp = new TwunchParser(context, "http://twunch.be/events.xml?when=future");

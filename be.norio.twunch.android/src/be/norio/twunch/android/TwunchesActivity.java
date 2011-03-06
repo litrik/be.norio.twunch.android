@@ -204,7 +204,7 @@ public class TwunchesActivity extends GDActivity {
 			@Override
 			public void run() {
 				try {
-					TwunchManager.getInstance().loadTwunches(thisActivity);
+					TwunchManager.getInstance().syncTwunches(thisActivity);
 					handler.post(onDownloadSuccess);
 				} catch (Exception e) {
 					e.printStackTrace();

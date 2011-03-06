@@ -34,10 +34,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE " + TwunchManager.TABLE_NAME + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-				+ TwunchManager.COLUMN_ID + " VARCHAR(255) UNIQUE," + TwunchManager.COLUMN_ADDED + " INTEGER,"
-				+ TwunchManager.COLUMN_TITLE + " VARCHAR(255)," + TwunchManager.COLUMN_ADDRESS + " VARCHAR(255),"
-				+ TwunchManager.COLUMN_NOTE + " VARCHAR(1024)," + TwunchManager.COLUMN_PARTICIPANTS + " VARCHAR(2048),"
-				+ TwunchManager.COLUMN_NUMPARTICIPANTS + " INTEGER," + TwunchManager.COLUMN_DATE + " INTEGER,"
+				+ TwunchManager.COLUMN_ID + " VARCHAR(255) UNIQUE," + TwunchManager.COLUMN_SYNCED + " INTEGER,"
+				+ TwunchManager.COLUMN_NEW + " INTEGER," + TwunchManager.COLUMN_TITLE + " VARCHAR(255)," + TwunchManager.COLUMN_ADDRESS
+				+ " VARCHAR(255)," + TwunchManager.COLUMN_NOTE + " VARCHAR(1024)," + TwunchManager.COLUMN_PARTICIPANTS
+				+ " VARCHAR(2048)," + TwunchManager.COLUMN_NUMPARTICIPANTS + " INTEGER," + TwunchManager.COLUMN_DATE + " INTEGER,"
 				+ TwunchManager.COLUMN_LINK + " VARCHAR(255)," + TwunchManager.COLUMN_LATITUDE + " DECIMAL(10,7),"
 				+ TwunchManager.COLUMN_LONGITUDE + " DECIMAL(10,7)" + ");");
 	}
