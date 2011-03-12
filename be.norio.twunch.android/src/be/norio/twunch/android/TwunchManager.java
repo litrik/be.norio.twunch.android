@@ -212,7 +212,7 @@ public class TwunchManager {
 		tp.parse();
 	}
 
-	public String getDistanceToTwunch(Context context, double lat, double lon) {
+	public Float getDistanceToTwunch(Context context, double lat, double lon) {
 		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		String p = locationManager.getBestProvider(new Criteria(), true);
 		if (p != null && p.length() > 0) {
@@ -220,7 +220,7 @@ public class TwunchManager {
 			if (location != null) {
 				float[] distance = new float[1];
 				Location.distanceBetween(location.getLatitude(), location.getLongitude(), lat, lon, distance);
-				return String.format(context.getString(R.string.distance), distance[0] / 1000);
+				return (distance[0] / 1000);
 			}
 		}
 		return null;
