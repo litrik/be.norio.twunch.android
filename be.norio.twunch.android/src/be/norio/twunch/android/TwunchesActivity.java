@@ -82,7 +82,7 @@ public class TwunchesActivity extends GDActivity {
 		mListView.setEmptyView(findViewById(R.id.noTwunches));
 
 		dbHelper = new DatabaseHelper(this);
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		db = dbHelper.getReadableDatabase();
 		cursor = db.query(TwunchManager.TABLE_NAME, columns, null, null, null, null, TwunchManager.COLUMN_DATE + ","
 				+ TwunchManager.COLUMN_NUMPARTICIPANTS + " DESC");
 		startManagingCursor(cursor);
@@ -96,6 +96,7 @@ public class TwunchesActivity extends GDActivity {
 				startActivity(intent);
 			}
 		});
+		refreshTwunches(false);
 	}
 
 	class TwunchCursorAdapter extends CursorAdapter {
@@ -169,21 +170,19 @@ public class TwunchesActivity extends GDActivity {
 			startActivity(intent);
 			return true;
 		case MENU_REFRESH:
-			refreshTwunches();
+			refreshTwunches(true);
 			return true;
 		}
 		return false;
 	}
 
-	public void refreshTwunches() {
+	public void refreshTwunches(boolean force) {
+		long lastSync = db.compileStatement("select max(" + TwunchManager.COLUMN_SYNCED + ") from " + TwunchManager.TABLE_NAME)
+				.simpleQueryForLong();
+		if (lastSync != 0 && !force) {
+			return;
+		}
 		((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
-		// if (!force) {
-		// mListView.setAdapter(new TwunchArrayAdapter(this,
-		// R.layout.twunch_list_item, R.id.twunchTitle, TwunchManager
-		// .getInstance().getTwunchList()));
-		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
-		// return;
-		// }
 		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
 		final Runnable onDownloadSuccess = new Runnable() {
@@ -226,7 +225,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
 		if (position == 0) {
-			refreshTwunches();
+			refreshTwunches(true);
 			return true;
 		}
 		return false;
