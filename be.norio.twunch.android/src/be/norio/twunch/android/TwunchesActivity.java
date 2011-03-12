@@ -30,6 +30,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
@@ -58,6 +62,9 @@ public class TwunchesActivity extends GDActivity {
 	DatabaseHelper dbHelper;
 	SQLiteDatabase db;
 	Cursor cursor;
+
+	LocationManager locationManager;
+	LocationListener locationListener;
 
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
 			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
@@ -96,6 +103,29 @@ public class TwunchesActivity extends GDActivity {
 				startActivity(intent);
 			}
 		});
+
+		// Acquire a reference to the system Location Manager
+		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+		// Define a listener that responds to location updates
+		locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				cursor.requery();
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+				// Do nothing
+			}
+
+			public void onProviderEnabled(String provider) {
+				// Do nothing
+			}
+
+			public void onProviderDisabled(String provider) {
+				// Do nothing
+			}
+		};
+
 		refreshTwunches(false);
 	}
 
@@ -229,6 +259,31 @@ public class TwunchesActivity extends GDActivity {
 			return true;
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// Stop listening for location updates
+		locationManager.removeUpdates(locationListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Start listening for location updates
+		locationManager
+				.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), true), 300000, 500, locationListener);
 	}
 
 }
