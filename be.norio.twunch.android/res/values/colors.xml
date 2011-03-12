@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="twunchItemBar">#eeffb5</color>
+    <color name="twunchItemBarText">#cc9999</color>
+    <color name="twunchItemTitle">#cc9999</color>
+    
+</resources>

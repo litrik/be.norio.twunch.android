@@ -21,6 +21,7 @@ import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.ActionBarItem.Type;
 
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import android.content.Intent;
@@ -78,21 +79,27 @@ public class TwunchActivity extends GDActivity {
 		cursor = db.query(TwunchManager.TABLE_NAME, columns,
 				BaseColumns._ID + " = " + String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0)), null, null, null, null);
 		cursor.moveToFirst();
+
+		// Title
 		((TextView) findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
-		StringBuffer address = new StringBuffer();
-		String distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
+		// Address
+		((TextView) findViewById(R.id.twunchAddress)).setText(cursor.getString(COLUMN_DISPLAY_ADDRESS));
+		// Distance
+		Float distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
 				cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
-		if (distance != null) {
-			address.append(distance);
-			address.append(" - ");
-		}
-		address.append(cursor.getString(COLUMN_DISPLAY_ADDRESS));
-		((TextView) findViewById(R.id.twunchAddress)).setText(address);
+		((TextView) findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
+		findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
+		// Date
 		((TextView) findViewById(R.id.twunchDate)).setText(String.format(
 				getString(R.string.date),
 				DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 						| DateUtils.FORMAT_SHOW_DATE),
 				DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
+		// Days
+		int days = (int) ((cursor.getLong(COLUMN_DISPLAY_DATE) - new Date().getTime()) / 1000 / 60 / 60 / 24);
+		((TextView) findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(getResources()
+				.getQuantityString(R.plurals.days_to_twunch, days), days));
+		// Note
 		TextView noteView = ((TextView) findViewById(R.id.twunchNote));
 		if (cursor.getString(COLUMN_DISPLAY_NOTE) == null || cursor.getString(COLUMN_DISPLAY_NOTE).length() == 0) {
 			noteView.setVisibility(View.GONE);
@@ -100,9 +107,11 @@ public class TwunchActivity extends GDActivity {
 			noteView.setText(cursor.getString(COLUMN_DISPLAY_NOTE));
 			noteView.setVisibility(View.VISIBLE);
 		}
+		// Number of participants
 		((TextView) findViewById(R.id.twunchNumberParticipants)).setText(String.format(
 				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)),
 				cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)));
+		// Participants
 		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
 		participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
 		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");

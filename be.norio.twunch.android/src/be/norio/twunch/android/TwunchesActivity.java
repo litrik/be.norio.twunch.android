@@ -20,8 +20,12 @@ package be.norio.twunch.android;
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.LoaderActionBarItem;
+
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,13 +34,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,41 +86,7 @@ public class TwunchesActivity extends GDActivity {
 		cursor = db.query(TwunchManager.TABLE_NAME, columns, null, null, null, null, TwunchManager.COLUMN_DATE + ","
 				+ TwunchManager.COLUMN_NUMPARTICIPANTS + " DESC");
 		startManagingCursor(cursor);
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.twunch_list_item, cursor, columns, new int[] {
-				R.id.twunchTitle, R.id.twunchTitle, R.id.twunchAddress, R.id.twunchDate, R.id.twunchNumberParticipants });
-		mListView.setAdapter(adapter);
-		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				switch (columnIndex) {
-				case COLUMN_DISPLAY_ADDRESS:
-					StringBuffer address = new StringBuffer();
-					String distance = TwunchManager.getInstance().getDistanceToTwunch(view.getContext(),
-							cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
-					if (distance != null) {
-						address.append(distance);
-						address.append(" - ");
-					}
-					address.append(cursor.getString(COLUMN_DISPLAY_ADDRESS));
-					((TextView) view.findViewById(R.id.twunchAddress)).setText(address);
-					return true;
-				case COLUMN_DISPLAY_DATE:
-					((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
-							view.getContext().getString(R.string.date),
-							DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
-									| DateUtils.FORMAT_SHOW_DATE),
-							DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
-					return true;
-				case COLUMN_DISPLAY_NUMPARTICIPANTS:
-					((TextView) view.findViewById(R.id.twunchNumberParticipants)).setText(String.format(view.getContext().getResources()
-							.getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)),
-							cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)));
-					return true;
-				default:
-					return false;
-				}
-			}
-		});
-
+		mListView.setAdapter(new TwunchCursorAdapter(this, cursor));
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView l, View v, int position, long id) {
@@ -124,6 +96,43 @@ public class TwunchesActivity extends GDActivity {
 				startActivity(intent);
 			}
 		});
+	}
+
+	class TwunchCursorAdapter extends CursorAdapter {
+
+		public TwunchCursorAdapter(Context context, Cursor c) {
+			super(context, c);
+		}
+
+		@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+			// Title
+			((TextView) view.findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
+			// Address
+			((TextView) view.findViewById(R.id.twunchAddress)).setText(cursor.getString(COLUMN_DISPLAY_ADDRESS));
+			// Distance
+			Float distance = TwunchManager.getInstance().getDistanceToTwunch(view.getContext(),
+					cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
+			((TextView) view.findViewById(R.id.twunchDistance)).setText(String.format(view.getContext().getString(R.string.distance),
+					distance));
+			view.findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
+			// Date
+			((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
+					view.getContext().getString(R.string.date),
+					DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+							| DateUtils.FORMAT_SHOW_DATE),
+					DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
+			// Days
+			int days = (int) ((cursor.getLong(COLUMN_DISPLAY_DATE) - new Date().getTime()) / 1000 / 60 / 60 / 24);
+			((TextView) view.findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(
+					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			final LayoutInflater inflater = LayoutInflater.from(context);
+			return inflater.inflate(R.layout.twunch_list_item, parent, false);
+		}
 	}
 
 	@Override

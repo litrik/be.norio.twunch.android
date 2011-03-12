@@ -18,7 +18,7 @@
 	<string name="register_title">Register via Twitter</string>
 	<string name="register_text">(%1$s) @twunch I\'ll be there! %2$s</string>
 	<string name="date">%1$s at %2$s</string>
-	<string name="distance">%1$.1fkm</string>
+	<string name="distance">%1$.1f km</string>
 	<string name="share_title">Share Twunch via...</string>
 	<string name="share_subject">Twunch</string>
 	<string name="share_text">There\'s a Twunch in %1$s on %2$s at %3$s: %4$s</string>
@@ -30,6 +30,12 @@
 	<plurals name="numberOfParticipants">
 		<item quantity="one">1 participant</item>
 		<item quantity="other">%d participants</item>
+	</plurals>
+
+	<string name="today">Today</string>
+	<plurals name="days_to_twunch">
+		<item quantity="one">%d day</item>
+		<item quantity="other">%d days</item>
 	</plurals>
 
 </resources>
