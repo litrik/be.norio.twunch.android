@@ -58,6 +58,7 @@ public class TwunchesActivity extends GDActivity {
 
 	private final static int MENU_ABOUT = 0;
 	private final static int MENU_REFRESH = 1;
+	private final static int MENU_MARK_READ = 2;
 
 	ListView mListView;
 	DatabaseHelper dbHelper;
@@ -188,6 +189,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_REFRESH, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
+		menu.add(0, MENU_MARK_READ, 0, R.string.menu_mark_read).setIcon(R.drawable.ic_menu_mark_read);
 		menu.add(0, MENU_ABOUT, 0, R.string.menu_about).setIcon(android.R.drawable.ic_menu_info_details);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -207,6 +209,10 @@ public class TwunchesActivity extends GDActivity {
 			return true;
 		case MENU_REFRESH:
 			refreshTwunches(true);
+			return true;
+		case MENU_MARK_READ:
+			TwunchManager.getInstance().setAllTwunchesRead(this);
+			cursor.requery();
 			return true;
 		}
 		return false;
