@@ -90,7 +90,8 @@ public class TwunchActivity extends GDActivity {
 		Float distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
 				cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
 		((TextView) findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
-		findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
+		findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
+		findViewById(R.id.twunchDistanceSeparator).setVisibility(distance == null ? View.GONE : View.VISIBLE);
 		// Date
 		((TextView) findViewById(R.id.twunchDate)).setText(String.format(
 				getString(R.string.date),
