@@ -30,6 +30,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -68,13 +69,14 @@ public class TwunchesActivity extends GDActivity {
 
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
 			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
-			TwunchManager.COLUMN_LONGITUDE };
+			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_NEW };
 	private static final int COLUMN_DISPLAY_TITLE = 1;
 	private static final int COLUMN_DISPLAY_ADDRESS = 2;
 	private static final int COLUMN_DISPLAY_DATE = 3;
 	private static final int COLUMN_DISPLAY_NUMPARTICIPANTS = 4;
 	private static final int COLUMN_DISPLAY_LATITUDE = 5;
 	private static final int COLUMN_DISPLAY_LONGITUDE = 6;
+	private static final int COLUMN_DISPLAY_NEW = 7;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,8 @@ public class TwunchesActivity extends GDActivity {
 			((TextView) view.findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
 			// Address
 			((TextView) view.findViewById(R.id.twunchAddress)).setText(cursor.getString(COLUMN_DISPLAY_ADDRESS));
+			((TextView) view.findViewById(R.id.twunchAddress)).setTypeface(null,
+					cursor.getInt(COLUMN_DISPLAY_NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
 			Float distance = TwunchManager.getInstance().getDistanceToTwunch(view.getContext(),
 					cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
@@ -153,6 +157,8 @@ public class TwunchesActivity extends GDActivity {
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 							| DateUtils.FORMAT_SHOW_DATE),
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
+			((TextView) view.findViewById(R.id.twunchDate)).setTypeface(null, cursor.getInt(COLUMN_DISPLAY_NEW) == 1 ? Typeface.BOLD
+					: Typeface.NORMAL);
 			// Days
 			int days = (int) ((cursor.getLong(COLUMN_DISPLAY_DATE) - new Date().getTime()) / 1000 / 60 / 60 / 24);
 			((TextView) view.findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(

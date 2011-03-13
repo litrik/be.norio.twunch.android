@@ -37,6 +37,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.util.Xml;
 
@@ -45,6 +46,7 @@ public class TwunchManager {
 	static final String TABLE_NAME = "twunches";
 
 	static final String COLUMN_ID = "id";
+	static final String COLUMN_ADDED = "added";
 	static final String COLUMN_SYNCED = "synced";
 	static final String COLUMN_TITLE = "title";
 	static final String COLUMN_ADDRESS = "address";
@@ -88,8 +90,9 @@ public class TwunchManager {
 		final long timestamp = (new Date()).getTime();
 		private SQLiteDatabase db;
 
-		public TwunchParser(String feedUrl) {
+		public TwunchParser(String feedUrl, SQLiteDatabase db) {
 			try {
+				this.db = db;
 				this.feedUrl = new URL(feedUrl);
 				dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
 				dateFormat.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
@@ -103,11 +106,9 @@ public class TwunchManager {
 		}
 
 		public void parse() throws IOException, SAXException {
-			db = dbHelper.getWritableDatabase();
 			TwunchHandler handler = new TwunchHandler();
 			Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, handler);
 			db.delete(TABLE_NAME, COLUMN_SYNCED + " != " + timestamp, null);
-			dbHelper.close();
 		}
 
 		public class TwunchHandler extends DefaultHandler {
@@ -166,6 +167,7 @@ public class TwunchManager {
 						if (db.insert(TABLE_NAME, null, values) == -1) {
 							Log.d(TwunchApplication.LOG_TAG,
 									"Insert failed. Instead trying update of twunch " + values.getAsString(COLUMN_ID));
+							values.remove(COLUMN_ADDED);
 							values.remove(COLUMN_NEW);
 							db.update(TABLE_NAME, values, COLUMN_ID + " = '" + values.getAsString(COLUMN_ID) + "'", null);
 						}
@@ -194,6 +196,7 @@ public class TwunchManager {
 					values = new ContentValues();
 					participants = new StringBuffer();
 					numParticipants = 0;
+					values.put(COLUMN_ADDED, timestamp);
 					values.put(COLUMN_SYNCED, timestamp);
 				} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
 					doingHtml = true;
@@ -203,13 +206,30 @@ public class TwunchManager {
 		}
 	}
 
-	private DatabaseHelper dbHelper;
-
 	public void syncTwunches(Context context) throws Exception {
 		// FIXME: Prevent multiple simultaneous downloads
-		dbHelper = new DatabaseHelper(context);
-		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future");
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		TwunchParser tp = new TwunchParser("http://twunch.be/events.xml?when=future", dbHelper.getWritableDatabase());
 		tp.parse();
+		dbHelper.close();
+	}
+
+	public void setTwunchRead(Context context, int id) {
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_NEW, false);
+		db.update(TABLE_NAME, values, BaseColumns._ID + " = " + id, null);
+		dbHelper.close();
+	}
+
+	public void setAllTwunchesRead(Context context) {
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_NEW, false);
+		db.update(TABLE_NAME, values, null, null);
+		dbHelper.close();
 	}
 
 	public Float getDistanceToTwunch(Context context, double lat, double lon) {

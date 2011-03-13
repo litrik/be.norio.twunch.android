@@ -75,10 +75,12 @@ public class TwunchActivity extends GDActivity {
 		addActionBarItem(Type.Locate);
 
 		dbHelper = new DatabaseHelper(this);
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		db = dbHelper.getReadableDatabase();
 		cursor = db.query(TwunchManager.TABLE_NAME, columns,
 				BaseColumns._ID + " = " + String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0)), null, null, null, null);
 		cursor.moveToFirst();
+
+		TwunchManager.getInstance().setTwunchRead(this, cursor.getInt(0));
 
 		// Title
 		((TextView) findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
