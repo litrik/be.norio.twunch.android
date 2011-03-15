@@ -155,7 +155,6 @@ public class TwunchManager {
 						values.put(COLUMN_NOTE, builder.toString());
 						doingHtml = false;
 					} else if (localName.equalsIgnoreCase(PARTICIPANT_ELEMENT)) {
-						participants.append('@');
 						participants.append(builder);
 						participants.append(' ');
 						numParticipants++;

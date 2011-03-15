@@ -4,5 +4,7 @@
     <color name="twunchItemBar">#eeffb5</color>
     <color name="twunchItemBarText">#cc9999</color>
     <color name="twunchItemTitle">#cc9999</color>
+
+    <color name="link">#0000ff</color>
     
 </resources>

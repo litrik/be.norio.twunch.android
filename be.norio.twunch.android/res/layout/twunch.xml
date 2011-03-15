@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/twunch"
-	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="10dp">
+	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:textStyle="bold" android:textSize="19sp" android:textColor="@color/twunchItemTitle" android:paddingBottom="4dp" />
+		android:textStyle="bold" android:textSize="19sp" android:textColor="@color/twunchItemTitle" android:paddingLeft="10dp"
+		android:paddingRight="10dp" android:paddingTop="10dp" />
 
 	<TextView android:id="@+id/twunchDate" android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:paddingBottom="4dp" />
+		android:paddingLeft="10dp" android:paddingRight="10dp" />
 
 	<TextView android:id="@+id/twunchAddress" android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:paddingBottom="4dp" />
+		android:paddingLeft="10dp" android:paddingRight="10dp" />
 
 	<TextView android:id="@+id/twunchNote" android:layout_height="wrap_content" android:layout_width="fill_parent"
-		android:textSize="15sp" android:paddingBottom="4dp" android:textColor="#CC9999" />
+		android:textSize="15sp" android:textColor="@color/twunchItemTitle" android:paddingLeft="10dp" android:paddingRight="10dp" />
 
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:paddingBottom="8dp">
+		android:padding="10dp">
 
 		<TextView android:id="@+id/twunchDays" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 		<TextView android:id="@+id/twunchDistanceSeparator" android:text=" - " android:layout_width="wrap_content"
@@ -26,7 +27,8 @@
 
 	</LinearLayout>
 
-	<TextView android:layout_height="wrap_content" android:id="@+id/twunchParticipants" android:layout_width="wrap_content"
-		android:lineSpacingMultiplier="1.5" android:textSize="15sp" />
+	<GridView android:id="@+id/twunchParticipants" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:columnWidth="100sp" android:numColumns="auto_fit" android:horizontalSpacing="10dp" android:stretchMode="columnWidth"
+		android:gravity="center" />
 
 </LinearLayout>

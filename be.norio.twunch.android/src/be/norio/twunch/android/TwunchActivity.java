@@ -21,20 +21,30 @@ import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
 import greendroid.widget.ActionBarItem.Type;
 
+import java.util.Arrays;
 import java.util.Date;
-import java.util.regex.Pattern;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Nickname;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.QuickContact;
 import android.text.format.DateUtils;
-import android.text.util.Linkify;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.cyrilmottier.android.greendroid.R;
@@ -64,6 +74,7 @@ public class TwunchActivity extends GDActivity {
 	DatabaseHelper dbHelper;
 	SQLiteDatabase db;
 	Cursor cursor;
+	String[] participants;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,9 +126,71 @@ public class TwunchActivity extends GDActivity {
 				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)),
 				cursor.getInt(COLUMN_DISPLAY_NUMPARTICIPANTS)));
 		// Participants
-		TextView participantsView = ((TextView) findViewById(R.id.twunchParticipants));
-		participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
-		Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"), "http://twitter.com/");
+		GridView participantsView = ((GridView) findViewById(R.id.twunchParticipants));
+		participants = cursor.getString(COLUMN_DISPLAY_PARTICIPANTS).split(" ");
+		Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
+		participantsView.setAdapter(new ContactAdapter(this));
+
+		// participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
+		// Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"),
+		// "http://twitter.com/");
+	}
+
+	private class ContactAdapter extends BaseAdapter {
+		private final Context context;
+
+		public ContactAdapter(Context c) {
+			context = c;
+		}
+
+		@Override
+		public int getCount() {
+			return participants.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return participants[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			final TextView textView;
+			if (convertView == null) {
+				LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+				textView = (TextView) inflater.inflate(R.layout.participant, null);
+			} else {
+				textView = (TextView) convertView;
+			}
+			textView.setText("@" + participants[position]);
+			textView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.LOOKUP_KEY };
+					Cursor rawTwitterContact = getContentResolver().query(Data.CONTENT_URI, projection, Nickname.NAME + " = ?",
+							new String[] { participants[position] }, null);
+					if (rawTwitterContact.getCount() > 0) {
+						// Show the QuickContact action bar
+						rawTwitterContact.moveToFirst();
+						final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI,
+								rawTwitterContact.getString(rawTwitterContact.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+						QuickContact.showQuickContact(context, textView, contactUri, ContactsContract.QuickContact.MODE_LARGE, null);
+					} else {
+						// Show the twitter profile
+						final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://twitter.com/"
+								+ participants[position]));
+						startActivity(myIntent);
+					}
+				}
+			});
+			return textView;
+		}
 	}
 
 	/*
