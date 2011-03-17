@@ -110,9 +110,8 @@ public class TwunchActivity extends GDActivity {
 						| DateUtils.FORMAT_SHOW_DATE),
 				DateUtils.formatDateTime(this, cursor.getLong(COLUMN_DISPLAY_DATE), DateUtils.FORMAT_SHOW_TIME)));
 		// Days
-		// TODO: This is not the most smart/correct way to calculate the number of
-		// days between 2 dates
-		int days = (int) Math.ceil(((cursor.getLong(COLUMN_DISPLAY_DATE) - new Date().getTime()) / 1000 / 60 / 60 / 24) + 0.5);
+		final long msInDay = 86400000;
+		int days = (int) (cursor.getLong(COLUMN_DISPLAY_DATE) / msInDay - new Date().getTime() / msInDay);
 		((TextView) findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(getResources()
 				.getQuantityString(R.plurals.days_to_twunch, days), days));
 		// Note
