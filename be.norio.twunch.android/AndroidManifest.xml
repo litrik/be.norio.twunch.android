@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="be.norio.twunch.android"
-	android:versionCode="8" android:versionName="1.0">
+	android:versionCode="9" android:versionName="1.0.1">
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:name="TwunchApplication"
 		android:theme="@style/Theme.Twunch">
 		<activity android:name=".TwunchesActivity" android:label="@string/app_name">
