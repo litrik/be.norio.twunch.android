@@ -39,6 +39,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -128,8 +129,6 @@ public class TwunchesActivity extends GDActivity {
 				// Do nothing
 			}
 		};
-
-		refreshTwunches(false);
 	}
 
 	class TwunchCursorAdapter extends CursorAdapter {
@@ -222,9 +221,13 @@ public class TwunchesActivity extends GDActivity {
 	public void refreshTwunches(boolean force) {
 		long lastSync = db.compileStatement("select max(" + TwunchManager.COLUMN_SYNCED + ") from " + TwunchManager.TABLE_NAME)
 				.simpleQueryForLong();
-		if (lastSync != 0 && !force) {
+		long now = (new Date()).getTime();
+		long oneDay = 1000 * 60 * 60 * 24;
+		if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
+			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
 			return;
 		}
+		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
 		((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
 		final GDActivity thisActivity = this;
 		final Handler handler = new Handler();
@@ -294,6 +297,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		refreshTwunches(false);
 		// Start listening for location updates
 		locationManager
 				.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), true), 300000, 500, locationListener);
