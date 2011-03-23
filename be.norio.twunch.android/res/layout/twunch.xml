@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/twunch"
-	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="@android:color/background_light">
 
 	<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:textStyle="bold" android:textSize="19sp" android:textColor="@color/twunchItemTitle" android:paddingLeft="10dp"
