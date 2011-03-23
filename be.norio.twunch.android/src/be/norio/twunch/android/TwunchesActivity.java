@@ -299,8 +299,10 @@ public class TwunchesActivity extends GDActivity {
 		super.onResume();
 		refreshTwunches(false);
 		// Start listening for location updates
-		locationManager
-				.requestLocationUpdates(locationManager.getBestProvider(new Criteria(), true), 300000, 500, locationListener);
+		String provider = locationManager.getBestProvider(new Criteria(), true);
+		if (provider != null) {
+			locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
+		}
 	}
 
 }
