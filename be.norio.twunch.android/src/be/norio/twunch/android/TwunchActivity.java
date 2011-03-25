@@ -59,6 +59,7 @@ public class TwunchActivity extends GDActivity {
 	private final static int MENU_MAP = 0;
 	private final static int MENU_REGISTER = 1;
 	private final static int MENU_SHARE = 2;
+	private final static int MENU_DIRECTIONS = 3;
 
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
 			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
@@ -207,6 +208,7 @@ public class TwunchActivity extends GDActivity {
 		menu.add(0, MENU_REGISTER, 0, R.string.button_register).setIcon(R.drawable.ic_menu_add);
 		menu.add(0, MENU_SHARE, 0, R.string.menu_share).setIcon(R.drawable.ic_menu_share);
 		menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
+		menu.add(0, MENU_DIRECTIONS, 0, R.string.menu_directions).setIcon(android.R.drawable.ic_menu_directions);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -227,6 +229,9 @@ public class TwunchActivity extends GDActivity {
 		case MENU_SHARE:
 			doShare();
 			return true;
+		case MENU_DIRECTIONS:
+			doDirections();
+			return true;
 		}
 		return false;
 	}
@@ -238,6 +243,14 @@ public class TwunchActivity extends GDActivity {
 		final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
 				+ cursor.getDouble(COLUMN_DISPLAY_LATITUDE) + "," + cursor.getDouble(COLUMN_DISPLAY_LONGITUDE)));
 		startActivity(myIntent);
+	}
+
+	/**
+	 * Show the directions to this Twunch.
+	 */
+	private void doDirections() {
+		startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="
+				+ cursor.getDouble(COLUMN_DISPLAY_LATITUDE) + "," + cursor.getDouble(COLUMN_DISPLAY_LONGITUDE))));
 	}
 
 	/**
