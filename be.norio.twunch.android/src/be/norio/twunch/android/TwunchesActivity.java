@@ -83,7 +83,7 @@ public class TwunchesActivity extends GDActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.TRACKER_ID, 60, this);
+		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.getTrackerId(), 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
 
 		setActionBarContentView(R.layout.twunch_list);

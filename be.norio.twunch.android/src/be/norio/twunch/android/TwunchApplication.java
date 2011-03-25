@@ -24,8 +24,11 @@ import greendroid.app.GDApplication;
  */
 public class TwunchApplication extends GDApplication {
 
-	// public static final String TRACKER_ID = "UA-1839065-15"; // PRD
-	public static final String TRACKER_ID = "UA-1839065-14"; // DEV
+	private static boolean isInDevMode = true;
+
+	public static String getTrackerId() {
+		return isInDevMode ? "UA-1839065-14" : "UA-1839065-15";
+	}
 
 	public static final String LOG_TAG = "Twunch";
 
