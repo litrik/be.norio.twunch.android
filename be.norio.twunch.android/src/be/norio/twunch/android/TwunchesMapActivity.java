@@ -35,12 +35,14 @@ import com.cyrilmottier.android.greendroid.R;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
 public class TwunchesMapActivity extends GDMapActivity {
 
 	MapView mapView;
 	TwunchItemizedOverlay itemizedoverlay;
+	MyLocationOverlay myLocationOverlay;
 
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_LATITUDE,
 			TwunchManager.COLUMN_LONGITUDE };
@@ -75,6 +77,8 @@ public class TwunchesMapActivity extends GDMapActivity {
 			itemizedoverlay.addOverlay(overlayitem);
 		}
 		mapOverlays.add(itemizedoverlay);
+		myLocationOverlay = new MyLocationOverlay(this, mapView);
+		mapOverlays.add(myLocationOverlay);
 		dbHelper.close();
 		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLatSpanE6());
 		mapView.getController().animateTo(itemizedoverlay.getCenter());
@@ -110,4 +114,27 @@ public class TwunchesMapActivity extends GDMapActivity {
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.google.android.maps.MapActivity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		myLocationOverlay.disableMyLocation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.google.android.maps.MapActivity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		myLocationOverlay.enableMyLocation();
+	}
+
 }
