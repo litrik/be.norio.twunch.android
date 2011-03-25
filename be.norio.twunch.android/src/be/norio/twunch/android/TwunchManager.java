@@ -116,7 +116,6 @@ public class TwunchManager {
 			private StringBuffer participants;
 			private int numParticipants;
 			private StringBuilder builder;
-			private boolean doingHtml = false;
 
 			@Override
 			public void characters(char[] ch, int start, int length) throws SAXException {
@@ -127,10 +126,6 @@ public class TwunchManager {
 			@Override
 			public void endElement(String uri, String localName, String name) throws SAXException {
 				super.endElement(uri, localName, name);
-				if (doingHtml && !localName.equalsIgnoreCase(NOTE_ELEMENT)) {
-					builder.append(' ');
-					return;
-				}
 				if (values != null) {
 					if (localName.equalsIgnoreCase(ID_ELEMENT)) {
 						values.put(COLUMN_ID, builder.toString());
@@ -153,7 +148,6 @@ public class TwunchManager {
 						values.put(COLUMN_LINK, builder.toString());
 					} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
 						values.put(COLUMN_NOTE, builder.toString());
-						doingHtml = false;
 					} else if (localName.equalsIgnoreCase(PARTICIPANT_ELEMENT)) {
 						participants.append(builder);
 						participants.append(' ');
@@ -187,9 +181,6 @@ public class TwunchManager {
 			@Override
 			public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 				super.startElement(uri, localName, name, attributes);
-				if (doingHtml) {
-					return;
-				}
 				builder.setLength(0);
 				if (localName.equalsIgnoreCase(TWUNCH_ELEMENT)) {
 					values = new ContentValues();
@@ -197,11 +188,8 @@ public class TwunchManager {
 					numParticipants = 0;
 					values.put(COLUMN_ADDED, timestamp);
 					values.put(COLUMN_SYNCED, timestamp);
-				} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
-					doingHtml = true;
 				}
 			}
-
 		}
 	}
 

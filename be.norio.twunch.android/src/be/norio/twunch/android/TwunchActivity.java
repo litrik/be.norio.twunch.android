@@ -36,7 +36,9 @@ import android.provider.ContactsContract.CommonDataKinds.Nickname;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.QuickContact;
+import android.text.Html;
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -119,7 +121,8 @@ public class TwunchActivity extends GDActivity {
 		if (cursor.getString(COLUMN_DISPLAY_NOTE) == null || cursor.getString(COLUMN_DISPLAY_NOTE).length() == 0) {
 			noteView.setVisibility(View.GONE);
 		} else {
-			noteView.setText(cursor.getString(COLUMN_DISPLAY_NOTE));
+			noteView.setMovementMethod(LinkMovementMethod.getInstance());
+			noteView.setText(Html.fromHtml(cursor.getString(COLUMN_DISPLAY_NOTE)));
 			noteView.setVisibility(View.VISIBLE);
 		}
 		// Number of participants
