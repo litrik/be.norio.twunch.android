@@ -17,28 +17,23 @@
 
 package be.norio.twunch.android;
 
-import greendroid.app.GDApplication;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.OverlayItem;
 
-/**
- * 
- */
-public class TwunchApplication extends GDApplication {
+public class TwunchOverlayItem extends OverlayItem {
 
-	private static boolean isInDevMode = true;
+	private final int twunchId;
 
-	public static String getTrackerId() {
-		return isInDevMode ? "UA-1839065-14" : "UA-1839065-15";
+	public TwunchOverlayItem(GeoPoint point, int id) {
+		super(point, "", "");
+		twunchId = id;
 	}
 
-	public static String getMapsKey() {
-		return isInDevMode ? "0im5xQjfO1W8juTqidG16mxtEnvU53jcsjw0Z4w" : "0im5xQjfO1W_YsqVbJtjY6M_I8pYmdza3gkoe5Q";
-	}
-
-	public static final String LOG_TAG = "Twunch";
-
-	@Override
-	public Class<?> getHomeActivityClass() {
-		return TwunchesActivity.class;
+	/**
+	 * @return the twunchId
+	 */
+	public int getTwunchId() {
+		return twunchId;
 	}
 
 }

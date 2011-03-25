@@ -19,6 +19,7 @@ package be.norio.twunch.android;
 
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBarItem;
+import greendroid.widget.ActionBarItem.Type;
 import greendroid.widget.LoaderActionBarItem;
 
 import java.util.Date;
@@ -87,7 +88,8 @@ public class TwunchesActivity extends GDActivity {
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
 
 		setActionBarContentView(R.layout.twunch_list);
-		addActionBarItem(greendroid.widget.ActionBarItem.Type.Refresh);
+		addActionBarItem(Type.Refresh);
+		addActionBarItem(Type.Locate);
 
 		mListView = (ListView) findViewById(R.id.twunchesList);
 		mListView.setEmptyView(findViewById(R.id.noTwunches));
@@ -270,11 +272,16 @@ public class TwunchesActivity extends GDActivity {
 
 	@Override
 	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		if (position == 0) {
+		switch (position) {
+		case 0:
 			refreshTwunches(true);
 			return true;
+		case 1:
+			startActivity(new Intent(this, TwunchesMapActivity.class));
+			return true;
+		default:
+			return false;
 		}
-		return false;
 	}
 
 	/*
