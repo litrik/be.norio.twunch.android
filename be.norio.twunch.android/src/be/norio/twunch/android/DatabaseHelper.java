@@ -25,7 +25,7 @@ import android.provider.BaseColumns;
 class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "twunches.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -38,8 +38,9 @@ class DatabaseHelper extends SQLiteOpenHelper {
 				+ TwunchManager.COLUMN_SYNCED + " INTEGER," + TwunchManager.COLUMN_NEW + " INTEGER," + TwunchManager.COLUMN_TITLE
 				+ " VARCHAR(255)," + TwunchManager.COLUMN_ADDRESS + " VARCHAR(255)," + TwunchManager.COLUMN_NOTE + " VARCHAR(1024),"
 				+ TwunchManager.COLUMN_PARTICIPANTS + " VARCHAR(2048)," + TwunchManager.COLUMN_NUMPARTICIPANTS + " INTEGER,"
-				+ TwunchManager.COLUMN_DATE + " INTEGER," + TwunchManager.COLUMN_LINK + " VARCHAR(255),"
-				+ TwunchManager.COLUMN_LATITUDE + " DECIMAL(10,7)," + TwunchManager.COLUMN_LONGITUDE + " DECIMAL(10,7)" + ");");
+				+ TwunchManager.COLUMN_DATE + " INTEGER," + TwunchManager.COLUMN_LINK + " VARCHAR(255)," + TwunchManager.COLUMN_CLOSED
+				+ " INTEGER," + TwunchManager.COLUMN_LATITUDE + " DECIMAL(10,7)," + TwunchManager.COLUMN_LONGITUDE + " DECIMAL(10,7)"
+				+ ");");
 	}
 
 	@Override

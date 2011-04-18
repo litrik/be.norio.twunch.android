@@ -24,7 +24,9 @@ import greendroid.widget.ActionBarItem.Type;
 import java.util.Arrays;
 import java.util.Date;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -63,7 +65,8 @@ public class TwunchActivity extends GDActivity {
 
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
 			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
-			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_PARTICIPANTS, TwunchManager.COLUMN_NOTE, TwunchManager.COLUMN_LINK };
+			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_PARTICIPANTS, TwunchManager.COLUMN_NOTE, TwunchManager.COLUMN_LINK,
+			TwunchManager.COLUMN_CLOSED };
 	private static final int COLUMN_DISPLAY_TITLE = 1;
 	private static final int COLUMN_DISPLAY_ADDRESS = 2;
 	private static final int COLUMN_DISPLAY_DATE = 3;
@@ -73,6 +76,7 @@ public class TwunchActivity extends GDActivity {
 	private static final int COLUMN_DISPLAY_PARTICIPANTS = 7;
 	private static final int COLUMN_DISPLAY_NOTE = 8;
 	private static final int COLUMN_DISPLAY_LINK = 9;
+	private static final int COLUMN_DISPLAY_CLOSED = 10;
 
 	DatabaseHelper dbHelper;
 	SQLiteDatabase db;
@@ -257,13 +261,27 @@ public class TwunchActivity extends GDActivity {
 	 * Register for this Twunch.
 	 */
 	private void doRegister() {
-		final Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(
-				Intent.EXTRA_TEXT,
-				String.format(getString(R.string.register_text), cursor.getString(COLUMN_DISPLAY_TITLE),
-						cursor.getString(COLUMN_DISPLAY_LINK)));
-		startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
+		if (cursor.getInt(COLUMN_DISPLAY_CLOSED) == 1) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.register_closed);
+			builder.setCancelable(false);
+			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					// Do nothing
+				}
+			});
+			builder.create().show();
+
+		} else {
+			final Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(
+					Intent.EXTRA_TEXT,
+					String.format(getString(R.string.register_text), cursor.getString(COLUMN_DISPLAY_TITLE),
+							cursor.getString(COLUMN_DISPLAY_LINK)));
+			startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
+
+		}
 	}
 
 	/**

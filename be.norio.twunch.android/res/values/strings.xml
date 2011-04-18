@@ -17,6 +17,7 @@
 	<string name="button_register">Register</string>
 
 	<string name="no_twunches">No Twunches found.</string>
+	<string name="register_closed">Registration for this Twunch is closed.</string>
 	<string name="register_title">Register via Twitter</string>
 	<string name="register_text">(%1$s) @twunch I\'ll be there! %2$s</string>
 	<string name="date">%1$s at %2$s</string>

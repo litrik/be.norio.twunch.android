@@ -58,6 +58,7 @@ public class TwunchManager {
 	static final String COLUMN_PARTICIPANTS = "participants";
 	static final String COLUMN_NUMPARTICIPANTS = "numparticipants";
 	static final String COLUMN_NEW = "new";
+	static final String COLUMN_CLOSED = "closed";
 
 	protected TwunchManager() {
 	}
@@ -83,6 +84,7 @@ public class TwunchManager {
 		static final String LON_ELEMENT = "longitude";
 		static final String LINK_ELEMENT = "link";
 		static final String NOTE_ELEMENT = "note";
+		static final String NOTE_CLOSED = "closed";
 		static final String PARTICIPANT_ELEMENT = "participant";
 
 		final URL feedUrl;
@@ -148,6 +150,8 @@ public class TwunchManager {
 						values.put(COLUMN_LINK, builder.toString());
 					} else if (localName.equalsIgnoreCase(NOTE_ELEMENT)) {
 						values.put(COLUMN_NOTE, builder.toString());
+					} else if (localName.equalsIgnoreCase(NOTE_CLOSED)) {
+						values.put(COLUMN_CLOSED, "true".equalsIgnoreCase(builder.toString()));
 					} else if (localName.equalsIgnoreCase(PARTICIPANT_ELEMENT)) {
 						participants.append(builder);
 						participants.append(' ');
