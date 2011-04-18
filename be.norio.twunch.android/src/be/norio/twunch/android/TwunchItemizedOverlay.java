@@ -23,11 +23,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 
 public class TwunchItemizedOverlay extends ItemizedOverlay<TwunchOverlayItem> {
 
-	private final ArrayList<TwunchOverlayItem> overlays = new ArrayList<TwunchOverlayItem>();
+	private final ArrayList<TwunchOverlayItem> items = new ArrayList<TwunchOverlayItem>();
 	private final Context context;
 
 	public TwunchItemizedOverlay(Drawable defaultMarker, Context context) {
@@ -37,25 +38,43 @@ public class TwunchItemizedOverlay extends ItemizedOverlay<TwunchOverlayItem> {
 
 	@Override
 	protected TwunchOverlayItem createItem(int i) {
-		return overlays.get(i);
+		return items.get(i);
 	}
 
 	public void addOverlay(TwunchOverlayItem overlay) {
-		overlays.add(overlay);
+		items.add(overlay);
 		populate();
 	}
 
 	@Override
 	public int size() {
-		return overlays.size();
+		return items.size();
 	}
 
 	@Override
 	protected boolean onTap(int index) {
-		TwunchOverlayItem item = overlays.get(index);
+		TwunchOverlayItem item = items.get(index);
 		Intent intent = new Intent(context, TwunchActivity.class);
 		intent.putExtra(TwunchActivity.PARAMETER_ID, item.getTwunchId());
 		context.startActivity(intent);
 		return true;
 	}
+
+	@Override
+	public GeoPoint getCenter() {
+		int minLat = Integer.MAX_VALUE;
+		int maxLat = Integer.MIN_VALUE;
+		int minLon = Integer.MAX_VALUE;
+		int maxLon = Integer.MIN_VALUE;
+		for (TwunchOverlayItem item : items) {
+			int lat = item.getPoint().getLatitudeE6();
+			int lon = item.getPoint().getLongitudeE6();
+			maxLat = Math.max(lat, maxLat);
+			minLat = Math.min(lat, minLat);
+			maxLon = Math.max(lon, maxLon);
+			minLon = Math.min(lon, minLon);
+		}
+		return new GeoPoint((maxLat + minLat) / 2, (maxLon + minLon) / 2);
+	}
+
 }

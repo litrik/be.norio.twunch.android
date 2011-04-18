@@ -80,7 +80,7 @@ public class TwunchesMapActivity extends GDMapActivity {
 		myLocationOverlay = new MyLocationOverlay(this, mapView);
 		mapOverlays.add(myLocationOverlay);
 		dbHelper.close();
-		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLatSpanE6());
+		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLonSpanE6());
 		mapView.getController().animateTo(itemizedoverlay.getCenter());
 	}
 
