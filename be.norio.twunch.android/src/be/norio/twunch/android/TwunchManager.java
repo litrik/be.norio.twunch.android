@@ -224,6 +224,9 @@ public class TwunchManager {
 	}
 
 	public Float getDistanceToTwunch(Context context, double lat, double lon) {
+		if (lat == 0 && lon == 0) {
+			return null;
+		}
 		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		String p = locationManager.getBestProvider(new Criteria(), true);
 		if (p != null && p.length() > 0) {

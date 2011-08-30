@@ -82,16 +82,13 @@ public class TwunchActivity extends GDActivity {
 	SQLiteDatabase db;
 	Cursor cursor;
 	String[] participants;
+	Float distance;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
 		setActionBarContentView(R.layout.twunch);
-		addActionBarItem(Type.Add);
-		addActionBarItem(Type.Share);
-		addActionBarItem(Type.Locate);
-
 		dbHelper = new DatabaseHelper(this);
 		db = dbHelper.getReadableDatabase();
 		cursor = db.query(TwunchManager.TABLE_NAME, columns,
@@ -105,7 +102,7 @@ public class TwunchActivity extends GDActivity {
 		// Address
 		((TextView) findViewById(R.id.twunchAddress)).setText(cursor.getString(COLUMN_DISPLAY_ADDRESS));
 		// Distance
-		Float distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
+		distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
 				cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
 		((TextView) findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
 		findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
@@ -143,6 +140,13 @@ public class TwunchActivity extends GDActivity {
 		// participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
 		// Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"),
 		// "http://twitter.com/");
+
+		addActionBarItem(Type.Add);
+		addActionBarItem(Type.Share);
+		if (distance != null) {
+			addActionBarItem(Type.Locate);
+		}
+
 	}
 
 	private class ContactAdapter extends BaseAdapter {
@@ -211,8 +215,10 @@ public class TwunchActivity extends GDActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_REGISTER, 0, R.string.button_register).setIcon(R.drawable.ic_menu_add);
 		menu.add(0, MENU_SHARE, 0, R.string.menu_share).setIcon(R.drawable.ic_menu_share);
-		menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
-		menu.add(0, MENU_DIRECTIONS, 0, R.string.menu_directions).setIcon(android.R.drawable.ic_menu_directions);
+		if (distance != null) {
+			menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
+			menu.add(0, MENU_DIRECTIONS, 0, R.string.menu_directions).setIcon(android.R.drawable.ic_menu_directions);
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 

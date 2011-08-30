@@ -71,10 +71,13 @@ public class TwunchesMapActivity extends GDMapActivity {
 		Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
 		itemizedoverlay = new TwunchItemizedOverlay(drawable, this);
 		while (cursor.moveToNext()) {
-			GeoPoint point = new GeoPoint(new Double(cursor.getFloat(COLUMN_DISPLAY_LATITUDE) * 1E6).intValue(), new Double(
-					cursor.getFloat(COLUMN_DISPLAY_LONGITUDE) * 1E6).intValue());
-			TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, cursor.getInt(0));
-			itemizedoverlay.addOverlay(overlayitem);
+			if (cursor.getFloat(COLUMN_DISPLAY_LATITUDE) != 0 && cursor.getFloat(COLUMN_DISPLAY_LONGITUDE) != 0) {
+				System.out.println(cursor.getFloat(COLUMN_DISPLAY_LATITUDE) + ":" + cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
+				GeoPoint point = new GeoPoint(new Double(cursor.getFloat(COLUMN_DISPLAY_LATITUDE) * 1E6).intValue(), new Double(
+						cursor.getFloat(COLUMN_DISPLAY_LONGITUDE) * 1E6).intValue());
+				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, cursor.getInt(0));
+				itemizedoverlay.addOverlay(overlayitem);
+			}
 		}
 		mapOverlays.add(itemizedoverlay);
 		myLocationOverlay = new MyLocationOverlay(this, mapView);
