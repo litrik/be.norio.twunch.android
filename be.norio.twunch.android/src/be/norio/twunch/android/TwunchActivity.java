@@ -93,7 +93,9 @@ public class TwunchActivity extends GDActivity {
 		db = dbHelper.getReadableDatabase();
 		cursor = db.query(TwunchManager.TABLE_NAME, columns,
 				BaseColumns._ID + " = " + String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0)), null, null, null, null);
-		cursor.moveToFirst();
+		if (!cursor.moveToFirst()) {
+			finish();
+		}
 
 		TwunchManager.getInstance().setTwunchRead(this, cursor.getInt(0));
 
