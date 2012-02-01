@@ -17,35 +17,27 @@
 
 package be.norio.twunch.android;
 
-import greendroid.app.GDMapActivity;
-import greendroid.widget.ActionBarItem;
-import greendroid.widget.ActionBarItem.Type;
-
 import java.util.List;
 
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 
-import com.cyrilmottier.android.greendroid.R;
+import com.actionbarsherlock.app.SherlockMapActivity;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
-public class TwunchesMapActivity extends GDMapActivity {
+public class TwunchesMapActivity extends SherlockMapActivity {
 
 	MapView mapView;
 	TwunchItemizedOverlay itemizedoverlay;
 	MyLocationOverlay myLocationOverlay;
 
-	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_LATITUDE,
-			TwunchManager.COLUMN_LONGITUDE };
+	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_LATITUDE, TwunchManager.COLUMN_LONGITUDE };
 	private static final int COLUMN_DISPLAY_LATITUDE = 1;
 	private static final int COLUMN_DISPLAY_LONGITUDE = 2;
 
@@ -59,8 +51,9 @@ public class TwunchesMapActivity extends GDMapActivity {
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
 
-		setActionBarContentView(mapView);
-		addActionBarItem(Type.LocateMyself);
+		setContentView(mapView);
+		// FIXME
+		// addActionBarItem(Type.LocateMyself);
 
 		DatabaseHelper dbHelper = new DatabaseHelper(this);
 		Cursor cursor = dbHelper.getReadableDatabase().query(TwunchManager.TABLE_NAME, columns, null, null, null, null,
@@ -94,24 +87,27 @@ public class TwunchesMapActivity extends GDMapActivity {
 		GoogleAnalyticsTracker.getInstance().stop();
 	}
 
-	@Override
-	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		if (position == 0) {
-			LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-			String lp = lm.getBestProvider(new Criteria(), true);
-			if (lp != null) {
-				Location lastKnownLocation = lm.getLastKnownLocation(lp);
-				if (lastKnownLocation != null) {
-					mapView.getController().animateTo(
-							new GeoPoint(new Double(lastKnownLocation.getLatitude() * 1E6).intValue(), new Double(lastKnownLocation
-									.getLongitude() * 1E6).intValue()));
-					mapView.getController().setZoom(11);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+	// FIXME
+	// @Override
+	// public boolean onHandleActionBarItemClick(ActionBarItem item, int
+	// position) {
+	// if (position == 0) {
+	// LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+	// String lp = lm.getBestProvider(new Criteria(), true);
+	// if (lp != null) {
+	// Location lastKnownLocation = lm.getLastKnownLocation(lp);
+	// if (lastKnownLocation != null) {
+	// mapView.getController().animateTo(
+	// new GeoPoint(new Double(lastKnownLocation.getLatitude() * 1E6).intValue(),
+	// new Double(lastKnownLocation
+	// .getLongitude() * 1E6).intValue()));
+	// mapView.getController().setZoom(11);
+	// return true;
+	// }
+	// }
+	// }
+	// return false;
+	// }
 
 	@Override
 	protected boolean isRouteDisplayed() {

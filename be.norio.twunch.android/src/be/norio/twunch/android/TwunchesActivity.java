@@ -17,13 +17,9 @@
 
 package be.norio.twunch.android;
 
-import greendroid.app.GDActivity;
-import greendroid.widget.ActionBarItem;
-import greendroid.widget.ActionBarItem.Type;
-import greendroid.widget.LoaderActionBarItem;
-
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -39,11 +35,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -53,10 +48,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cyrilmottier.android.greendroid.R;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchesActivity extends GDActivity {
+public class TwunchesActivity extends FragmentActivity {
 
 	private final static int MENU_ABOUT = 0;
 	private final static int MENU_REFRESH = 1;
@@ -88,9 +84,7 @@ public class TwunchesActivity extends GDActivity {
 		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.getTrackerId(), 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
 
-		setActionBarContentView(R.layout.twunch_list);
-		addActionBarItem(Type.Refresh);
-		addActionBarItem(Type.Locate);
+		setContentView(R.layout.twunch_list);
 
 		mListView = (ListView) findViewById(R.id.twunchesList);
 		mListView.setEmptyView(findViewById(R.id.noTwunches));
@@ -233,21 +227,26 @@ public class TwunchesActivity extends GDActivity {
 			return;
 		}
 		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
-		((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
-		final GDActivity thisActivity = this;
+		// FIXME
+		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
+		final Activity thisActivity = this;
 		final Handler handler = new Handler();
 		final Runnable onDownloadSuccess = new Runnable() {
 			@Override
 			public void run() {
 				cursor.requery();
-				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
+				// FIXME
+				// ((LoaderActionBarItem)
+				// getActionBar().getItem(0)).setLoading(false);
 				Toast.makeText(getApplicationContext(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
 			}
 		};
 		final Runnable onDownloadFailure = new Runnable() {
 			@Override
 			public void run() {
-				((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(false);
+				// FIXME
+				// ((LoaderActionBarItem)
+				// getActionBar().getItem(0)).setLoading(false);
 				AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
 				builder.setMessage(R.string.download_error);
 				builder.setCancelable(false);
@@ -271,20 +270,6 @@ public class TwunchesActivity extends GDActivity {
 				}
 			}
 		}.start();
-	}
-
-	@Override
-	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		switch (position) {
-		case 0:
-			refreshTwunches(true);
-			return true;
-		case 1:
-			startActivity(new Intent(this, TwunchesMapActivity.class));
-			return true;
-		default:
-			return false;
-		}
 	}
 
 	/*

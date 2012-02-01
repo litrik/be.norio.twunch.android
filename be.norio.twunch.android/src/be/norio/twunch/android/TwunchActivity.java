@@ -17,10 +17,6 @@
 
 package be.norio.twunch.android;
 
-import greendroid.app.GDActivity;
-import greendroid.widget.ActionBarItem;
-import greendroid.widget.ActionBarItem.Type;
-
 import java.util.Arrays;
 import java.util.Date;
 
@@ -38,12 +34,11 @@ import android.provider.ContactsContract.CommonDataKinds.Nickname;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.QuickContact;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -51,10 +46,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.cyrilmottier.android.greendroid.R;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchActivity extends GDActivity {
+public class TwunchActivity extends FragmentActivity {
 
 	public static String PARAMETER_ID = "id";
 
@@ -88,7 +84,7 @@ public class TwunchActivity extends GDActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
-		setActionBarContentView(R.layout.twunch);
+		setContentView(R.layout.twunch);
 		dbHelper = new DatabaseHelper(this);
 		db = dbHelper.getReadableDatabase();
 		cursor = db.query(TwunchManager.TABLE_NAME, columns,
@@ -140,14 +136,16 @@ public class TwunchActivity extends GDActivity {
 		participantsView.setAdapter(new ContactAdapter(this));
 
 		// participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
-		// Linkify.addLinks(participantsView, Pattern.compile("@([A-Za-z0-9-_]+)"),
+		// Linkify.addLinks(participantsView,
+		// Pattern.compile("@([A-Za-z0-9-_]+)"),
 		// "http://twitter.com/");
 
-		addActionBarItem(Type.Add);
-		addActionBarItem(Type.Share);
-		if (distance != null) {
-			addActionBarItem(Type.Locate);
-		}
+		// FIXME
+		// addActionBarItem(Type.Add);
+		// addActionBarItem(Type.Share);
+		// if (distance != null) {
+		// addActionBarItem(Type.Locate);
+		// }
 
 	}
 
@@ -312,22 +310,24 @@ public class TwunchActivity extends GDActivity {
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
 	}
 
-	@Override
-	public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
-		switch (position) {
-		case 0:
-			doRegister();
-			break;
-		case 1:
-			doShare();
-			break;
-		case 2:
-			doMap();
-			break;
-		default:
-			return false;
-		}
-		return true;
-	}
+	// FIXME
+	// @Override
+	// public boolean onHandleActionBarItemClick(ActionBarItem item, int
+	// position) {
+	// switch (position) {
+	// case 0:
+	// doRegister();
+	// break;
+	// case 1:
+	// doShare();
+	// break;
+	// case 2:
+	// doMap();
+	// break;
+	// default:
+	// return false;
+	// }
+	// return true;
+	// }
 
 }

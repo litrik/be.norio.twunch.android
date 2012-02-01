@@ -17,10 +17,10 @@
 
 package be.norio.twunch.android;
 
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.webkit.WebView;
 
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
@@ -28,7 +28,7 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 /**
  * The Activity that shows 'About' information.
  */
-public class AboutActivity extends Activity {
+public class AboutActivity extends FragmentActivity {
 
 	/*
 	 * (non-Javadoc)

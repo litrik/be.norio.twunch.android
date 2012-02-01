@@ -17,12 +17,12 @@
 
 package be.norio.twunch.android;
 
-import greendroid.app.GDApplication;
+import android.app.Application;
 
 /**
  * 
  */
-public class TwunchApplication extends GDApplication {
+public class TwunchApplication extends Application {
 
 	private static boolean isInDevMode = true;
 
@@ -31,14 +31,9 @@ public class TwunchApplication extends GDApplication {
 	}
 
 	public static String getMapsKey() {
-		return isInDevMode ? "0im5xQjfO1W8juTqidG16mxtEnvU53jcsjw0Z4w" : "0im5xQjfO1W_YsqVbJtjY6M_I8pYmdza3gkoe5Q";
+		return isInDevMode ? "0im5xQjfO1W_jbSxXP79PDw_m5fCCruNE-rtiow" : "0im5xQjfO1W_YsqVbJtjY6M_I8pYmdza3gkoe5Q";
 	}
 
 	public static final String LOG_TAG = "Twunch";
-
-	@Override
-	public Class<?> getHomeActivityClass() {
-		return TwunchesActivity.class;
-	}
 
 }
