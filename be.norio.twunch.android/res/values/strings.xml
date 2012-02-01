@@ -8,13 +8,12 @@
 	<string name="menu_share">Share</string>
 	<string name="menu_mark_read">Mark all read</string>
 	<string name="menu_directions">Directions</string>
+	<string name="menu_map">Map</string>
+	<string name="menu_register">Register</string>
 
 	<string name="activity_twunches">Upcoming Twunches</string>
 	<string name="activity_twunch">Twunch</string>
 	<string name="activity_about">About Twunch %1$s</string>
-
-	<string name="button_map">Map</string>
-	<string name="button_register">Register</string>
 
 	<string name="no_twunches">No Twunches found.</string>
 	<string name="register_closed">Registration for this Twunch is closed.</string>

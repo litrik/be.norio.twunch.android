@@ -54,11 +54,6 @@ public class TwunchActivity extends FragmentActivity {
 
 	public static String PARAMETER_ID = "id";
 
-	private final static int MENU_MAP = 0;
-	private final static int MENU_REGISTER = 1;
-	private final static int MENU_SHARE = 2;
-	private final static int MENU_DIRECTIONS = 3;
-
 	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
 			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
 			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_PARTICIPANTS, TwunchManager.COLUMN_NOTE, TwunchManager.COLUMN_LINK,
@@ -213,12 +208,7 @@ public class TwunchActivity extends FragmentActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_REGISTER, 0, R.string.button_register).setIcon(R.drawable.ic_menu_add);
-		menu.add(0, MENU_SHARE, 0, R.string.menu_share).setIcon(R.drawable.ic_menu_share);
-		if (distance != null) {
-			menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
-			menu.add(0, MENU_DIRECTIONS, 0, R.string.menu_directions).setIcon(android.R.drawable.ic_menu_directions);
-		}
+		getSupportMenuInflater().inflate(R.menu.twunch, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -230,16 +220,16 @@ public class TwunchActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_MAP:
+		case R.id.menuMap:
 			doMap();
 			return true;
-		case MENU_REGISTER:
+		case R.id.menuRegister:
 			doRegister();
 			return true;
-		case MENU_SHARE:
+		case R.id.menuShare:
 			doShare();
 			return true;
-		case MENU_DIRECTIONS:
+		case R.id.menuDirections:
 			doDirections();
 			return true;
 		}

@@ -54,11 +54,6 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class TwunchesActivity extends FragmentActivity {
 
-	private final static int MENU_ABOUT = 0;
-	private final static int MENU_REFRESH = 1;
-	private final static int MENU_MARK_READ = 2;
-	private final static int MENU_MAP = 3;
-
 	ListView mListView;
 	DatabaseHelper dbHelper;
 	SQLiteDatabase db;
@@ -185,10 +180,7 @@ public class TwunchesActivity extends FragmentActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_REFRESH, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
-		menu.add(0, MENU_MAP, 0, R.string.button_map).setIcon(R.drawable.ic_menu_mapmode);
-		menu.add(0, MENU_MARK_READ, 0, R.string.menu_mark_read).setIcon(R.drawable.ic_menu_mark_read);
-		menu.add(0, MENU_ABOUT, 0, R.string.menu_about).setIcon(android.R.drawable.ic_menu_info_details);
+		getSupportMenuInflater().inflate(R.menu.twunches, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -200,17 +192,17 @@ public class TwunchesActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_ABOUT:
+		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			return true;
-		case MENU_REFRESH:
+		case R.id.menuRefresh:
 			refreshTwunches(true);
 			return true;
-		case MENU_MARK_READ:
+		case R.id.menuMarkRead:
 			TwunchManager.getInstance().setAllTwunchesRead(this);
 			cursor.requery();
 			return true;
-		case MENU_MAP:
+		case R.id.menuMap:
 			startActivity(new Intent(this, TwunchesMapActivity.class));
 			return true;
 		}
