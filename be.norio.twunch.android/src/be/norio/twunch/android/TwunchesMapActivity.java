@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import be.norio.twunch.android.provider.TwunchContract.Twunches;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
@@ -33,11 +34,13 @@ import com.google.android.maps.Overlay;
 
 public class TwunchesMapActivity extends SherlockMapActivity {
 
+	Cursor cursor;
+
 	MapView mapView;
 	TwunchItemizedOverlay itemizedoverlay;
 	MyLocationOverlay myLocationOverlay;
 
-	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_LATITUDE, TwunchManager.COLUMN_LONGITUDE };
+	private static String[] columns = new String[] { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
 	private static final int COLUMN_DISPLAY_LATITUDE = 1;
 	private static final int COLUMN_DISPLAY_LONGITUDE = 2;
 
@@ -55,9 +58,7 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		// FIXME
 		// addActionBarItem(Type.LocateMyself);
 
-		DatabaseHelper dbHelper = new DatabaseHelper(this);
-		Cursor cursor = dbHelper.getReadableDatabase().query(TwunchManager.TABLE_NAME, columns, null, null, null, null,
-				TwunchManager.COLUMN_DATE + "," + TwunchManager.COLUMN_NUMPARTICIPANTS + " DESC");
+		cursor = getContentResolver().query(Twunches.CONTENT_URI, columns, null, null, Twunches.DEFAULT_SORT);
 		startManagingCursor(cursor);
 
 		List<Overlay> mapOverlays = mapView.getOverlays();
@@ -75,7 +76,6 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		mapOverlays.add(itemizedoverlay);
 		myLocationOverlay = new MyLocationOverlay(this, mapView);
 		mapOverlays.add(myLocationOverlay);
-		dbHelper.close();
 		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLonSpanE6());
 		mapView.getController().animateTo(itemizedoverlay.getCenter());
 	}

@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -45,6 +44,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -54,10 +55,9 @@ public class TwunchActivity extends FragmentActivity {
 
 	public static String PARAMETER_ID = "id";
 
-	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
-			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
-			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_PARTICIPANTS, TwunchManager.COLUMN_NOTE, TwunchManager.COLUMN_LINK,
-			TwunchManager.COLUMN_CLOSED };
+	private static String[] columns = new String[] { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE,
+			Twunches.NUMPARTICIPANTS, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.PARTICIPANTS, Twunches.NOTE, Twunches.LINK,
+			Twunches.CLOSED };
 	private static final int COLUMN_DISPLAY_TITLE = 1;
 	private static final int COLUMN_DISPLAY_ADDRESS = 2;
 	private static final int COLUMN_DISPLAY_DATE = 3;
@@ -69,8 +69,6 @@ public class TwunchActivity extends FragmentActivity {
 	private static final int COLUMN_DISPLAY_LINK = 9;
 	private static final int COLUMN_DISPLAY_CLOSED = 10;
 
-	DatabaseHelper dbHelper;
-	SQLiteDatabase db;
 	Cursor cursor;
 	String[] participants;
 	Float distance;
@@ -80,23 +78,22 @@ public class TwunchActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
 		setContentView(R.layout.twunch);
-		dbHelper = new DatabaseHelper(this);
-		db = dbHelper.getReadableDatabase();
-		cursor = db.query(TwunchManager.TABLE_NAME, columns,
-				BaseColumns._ID + " = " + String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0)), null, null, null, null);
+		cursor = getContentResolver().query(Twunches.buildTwunchUri(String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0))),
+				columns, null, null, null);
 		if (!cursor.moveToFirst()) {
 			finish();
 		}
 
-		TwunchManager.getInstance().setTwunchRead(this, cursor.getInt(0));
+		// FIXME
+		// TwunchManager.getInstance().setTwunchRead(this, cursor.getInt(0));
 
 		// Title
 		((TextView) findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
 		// Address
 		((TextView) findViewById(R.id.twunchAddress)).setText(cursor.getString(COLUMN_DISPLAY_ADDRESS));
 		// Distance
-		distance = TwunchManager.getInstance().getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
-				cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
+		distance = Util
+				.getDistanceToTwunch(this, cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
 		((TextView) findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
 		findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
 		findViewById(R.id.twunchDistanceSeparator).setVisibility(distance == null ? View.GONE : View.VISIBLE);

@@ -19,14 +19,12 @@ package be.norio.twunch.android;
 
 import java.util.Date;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
@@ -47,24 +45,27 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.service.SyncService;
+import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+import com.google.android.apps.iosched.util.DetachableResultReceiver;
 
 public class TwunchesActivity extends FragmentActivity {
 
 	ListView mListView;
-	DatabaseHelper dbHelper;
-	SQLiteDatabase db;
 	Cursor cursor;
 
 	LocationManager locationManager;
 	LocationListener locationListener;
 
-	private static String[] columns = new String[] { BaseColumns._ID, TwunchManager.COLUMN_TITLE, TwunchManager.COLUMN_ADDRESS,
-			TwunchManager.COLUMN_DATE, TwunchManager.COLUMN_NUMPARTICIPANTS, TwunchManager.COLUMN_LATITUDE,
-			TwunchManager.COLUMN_LONGITUDE, TwunchManager.COLUMN_NEW };
+	private DetachableResultReceiver resultReceiver;
+
+	private static String[] columns = new String[] { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE,
+			Twunches.NUMPARTICIPANTS, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.NEW };
 	private static final int COLUMN_DISPLAY_TITLE = 1;
 	private static final int COLUMN_DISPLAY_ADDRESS = 2;
 	private static final int COLUMN_DISPLAY_DATE = 3;
@@ -84,10 +85,7 @@ public class TwunchesActivity extends FragmentActivity {
 		mListView = (ListView) findViewById(R.id.twunchesList);
 		mListView.setEmptyView(findViewById(R.id.noTwunches));
 
-		dbHelper = new DatabaseHelper(this);
-		db = dbHelper.getReadableDatabase();
-		cursor = db.query(TwunchManager.TABLE_NAME, columns, null, null, null, null, TwunchManager.COLUMN_DATE + ","
-				+ TwunchManager.COLUMN_NUMPARTICIPANTS + " DESC");
+		cursor = getContentResolver().query(Twunches.CONTENT_URI, columns, null, null, Twunches.DEFAULT_SORT);
 		startManagingCursor(cursor);
 		mListView.setAdapter(new TwunchCursorAdapter(this, cursor));
 		mListView.setOnItemClickListener(new OnItemClickListener() {
@@ -121,6 +119,9 @@ public class TwunchesActivity extends FragmentActivity {
 				// Do nothing
 			}
 		};
+
+		resultReceiver = new DetachableResultReceiver(new Handler());
+		resultReceiver.setReceiver(new SyncResultReceiver());
 	}
 
 	class TwunchCursorAdapter extends CursorAdapter {
@@ -138,8 +139,8 @@ public class TwunchesActivity extends FragmentActivity {
 			((TextView) view.findViewById(R.id.twunchAddress)).setTypeface(null,
 					cursor.getInt(COLUMN_DISPLAY_NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
-			Float distance = TwunchManager.getInstance().getDistanceToTwunch(view.getContext(),
-					cursor.getFloat(COLUMN_DISPLAY_LATITUDE), cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
+			Float distance = Util.getDistanceToTwunch(view.getContext(), cursor.getFloat(COLUMN_DISPLAY_LATITUDE),
+					cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
 			((TextView) view.findViewById(R.id.twunchDistance)).setText(String.format(view.getContext().getString(R.string.distance),
 					distance));
 			view.findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
@@ -170,7 +171,6 @@ public class TwunchesActivity extends FragmentActivity {
 		super.onDestroy();
 		GoogleAnalyticsTracker.getInstance().dispatch();
 		GoogleAnalyticsTracker.getInstance().stop();
-		dbHelper.close();
 	}
 
 	/*
@@ -199,7 +199,8 @@ public class TwunchesActivity extends FragmentActivity {
 			refreshTwunches(true);
 			return true;
 		case R.id.menuMarkRead:
-			TwunchManager.getInstance().setAllTwunchesRead(this);
+			// FIXME
+			// TwunchManager.getInstance().setAllTwunchesRead(this);
 			cursor.requery();
 			return true;
 		case R.id.menuMap:
@@ -210,58 +211,22 @@ public class TwunchesActivity extends FragmentActivity {
 	}
 
 	public void refreshTwunches(boolean force) {
-		long lastSync = db.compileStatement("select max(" + TwunchManager.COLUMN_SYNCED + ") from " + TwunchManager.TABLE_NAME)
-				.simpleQueryForLong();
-		long now = (new Date()).getTime();
-		long oneDay = 1000 * 60 * 60 * 24;
-		if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
-			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
-			return;
-		}
-		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
+		// FIXME
+		// long lastSync = db.compileStatement("select max(" + Twunches.SYNCED +
+		// ") from " + TwunchDatabase.Tables.TWUNCHES)
+		// .simpleQueryForLong();
+		// long now = (new Date()).getTime();
+		// long oneDay = 1000 * 60 * 60 * 24;
+		// if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
+		// Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
+		// return;
+		// }
 		// FIXME
 		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
-		final Activity thisActivity = this;
-		final Handler handler = new Handler();
-		final Runnable onDownloadSuccess = new Runnable() {
-			@Override
-			public void run() {
-				cursor.requery();
-				// FIXME
-				// ((LoaderActionBarItem)
-				// getActionBar().getItem(0)).setLoading(false);
-				Toast.makeText(getApplicationContext(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
-			}
-		};
-		final Runnable onDownloadFailure = new Runnable() {
-			@Override
-			public void run() {
-				// FIXME
-				// ((LoaderActionBarItem)
-				// getActionBar().getItem(0)).setLoading(false);
-				AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-				builder.setMessage(R.string.download_error);
-				builder.setCancelable(false);
-				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// Do nothing
-					}
-				});
-				builder.create().show();
-			}
-		};
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					TwunchManager.getInstance().syncTwunches(thisActivity);
-					handler.post(onDownloadSuccess);
-				} catch (Exception e) {
-					e.printStackTrace();
-					handler.post(onDownloadFailure);
-				}
-			}
-		}.start();
+		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
+		Intent intent = new Intent(getApplicationContext(), SyncService.class);
+		intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, resultReceiver);
+		startService(intent);
 	}
 
 	/*
@@ -284,11 +249,48 @@ public class TwunchesActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		refreshTwunches(false);
+		// FIXME
+		// refreshTwunches(false);
 		// Start listening for location updates
 		String provider = locationManager.getBestProvider(new Criteria(), true);
 		if (provider != null) {
 			locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
+		}
+	}
+
+	private class SyncResultReceiver implements DetachableResultReceiver.Receiver {
+
+		@Override
+		public void onReceiveResult(int resultCode, Bundle resultData) {
+			switch (resultCode) {
+			case SyncService.STATUS_RUNNING: {
+				break;
+			}
+			case SyncService.STATUS_FINISHED: {
+				cursor.requery();
+				// FIXME
+				// ((LoaderActionBarItem)
+				// getActionBar().getItem(0)).setLoading(false);
+				Toast.makeText(getApplicationContext(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
+				break;
+			}
+			case SyncService.STATUS_ERROR: {
+				// FIXME
+				// ((LoaderActionBarItem)
+				// getActionBar().getItem(0)).setLoading(false);
+				AlertDialog.Builder builder = new AlertDialog.Builder(TwunchesActivity.this);
+				builder.setMessage(R.string.download_error);
+				builder.setCancelable(false);
+				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// Do nothing
+					}
+				});
+				builder.create().show();
+				break;
+			}
+			}
+
 		}
 	}
 
