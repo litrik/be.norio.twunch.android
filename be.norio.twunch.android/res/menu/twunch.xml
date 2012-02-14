@@ -3,21 +3,21 @@
 
     <item
         android:id="@+id/menuRegister"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_action_user_add"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_register"/>
     <item
         android:id="@+id/menuShare"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_action_share"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_share"/>
     <item
         android:id="@+id/menuMap"
-        android:icon="@android:drawable/ic_menu_mapmode"
+        android:icon="@drawable/ic_action_locate"
         android:title="@string/menu_map"/>
     <item
         android:id="@+id/menuDirections"
-        android:icon="@android:drawable/ic_menu_directions"
+        android:showAsAction="never"
         android:title="@string/menu_directions"/>
 
 </menu>
