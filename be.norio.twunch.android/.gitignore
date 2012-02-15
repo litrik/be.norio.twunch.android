@@ -1,2 +1,6 @@
 bin
 gen
+build/local.*
+work
+dist
+

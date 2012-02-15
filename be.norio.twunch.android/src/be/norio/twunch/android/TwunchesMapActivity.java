@@ -47,10 +47,10 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.getTrackerId(), 60, this);
+		GoogleAnalyticsTracker.getInstance().start(BuildProperties.GA_TRACKING, 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("TwunchesMap");
 
-		mapView = new MapView(this, TwunchApplication.getMapsKey());
+		mapView = new MapView(this, BuildProperties.MAPS_KEY);
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
 

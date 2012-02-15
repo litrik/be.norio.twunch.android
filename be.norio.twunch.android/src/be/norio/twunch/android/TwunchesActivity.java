@@ -78,7 +78,7 @@ public class TwunchesActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().start(TwunchApplication.getTrackerId(), 60, this);
+		GoogleAnalyticsTracker.getInstance().start(BuildProperties.GA_TRACKING, 60, this);
 		GoogleAnalyticsTracker.getInstance().trackPageView("Twunches");
 
 		setContentView(R.layout.twunch_list);

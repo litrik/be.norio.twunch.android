@@ -25,16 +25,6 @@ import be.norio.twunch.android.util.PrefsUtils;
  */
 public class TwunchApplication extends Application {
 
-	private static boolean isInDevMode = true;
-
-	public static String getTrackerId() {
-		return isInDevMode ? "UA-1839065-14" : "UA-1839065-15";
-	}
-
-	public static String getMapsKey() {
-		return isInDevMode ? "0im5xQjfO1W_jbSxXP79PDw_m5fCCruNE-rtiow" : "0im5xQjfO1W_YsqVbJtjY6M_I8pYmdza3gkoe5Q";
-	}
-
 	public static final String LOG_TAG = "Twunch";
 
 	@Override
