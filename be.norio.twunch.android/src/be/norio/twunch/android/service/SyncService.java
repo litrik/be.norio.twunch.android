@@ -37,6 +37,7 @@ import android.os.ResultReceiver;
 import android.text.format.DateUtils;
 import android.util.Log;
 import be.norio.twunch.android.io.TwunchesHandler;
+import be.norio.twunch.android.util.PrefsUtils;
 
 import com.google.android.apps.iosched.io.RemoteExecutor;
 
@@ -87,12 +88,10 @@ public class SyncService extends IntentService {
 
 		final Context context = this;
 		try {
-
-			// Always hit remote spreadsheet for any updates
 			final long startRemote = System.currentTimeMillis();
 			mRemoteExecutor.executeGet(URL, new TwunchesHandler());
-			Log.d(TAG, "remote sync took " + (System.currentTimeMillis() - startRemote) + "ms");
-
+			Log.d(TAG, "Remote sync took " + (System.currentTimeMillis() - startRemote) + "ms");
+			PrefsUtils.setLastUpdate(startRemote);
 		} catch (Exception e) {
 			Log.e(TAG, "Problem while syncing", e);
 

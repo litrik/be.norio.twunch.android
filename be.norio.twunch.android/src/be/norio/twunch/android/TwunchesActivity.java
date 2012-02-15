@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
+import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.view.Menu;
@@ -211,16 +212,13 @@ public class TwunchesActivity extends FragmentActivity {
 	}
 
 	public void refreshTwunches(boolean force) {
-		// FIXME
-		// long lastSync = db.compileStatement("select max(" + Twunches.SYNCED +
-		// ") from " + TwunchDatabase.Tables.TWUNCHES)
-		// .simpleQueryForLong();
-		// long now = (new Date()).getTime();
-		// long oneDay = 1000 * 60 * 60 * 24;
-		// if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
-		// Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
-		// return;
-		// }
+		long lastSync = PrefsUtils.getLastUpdate();
+		long now = (new Date()).getTime();
+		long oneDay = 1000 * 60 * 60 * 24;
+		if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
+			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
+			return;
+		}
 		// FIXME
 		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
 		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
