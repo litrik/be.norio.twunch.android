@@ -19,6 +19,7 @@ package be.norio.twunch.android;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.provider.BaseColumns;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
@@ -78,6 +80,8 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		mapOverlays.add(myLocationOverlay);
 		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLonSpanE6());
 		mapView.getController().animateTo(itemizedoverlay.getCenter());
+
+		getSupportActionBar().setHomeButtonEnabled(true);
 	}
 
 	@Override
@@ -136,4 +140,15 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		myLocationOverlay.enableMyLocation();
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, TwunchesActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
+		}
+		return false;
+	}
 }

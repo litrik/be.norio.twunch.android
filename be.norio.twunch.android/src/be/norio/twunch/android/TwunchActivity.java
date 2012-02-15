@@ -139,6 +139,7 @@ public class TwunchActivity extends FragmentActivity {
 		// addActionBarItem(Type.Locate);
 		// }
 
+		getSupportActionBar().setHomeButtonEnabled(true);
 	}
 
 	private class ContactAdapter extends BaseAdapter {
@@ -217,6 +218,11 @@ public class TwunchActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, TwunchesActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
 		case R.id.menuMap:
 			doMap();
 			return true;
