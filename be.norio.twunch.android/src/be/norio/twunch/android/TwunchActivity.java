@@ -84,9 +84,6 @@ public class TwunchActivity extends FragmentActivity {
 			finish();
 		}
 
-		// FIXME
-		// TwunchManager.getInstance().setTwunchRead(this, cursor.getInt(0));
-
 		// Title
 		((TextView) findViewById(R.id.twunchTitle)).setText(cursor.getString(COLUMN_DISPLAY_TITLE));
 		// Address

@@ -199,11 +199,6 @@ public class TwunchesActivity extends FragmentActivity {
 		case R.id.menuRefresh:
 			refreshTwunches(true);
 			return true;
-		case R.id.menuMarkRead:
-			// FIXME
-			// TwunchManager.getInstance().setAllTwunchesRead(this);
-			cursor.requery();
-			return true;
 		case R.id.menuMap:
 			startActivity(new Intent(this, TwunchesMapActivity.class));
 			return true;
