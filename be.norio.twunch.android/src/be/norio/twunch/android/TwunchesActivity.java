@@ -249,8 +249,7 @@ public class TwunchesActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// FIXME
-		// refreshTwunches(false);
+		refreshTwunches(false);
 		// Start listening for location updates
 		String provider = locationManager.getBestProvider(new Criteria(), true);
 		if (provider != null) {
