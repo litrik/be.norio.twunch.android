@@ -124,18 +124,6 @@ public class TwunchActivity extends FragmentActivity {
 		Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
 		participantsView.setAdapter(new ContactAdapter(this));
 
-		// participantsView.setText(cursor.getString(COLUMN_DISPLAY_PARTICIPANTS));
-		// Linkify.addLinks(participantsView,
-		// Pattern.compile("@([A-Za-z0-9-_]+)"),
-		// "http://twitter.com/");
-
-		// FIXME
-		// addActionBarItem(Type.Add);
-		// addActionBarItem(Type.Share);
-		// if (distance != null) {
-		// addActionBarItem(Type.Locate);
-		// }
-
 		getSupportActionBar().setHomeButtonEnabled(true);
 	}
 

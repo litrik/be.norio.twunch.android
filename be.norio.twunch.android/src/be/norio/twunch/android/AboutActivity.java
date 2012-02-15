@@ -32,11 +32,6 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
  */
 public class AboutActivity extends FragmentActivity {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

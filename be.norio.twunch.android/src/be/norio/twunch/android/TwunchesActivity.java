@@ -174,22 +174,12 @@ public class TwunchesActivity extends FragmentActivity {
 		GoogleAnalyticsTracker.getInstance().stop();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.twunches, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
-	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -222,11 +212,6 @@ public class TwunchesActivity extends FragmentActivity {
 		startService(intent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onPause()
-	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -234,11 +219,6 @@ public class TwunchesActivity extends FragmentActivity {
 		locationManager.removeUpdates(locationListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();

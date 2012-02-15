@@ -29,9 +29,6 @@ public class TwunchOverlayItem extends OverlayItem {
 		twunchId = id;
 	}
 
-	/**
-	 * @return the twunchId
-	 */
 	public int getTwunchId() {
 		return twunchId;
 	}

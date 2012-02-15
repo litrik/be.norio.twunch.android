@@ -57,8 +57,6 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		mapView.setBuiltInZoomControls(true);
 
 		setContentView(mapView);
-		// FIXME
-		// addActionBarItem(Type.LocateMyself);
 
 		cursor = getContentResolver().query(Twunches.CONTENT_URI, columns, null, null, Twunches.DEFAULT_SORT);
 		startManagingCursor(cursor);
@@ -91,49 +89,17 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		GoogleAnalyticsTracker.getInstance().stop();
 	}
 
-	// FIXME
-	// @Override
-	// public boolean onHandleActionBarItemClick(ActionBarItem item, int
-	// position) {
-	// if (position == 0) {
-	// LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-	// String lp = lm.getBestProvider(new Criteria(), true);
-	// if (lp != null) {
-	// Location lastKnownLocation = lm.getLastKnownLocation(lp);
-	// if (lastKnownLocation != null) {
-	// mapView.getController().animateTo(
-	// new GeoPoint(new Double(lastKnownLocation.getLatitude() * 1E6).intValue(),
-	// new Double(lastKnownLocation
-	// .getLongitude() * 1E6).intValue()));
-	// mapView.getController().setZoom(11);
-	// return true;
-	// }
-	// }
-	// }
-	// return false;
-	// }
-
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.google.android.maps.MapActivity#onPause()
-	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
 		myLocationOverlay.disableMyLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.google.android.maps.MapActivity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
