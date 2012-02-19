@@ -19,7 +19,6 @@ package be.norio.twunch.android;
 
 import java.util.List;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -27,8 +26,6 @@ import android.provider.BaseColumns;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
@@ -49,8 +46,10 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().start(BuildProperties.GA_TRACKING, 60, this);
-		GoogleAnalyticsTracker.getInstance().trackPageView("TwunchesMap");
+		// FIXME
+		// GoogleAnalyticsTracker.getInstance().start(BuildProperties.GA_TRACKING,
+		// 60, this);
+		// GoogleAnalyticsTracker.getInstance().trackPageView("TwunchesMap");
 
 		mapView = new MapView(this, BuildProperties.MAPS_KEY);
 		mapView.setClickable(true);
@@ -85,8 +84,9 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		GoogleAnalyticsTracker.getInstance().dispatch();
-		GoogleAnalyticsTracker.getInstance().stop();
+		// FIXME
+		// GoogleAnalyticsTracker.getInstance().dispatch();
+		// GoogleAnalyticsTracker.getInstance().stop();
 	}
 
 	@Override
@@ -106,15 +106,4 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		myLocationOverlay.enableMyLocation();
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent intent = new Intent(this, TwunchesActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			return true;
-		}
-		return false;
-	}
 }

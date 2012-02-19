@@ -17,25 +17,20 @@
 
 package be.norio.twunch.android;
 
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.webkit.WebView;
-
-import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+import be.norio.twunch.android.ui.BaseActivity;
 
 /**
  * The Activity that shows 'About' information.
  */
-public class AboutActivity extends FragmentActivity {
+public class AboutActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().trackPageView("About");
 		setContentView(R.layout.about);
 		String version = "";
 		try {
@@ -49,14 +44,8 @@ public class AboutActivity extends FragmentActivity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent intent = new Intent(this, TwunchesActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			return true;
-		}
-		return false;
+	protected String getPageName() {
+		return "About";
 	}
+
 }

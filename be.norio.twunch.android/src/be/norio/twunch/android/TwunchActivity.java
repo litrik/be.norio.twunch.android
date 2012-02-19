@@ -33,7 +33,6 @@ import android.provider.ContactsContract.CommonDataKinds.Nickname;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.QuickContact;
-import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -45,13 +44,13 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.ui.BaseActivity;
 import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchActivity extends FragmentActivity {
+public class TwunchActivity extends BaseActivity {
 
 	public static String PARAMETER_ID = "id";
 
@@ -76,7 +75,6 @@ public class TwunchActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsTracker.getInstance().trackPageView("Twunch");
 		setContentView(R.layout.twunch);
 		cursor = getContentResolver().query(Twunches.buildTwunchUri(String.valueOf(getIntent().getIntExtra(PARAMETER_ID, 0))),
 				columns, null, null, null);
@@ -203,11 +201,6 @@ public class TwunchActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			Intent intent = new Intent(this, TwunchesActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-			return true;
 		case R.id.menuMap:
 			doMap();
 			return true;
@@ -221,7 +214,7 @@ public class TwunchActivity extends FragmentActivity {
 			doDirections();
 			return true;
 		}
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -308,4 +301,8 @@ public class TwunchActivity extends FragmentActivity {
 	// return true;
 	// }
 
+	@Override
+	protected String getPageName() {
+		return "Twunch";
+	}
 }
