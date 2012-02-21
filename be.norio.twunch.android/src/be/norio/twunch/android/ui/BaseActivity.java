@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import be.norio.twunch.android.AboutActivity;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.util.ViewServer;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -23,7 +24,7 @@ public abstract class BaseActivity extends FragmentActivity {
 		if (!(this instanceof TwunchListActivity)) {
 			getSupportActionBar().setHomeButtonEnabled(true);
 		}
-
+		ViewServer.get(getApplicationContext()).addWindow(this);
 	}
 
 	@Override
@@ -31,6 +32,13 @@ public abstract class BaseActivity extends FragmentActivity {
 		super.onDestroy();
 		GoogleAnalyticsTracker.getInstance().dispatch();
 		GoogleAnalyticsSessionManager.getInstance().decrementActivityCount();
+		ViewServer.get(getApplicationContext()).removeWindow(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		ViewServer.get(getApplicationContext()).setFocusedWindow(this);
 	}
 
 	protected String getPageName() {
