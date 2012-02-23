@@ -1,31 +1,64 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/twunch_item_root"
-	android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal" style="@style/Theme.Twunch">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/twunch_item_root"
+    style="@style/Theme.Twunch"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
 
-	<LinearLayout android:layout_width="70sp" android:layout_height="fill_parent" android:padding="10dp"
-		android:orientation="vertical" android:background="@color/twunchItemBar">
+    <LinearLayout
+        android:layout_width="70sp"
+        android:layout_height="fill_parent"
+        android:background="@color/twunchItemBar"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-		<TextView android:id="@+id/twunchDays" android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:gravity="center_horizontal" android:paddingBottom="7sp" android:layout_gravity="center" android:textColor="@color/twunchItemBarText"
-			android:textStyle="bold" />
+        <TextView
+            android:id="@+id/twunchDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:paddingBottom="7sp"
+            android:textColor="@color/twunchItemBarText"
+            android:textStyle="bold" />
 
-		<TextView android:id="@+id/twunchDistance" android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:gravity="center_horizontal" android:layout_gravity="center" android:textColor="@color/twunchItemBarText"
-			android:textStyle="bold" />
+        <TextView
+            android:id="@+id/twunchDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:textColor="@color/twunchItemBarText"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-	</LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_light"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:padding="10dp"
-		android:orientation="vertical" android:background="@android:color/background_light">
+        <TextView
+            android:id="@+id/twunchTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:textColor="@color/twunchItemTitle"
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
-		<TextView android:id="@+id/twunchTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:textStyle="bold" android:textSize="19sp" android:textColor="@color/twunchItemTitle" android:paddingBottom="4dp" />
+        <TextView
+            android:id="@+id/twunchDate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp" />
 
-		<TextView android:id="@+id/twunchDate" android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:paddingBottom="4dp" />
-
-		<TextView android:id="@+id/twunchAddress" android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:paddingBottom="4dp" />
-
-	</LinearLayout>
+        <TextView
+            android:id="@+id/twunchAddress"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp" />
+    </LinearLayout>
 
 </LinearLayout>
