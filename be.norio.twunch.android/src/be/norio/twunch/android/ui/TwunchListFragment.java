@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,8 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 	LocationManager locationManager;
 	LocationListener locationListener;
 
+	MenuItem refreshMenuItem;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,7 +72,9 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 		// Define a listener that responds to location updates
 		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
-				mCursor.requery();
+				if (mCursor != null) {
+					mCursor.requery();
+				}
 			}
 
 			public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -248,8 +254,10 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
 			return;
 		}
-		// FIXME
-		// ((LoaderActionBarItem) getActionBar().getItem(0)).setLoading(true);
+		if (refreshMenuItem != null) {
+			refreshMenuItem.setActionView(R.layout.actionbar_indeterminate_progress);
+			((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).start();
+		}
 		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
 		Intent intent = new Intent(getActivity(), SyncService.class);
 		intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, resultReceiver);
@@ -260,6 +268,7 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.fragment_twunchlist, menu);
+		refreshMenuItem = menu.findItem(R.id.menuRefresh);
 	}
 
 	@Override
@@ -285,16 +294,14 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 			}
 			case SyncService.STATUS_FINISHED: {
 				mCursor.requery();
-				// FIXME
-				// ((LoaderActionBarItem)
-				// getActionBar().getItem(0)).setLoading(false);
+				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
+				refreshMenuItem.setActionView(null);
 				Toast.makeText(getActivity(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
 				break;
 			}
 			case SyncService.STATUS_ERROR: {
-				// FIXME
-				// ((LoaderActionBarItem)
-				// getActionBar().getItem(0)).setLoading(false);
+				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
+				refreshMenuItem.setActionView(null);
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(R.string.download_error);
 				builder.setCancelable(false);

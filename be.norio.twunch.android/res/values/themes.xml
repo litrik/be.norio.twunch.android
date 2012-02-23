@@ -3,6 +3,11 @@
 
     <style name="Theme.Twunch" parent="Theme.Sherlock.Light">
         <item name="android:textColor">#777777</item>
+        <item name="android:actionBarStyle">@style/ActionBarIPS</item>
+    </style>
+
+    <style name="ActionBarIPS" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
+        <item name="android:indeterminateProgressStyle">@android:style/Widget.ProgressBar.Small</item>
     </style>
 
 </resources>
