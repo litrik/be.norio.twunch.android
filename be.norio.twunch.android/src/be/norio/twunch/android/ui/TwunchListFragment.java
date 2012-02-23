@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -19,6 +18,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -42,15 +44,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
-import com.google.android.apps.iosched.util.NotifyingAsyncQueryHandler;
-import com.google.android.apps.iosched.util.NotifyingAsyncQueryHandler.AsyncQueryListener;
 
-public class TwunchListFragment extends ListFragment implements AsyncQueryListener {
+public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-	private Cursor mCursor;
 	private CursorAdapter mAdapter;
 
-	private NotifyingAsyncQueryHandler mHandler;
 	private DetachableResultReceiver resultReceiver;
 
 	LocationManager locationManager;
@@ -64,16 +62,15 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 
 		setHasOptionsMenu(true);
 
-		mHandler = new NotifyingAsyncQueryHandler(getActivity().getContentResolver(), this);
-
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
 		// Define a listener that responds to location updates
 		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
-				if (mCursor != null) {
-					mCursor.requery();
+				Cursor cursor = ((CursorAdapter) getListAdapter()).getCursor();
+				if (cursor != null) {
+					cursor.requery();
 				}
 			}
 
@@ -97,17 +94,14 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		reloadFromArguments(getArguments());
-	}
 
-	private final ContentObserver mChangesObserver = new ContentObserver(new Handler()) {
-		@Override
-		public void onChange(boolean selfChange) {
-			if (mCursor != null) {
-				mCursor.requery();
-			}
-		}
-	};
+		mAdapter = new TwunchAdapter(getActivity());
+		setListAdapter(mAdapter);
+
+		setListShown(false);
+
+		getLoaderManager().initLoader(TwunchesQuery._TOKEN, getArguments(), this);
+	}
 
 	private interface TwunchesQuery {
 		int _TOKEN = 0x1;
@@ -123,55 +117,6 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 		int LATITUDE = 5;
 		int LONGITUDE = 6;
 		int NEW = 7;
-	}
-
-	public void reloadFromArguments(Bundle arguments) {
-		if (mCursor != null) {
-			getActivity().stopManagingCursor(mCursor);
-			mCursor = null;
-		}
-
-		setListAdapter(null);
-
-		mHandler.cancelOperation(TwunchesQuery._TOKEN);
-
-		// Load new arguments
-		// final Intent intent =
-		// BaseActivity.fragmentArgumentsToIntent(arguments);
-		// final Uri uri = intent.getData();
-		// if (uri == null) {
-		// return;
-		// }
-
-		mAdapter = new TwunchAdapter(getActivity());
-		setListAdapter(mAdapter);
-
-		mHandler.startQuery(TwunchesQuery._TOKEN, null, Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null,
-				Twunches.DEFAULT_SORT);
-	}
-
-	@Override
-	public void onQueryComplete(int token, Object cookie, Cursor cursor) {
-		if (getActivity() == null) {
-			return;
-		}
-
-		if (token == TwunchesQuery._TOKEN) {
-			onDepotsQueryComplete(cursor);
-		} else {
-			cursor.close();
-		}
-	}
-
-	private void onDepotsQueryComplete(Cursor cursor) {
-		if (mCursor != null) {
-			getActivity().stopManagingCursor(mCursor);
-			mCursor = null;
-		}
-
-		mCursor = cursor;
-		getActivity().startManagingCursor(mCursor);
-		mAdapter.changeCursor(mCursor);
 	}
 
 	class TwunchAdapter extends CursorAdapter {
@@ -225,16 +170,11 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 		if (provider != null) {
 			locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
 		}
-		getActivity().getContentResolver().registerContentObserver(Twunches.CONTENT_URI, true, mChangesObserver);
-		if (mCursor != null) {
-			mCursor.requery();
-		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().getContentResolver().unregisterContentObserver(mChangesObserver);
 		locationManager.removeUpdates(locationListener);
 	}
 
@@ -293,7 +233,6 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 				break;
 			}
 			case SyncService.STATUS_FINISHED: {
-				mCursor.requery();
 				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
 				refreshMenuItem.setActionView(null);
 				Toast.makeText(getActivity(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
@@ -316,5 +255,25 @@ public class TwunchListFragment extends ListFragment implements AsyncQueryListen
 			}
 
 		}
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(getActivity(), Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null, Twunches.DEFAULT_SORT);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		mAdapter.swapCursor(cursor);
+		if (isResumed()) {
+			setListShown(true);
+		} else {
+			setListShownNoAnimation(true);
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		mAdapter.swapCursor(null);
 	}
 }
