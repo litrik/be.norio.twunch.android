@@ -119,6 +119,26 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 		int NEW = 7;
 	}
 
+	private static class ViewHolder {
+		public View rootView;
+		public TextView title;
+		public TextView address;
+		public TextView distance;
+		public TextView date;
+		public TextView days;
+
+		public ViewHolder(View view) {
+			rootView = view;
+			title = (TextView) view.findViewById(R.id.twunchTitle);
+			address = (TextView) view.findViewById(R.id.twunchAddress);
+			distance = (TextView) view.findViewById(R.id.twunchDistance);
+			date = (TextView) view.findViewById(R.id.twunchDate);
+			days = (TextView) view.findViewById(R.id.twunchDays);
+
+			view.setTag(this);
+		}
+	}
+
 	class TwunchAdapter extends CursorAdapter {
 
 		public TwunchAdapter(Context context) {
@@ -127,37 +147,37 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
+
+			ViewHolder vh = (ViewHolder) view.getTag();
 			// Title
-			((TextView) view.findViewById(R.id.twunchTitle)).setText(cursor.getString(TwunchesQuery.NAME));
+			vh.title.setText(cursor.getString(TwunchesQuery.NAME));
 			// Address
-			((TextView) view.findViewById(R.id.twunchAddress)).setText(cursor.getString(TwunchesQuery.ADDRESS));
-			((TextView) view.findViewById(R.id.twunchAddress)).setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD
-					: Typeface.NORMAL);
+			vh.address.setText(cursor.getString(TwunchesQuery.ADDRESS));
+			vh.address.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
 			Float distance = Util.getDistanceToTwunch(view.getContext(), cursor.getFloat(TwunchesQuery.LATITUDE),
 					cursor.getFloat(TwunchesQuery.LONGITUDE));
-			((TextView) view.findViewById(R.id.twunchDistance)).setText(String.format(view.getContext().getString(R.string.distance),
-					distance));
-			view.findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
+			vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance));
+			vh.distance.setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
 			// Date
-			((TextView) view.findViewById(R.id.twunchDate)).setText(String.format(
+			vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 							| DateUtils.FORMAT_SHOW_DATE),
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_TIME)));
-			((TextView) view.findViewById(R.id.twunchDate)).setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD
-					: Typeface.NORMAL);
+			vh.date.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Days
 			final long msInDay = 86400000;
 			int days = (int) (cursor.getLong(TwunchesQuery.DATE) / msInDay - new Date().getTime() / msInDay);
-			((TextView) view.findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(
+			vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
 					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
 		}
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			final LayoutInflater inflater = LayoutInflater.from(context);
-			return inflater.inflate(R.layout.twunch_list_item, parent, false);
+			View view = LayoutInflater.from(context).inflate(R.layout.twunch_list_item, parent, false);
+			new ViewHolder(view);
+			return view;
 		}
 	}
 
