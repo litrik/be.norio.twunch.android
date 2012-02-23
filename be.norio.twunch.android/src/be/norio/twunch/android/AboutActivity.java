@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010 Norio bvba
+ *	Copyright 2010-2012 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 
 package be.norio.twunch.android;
 
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.webkit.WebView;
 import be.norio.twunch.android.ui.BaseActivity;
+
+import com.actionbarsherlock.view.Menu;
 
 /**
  * The Activity that shows 'About' information.
@@ -32,15 +32,15 @@ public class AboutActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about);
-		String version = "";
-		try {
-			version = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionName;
-		} catch (NameNotFoundException e) {
-			// Do nothing
-		}
-		setTitle(String.format(getString(R.string.activity_about), version));
-		((WebView) findViewById(R.id.about)).loadUrl("file:///android_asset/about.html");
+		setTitle(String.format(getString(R.string.activity_about), BuildProperties.VERSION_NAME));
+		WebView webView = (WebView) findViewById(R.id.about);
+		webView.loadUrl("file:///android_asset/about.html");
 		getSupportActionBar().setHomeButtonEnabled(true);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return true;
 	}
 
 	@Override
