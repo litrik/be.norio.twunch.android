@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -46,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
@@ -55,6 +55,7 @@ import be.norio.twunch.android.util.Util;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.imageloader.ImageLoader;
 
 public class TwunchDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -177,7 +178,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		GridView participantsView = ((GridView) getView().findViewById(R.id.twunchParticipants));
 		participants = cursor.getString(TwunchDetailsQuery.PARTICIPANTS).split(" ");
 		Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
-		participantsView.setAdapter(new ContactAdapter(getActivity()));
+		participantsView.setAdapter(new ContactAdapter());
 	}
 
 	@Override
@@ -247,12 +248,23 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
 	}
 
-	private class ContactAdapter extends BaseAdapter {
-		private final Context context;
+	private static class ViewHolder {
+		public View rootView;
+		public TextView name;
+		public ImageView avatar;
 
-		public ContactAdapter(Context c) {
-			context = c;
+		public ViewHolder(View view) {
+			rootView = view;
+			name = (TextView) view.findViewById(R.id.participantName);
+			avatar = (ImageView) view.findViewById(R.id.participantAvatar);
+
+			view.setTag(this);
 		}
+	}
+
+	private class ContactAdapter extends BaseAdapter {
+
+		ImageLoader mImageLoader = new ImageLoader();
 
 		@Override
 		public int getCount() {
@@ -271,15 +283,18 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
-			final TextView textView;
+			final View view;
 			if (convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(getActivity());
-				textView = (TextView) inflater.inflate(R.layout.participant, null);
+				view = inflater.inflate(R.layout.participant, null);
+				new ViewHolder(view);
 			} else {
-				textView = (TextView) convertView;
+				view = convertView;
 			}
-			textView.setText("@" + participants[position]);
-			textView.setOnClickListener(new OnClickListener() {
+			final ViewHolder vh = (ViewHolder) view.getTag();
+
+			vh.name.setText("@" + participants[position]);
+			vh.name.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -291,7 +306,8 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 						rawTwitterContact.moveToFirst();
 						final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI,
 								rawTwitterContact.getString(rawTwitterContact.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-						QuickContact.showQuickContact(context, textView, contactUri, ContactsContract.QuickContact.MODE_LARGE, null);
+						QuickContact.showQuickContact(TwunchDetailsFragment.this.getActivity(), vh.name, contactUri,
+								ContactsContract.QuickContact.MODE_LARGE, null);
 					} else {
 						// Show the twitter profile
 						final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://twitter.com/"
@@ -300,7 +316,9 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 					}
 				}
 			});
-			return textView;
+			mImageLoader.bind(vh.avatar, "http://api.twitter.com/1/users/profile_image?screen_name=" + participants[position]
+					+ "&size=bigger", null);
+			return view;
 		}
 	}
 
