@@ -15,7 +15,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android;
+package be.norio.twunch.android.util;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;

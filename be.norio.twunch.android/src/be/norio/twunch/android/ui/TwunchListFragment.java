@@ -20,7 +20,6 @@ package be.norio.twunch.android.ui;
 import java.util.Date;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,9 +49,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import be.norio.twunch.android.R;
-import be.norio.twunch.android.TwunchActivity;
 import be.norio.twunch.android.TwunchApplication;
-import be.norio.twunch.android.TwunchesMapActivity;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
 import be.norio.twunch.android.util.PrefsUtils;
@@ -230,9 +227,8 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Intent intent = new Intent();
-		intent.setComponent(new ComponentName(v.getContext(), TwunchActivity.class));
-		intent.putExtra(TwunchActivity.PARAMETER_ID, ((Cursor) mAdapter.getItem(position)).getInt(TwunchesQuery._ID));
+		Intent intent = new Intent(getActivity(), TwunchDetailsActivity.class);
+		intent.setData(Twunches.buildTwunchUri(Integer.toString(((Cursor) mAdapter.getItem(position)).getInt(TwunchesQuery._ID))));
 		startActivity(intent);
 	}
 

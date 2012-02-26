@@ -36,10 +36,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TwunchesMapActivity"
+            android:name=".ui.TwunchesMapActivity"
             android:label="@string/activity_twunches" />
         <activity
-            android:name=".TwunchActivity"
+            android:name=".ui.TwunchDetailsActivity"
             android:label="@string/activity_twunch" />
         <activity
             android:name=".AboutActivity"

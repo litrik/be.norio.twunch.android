@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2011 Norio bvba
+ *	Copyright 2010-2012 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,13 +15,15 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android;
+package be.norio.twunch.android.util;
 
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.ui.TwunchDetailsActivity;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -54,8 +56,8 @@ public class TwunchItemizedOverlay extends ItemizedOverlay<TwunchOverlayItem> {
 	@Override
 	protected boolean onTap(int index) {
 		TwunchOverlayItem item = items.get(index);
-		Intent intent = new Intent(context, TwunchActivity.class);
-		intent.putExtra(TwunchActivity.PARAMETER_ID, item.getTwunchId());
+		Intent intent = new Intent(context, TwunchDetailsActivity.class);
+		intent.setData(Twunches.buildTwunchUri(Integer.toString(item.getTwunchId())));
 		context.startActivity(intent);
 		return true;
 	}

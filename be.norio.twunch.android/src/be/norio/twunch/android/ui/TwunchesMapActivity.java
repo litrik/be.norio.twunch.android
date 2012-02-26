@@ -15,7 +15,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android;
+package be.norio.twunch.android.ui;
 
 import java.util.List;
 
@@ -23,7 +23,12 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import be.norio.twunch.android.BuildProperties;
+import be.norio.twunch.android.R;
+import be.norio.twunch.android.R.drawable;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.util.TwunchItemizedOverlay;
+import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
 import com.google.android.maps.GeoPoint;

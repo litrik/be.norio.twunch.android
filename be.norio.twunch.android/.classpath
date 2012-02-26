@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="libs/actionbarsherlock-plugin-maps-4.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/actionbarsherlock-plugin-support-lib-4.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="libs/libGoogleAnalytics.jar"/>
+	<classpathentry kind="lib" path="libs/imageloader.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
