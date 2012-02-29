@@ -200,7 +200,7 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			View view = LayoutInflater.from(context).inflate(R.layout.twunch_list_item, parent, false);
+			View view = LayoutInflater.from(context).inflate(R.layout.listitem_twunch, parent, false);
 			new ViewHolder(view);
 			return view;
 		}

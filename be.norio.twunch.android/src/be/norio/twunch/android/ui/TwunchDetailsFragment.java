@@ -44,8 +44,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
@@ -60,7 +60,7 @@ import com.google.android.imageloader.ImageLoader;
 public class TwunchDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	Cursor mCursor;
-	String[] participants;
+	String[] mParticipants;
 	Float distance;
 
 	@Override
@@ -149,7 +149,6 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 				cursor.getFloat(TwunchDetailsQuery.LONGITUDE));
 		((TextView) getView().findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
 		getView().findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
-		getView().findViewById(R.id.twunchDistanceSeparator).setVisibility(distance == null ? View.GONE : View.VISIBLE);
 		// Date
 		((TextView) getView().findViewById(R.id.twunchDate)).setText(String.format(
 				getString(R.string.date),
@@ -175,10 +174,10 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)),
 				cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)));
 		// Participants
-		GridView participantsView = ((GridView) getView().findViewById(R.id.twunchParticipants));
-		participants = cursor.getString(TwunchDetailsQuery.PARTICIPANTS).split(" ");
-		Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
-		participantsView.setAdapter(new ContactAdapter());
+		ListView participantsView = ((ListView) getView().findViewById(R.id.twunchParticipants));
+		mParticipants = cursor.getString(TwunchDetailsQuery.PARTICIPANTS).split(" ");
+		Arrays.sort(mParticipants, String.CASE_INSENSITIVE_ORDER);
+		participantsView.setAdapter(new ParticipantAdapter());
 	}
 
 	@Override
@@ -262,18 +261,18 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		}
 	}
 
-	private class ContactAdapter extends BaseAdapter {
+	private class ParticipantAdapter extends BaseAdapter {
 
 		ImageLoader mImageLoader = new ImageLoader();
 
 		@Override
 		public int getCount() {
-			return participants.length;
+			return mParticipants.length;
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return participants[position];
+			return mParticipants[position];
 		}
 
 		@Override
@@ -286,21 +285,21 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 			final View view;
 			if (convertView == null) {
 				LayoutInflater inflater = LayoutInflater.from(getActivity());
-				view = inflater.inflate(R.layout.participant, null);
+				view = inflater.inflate(R.layout.listitem_participant, null);
 				new ViewHolder(view);
 			} else {
 				view = convertView;
 			}
 			final ViewHolder vh = (ViewHolder) view.getTag();
 
-			vh.name.setText("@" + participants[position]);
-			vh.name.setOnClickListener(new OnClickListener() {
+			vh.name.setText("@" + mParticipants[position]);
+			view.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.LOOKUP_KEY };
 					Cursor rawTwitterContact = getActivity().getContentResolver().query(Data.CONTENT_URI, projection,
-							Nickname.NAME + " = ?", new String[] { participants[position] }, null);
+							Nickname.NAME + " = ?", new String[] { mParticipants[position] }, null);
 					if (rawTwitterContact.getCount() > 0) {
 						// Show the QuickContact action bar
 						rawTwitterContact.moveToFirst();
@@ -311,12 +310,12 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 					} else {
 						// Show the twitter profile
 						final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://twitter.com/"
-								+ participants[position]));
+								+ mParticipants[position]));
 						startActivity(myIntent);
 					}
 				}
 			});
-			mImageLoader.bind(vh.avatar, "http://api.twitter.com/1/users/profile_image?screen_name=" + participants[position]
+			mImageLoader.bind(vh.avatar, "http://api.twitter.com/1/users/profile_image?screen_name=" + mParticipants[position]
 					+ "&size=bigger", null);
 			return view;
 		}

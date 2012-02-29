@@ -25,8 +25,8 @@
 		try again later.</string>
 
     <plurals name="numberOfParticipants">
-        <item quantity="one">1 participant</item>
-        <item quantity="other">%d participants</item>
+        <item quantity="one">1 person</item>
+        <item quantity="other">%d people</item>
     </plurals>
 
     <string name="today">Today</string>

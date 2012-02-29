@@ -2,7 +2,6 @@
 <resources>
 
     <style name="Theme.Twunch" parent="Theme.Sherlock.Light">
-        <item name="android:textColor">#777777</item>
         <item name="android:actionBarStyle">@style/ActionBarIPS</item>
     </style>
 

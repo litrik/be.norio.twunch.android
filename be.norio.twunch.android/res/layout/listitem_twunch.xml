@@ -8,7 +8,6 @@
     <LinearLayout
         android:layout_width="70sp"
         android:layout_height="fill_parent"
-        android:background="@color/twunchItemBar"
         android:orientation="vertical"
         android:padding="10dp" >
 
@@ -19,7 +18,6 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:paddingBottom="7sp"
-            android:textColor="@color/twunchItemBarText"
             android:textStyle="bold" />
 
         <TextView
@@ -28,14 +26,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
-            android:textColor="@color/twunchItemBarText"
             android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/background_light"
         android:orientation="vertical"
         android:padding="10dp" >
 
@@ -44,7 +40,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:textColor="@color/twunchItemTitle"
             android:textSize="19sp"
             android:textStyle="bold" />
 
