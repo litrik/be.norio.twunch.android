@@ -27,6 +27,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Nickname;
 import android.provider.ContactsContract.Contacts;
@@ -134,32 +136,60 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	public void onLoadFinished(Loader<Cursor> loader, final Cursor cursor) {
 		if (!cursor.moveToFirst()) {
 			return;
 		}
 
 		mCursor = cursor;
+
 		// Title
 		((TextView) getView().findViewById(R.id.twunchTitle)).setText(cursor.getString(TwunchDetailsQuery.TITLE));
+
 		// Address
 		((TextView) getView().findViewById(R.id.twunchAddress)).setText(cursor.getString(TwunchDetailsQuery.ADDRESS));
+
 		// Distance
 		distance = Util.getDistanceToTwunch(getActivity(), cursor.getFloat(TwunchDetailsQuery.LATITUDE),
 				cursor.getFloat(TwunchDetailsQuery.LONGITUDE));
 		((TextView) getView().findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
 		getView().findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
+
 		// Date
 		((TextView) getView().findViewById(R.id.twunchDate)).setText(String.format(
 				getString(R.string.date),
 				DateUtils.formatDateTime(getActivity(), cursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 						| DateUtils.FORMAT_SHOW_DATE),
 				DateUtils.formatDateTime(getActivity(), cursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_TIME)));
+
 		// Days
 		final long msInDay = 86400000;
 		int days = (int) (cursor.getLong(TwunchDetailsQuery.DATE) / msInDay - new Date().getTime() / msInDay);
-		((TextView) getView().findViewById(R.id.twunchDays)).setText(days == 0 ? getString(R.string.today) : String.format(
+		TextView daysView = (TextView) getView().findViewById(R.id.twunchDays);
+		daysView.setText(days == 0 ? getString(R.string.today) : String.format(
 				getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
+		daysView.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				try {
+
+					Intent intent = new Intent(Intent.ACTION_INSERT)
+							.setData(Events.CONTENT_URI)
+							.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(TwunchDetailsQuery.DATE))
+							.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+									cursor.getLong(TwunchDetailsQuery.DATE) + DateUtils.HOUR_IN_MILLIS)
+							.putExtra(Events.TITLE, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
+							.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
+							.putExtra(Events.EVENT_LOCATION, cursor.getString(TwunchDetailsQuery.ADDRESS))
+							.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+					startActivity(intent);
+				} catch (Exception e) {
+					// FIXME: handle exception
+				}
+			}
+		});
+
 		// Note
 		TextView noteView = ((TextView) getView().findViewById(R.id.twunchNote));
 		if (cursor.getString(TwunchDetailsQuery.NOTE) == null || cursor.getString(TwunchDetailsQuery.NOTE).length() == 0) {
@@ -169,10 +199,12 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 			noteView.setText(Html.fromHtml(cursor.getString(TwunchDetailsQuery.NOTE)));
 			noteView.setVisibility(View.VISIBLE);
 		}
+
 		// Number of participants
 		((TextView) getView().findViewById(R.id.twunchNumberParticipants)).setText(String.format(
 				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)),
 				cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)));
+
 		// Participants
 		ListView participantsView = ((ListView) getView().findViewById(R.id.twunchParticipants));
 		mParticipants = cursor.getString(TwunchDetailsQuery.PARTICIPANTS).split(" ");
