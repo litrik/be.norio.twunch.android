@@ -44,6 +44,7 @@ public class TwunchContract {
 	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
 	private static final String PATH_TWUNCHES = "twunches";
+	private static final String PATH_FUTURE = "future";
 
 	public static class Twunches implements TwunchesColumns, BaseColumns {
 		public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TWUNCHES).build();
@@ -55,6 +56,10 @@ public class TwunchContract {
 
 		public static Uri buildTwunchUri(String twunchId) {
 			return CONTENT_URI.buildUpon().appendPath(twunchId).build();
+		}
+
+		public static Uri buildFutureTwunchesUri() {
+			return CONTENT_URI.buildUpon().appendPath(PATH_FUTURE).build();
 		}
 
 		public static String getTwunchId(Uri uri) {

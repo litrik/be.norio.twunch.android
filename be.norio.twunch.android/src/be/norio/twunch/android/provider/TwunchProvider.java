@@ -20,6 +20,7 @@ package be.norio.twunch.android.provider;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -48,6 +49,7 @@ public class TwunchProvider extends ContentProvider {
 
 	private static final int TWUNCHES = 100;
 	private static final int TWUNCHES_ID = 101;
+	private static final int TWUNCHES_FUTURE = 10;
 
 	private static final String MIME_XML = "text/xml";
 
@@ -60,6 +62,7 @@ public class TwunchProvider extends ContentProvider {
 		final String authority = TwunchContract.CONTENT_AUTHORITY;
 
 		matcher.addURI(authority, "twunches", TWUNCHES);
+		matcher.addURI(authority, "twunches/future", TWUNCHES_FUTURE);
 		matcher.addURI(authority, "twunches/*", TWUNCHES_ID);
 
 		return matcher;
@@ -81,6 +84,8 @@ public class TwunchProvider extends ContentProvider {
 			return Twunches.CONTENT_TYPE;
 		case TWUNCHES_ID:
 			return Twunches.CONTENT_ITEM_TYPE;
+		case TWUNCHES_FUTURE:
+			return Twunches.CONTENT_TYPE;
 		default:
 			throw new UnsupportedOperationException("Unknown uri: " + uri);
 		}
@@ -184,6 +189,10 @@ public class TwunchProvider extends ContentProvider {
 			final String twunchId = Twunches.getTwunchId(uri);
 			return builder.table(Tables.TWUNCHES).where(Twunches._ID + "=?", twunchId);
 		}
+		case TWUNCHES_FUTURE: {
+			long now = new Date().getTime();
+			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " > ?", Long.toString(now));
+		}
 		default: {
 			throw new UnsupportedOperationException("Unknown uri: " + uri);
 		}
@@ -204,6 +213,10 @@ public class TwunchProvider extends ContentProvider {
 		case TWUNCHES_ID: {
 			final String twunchId = Twunches.getTwunchId(uri);
 			return builder.table(Tables.TWUNCHES).where(Twunches._ID + "=?", twunchId);
+		}
+		case TWUNCHES_FUTURE: {
+			long now = new Date().getTime();
+			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " > ?", Long.toString(now));
 		}
 		default: {
 			throw new UnsupportedOperationException("Unknown uri: " + uri);

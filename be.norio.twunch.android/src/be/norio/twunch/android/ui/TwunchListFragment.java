@@ -305,7 +305,8 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null, Twunches.DEFAULT_SORT);
+		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null,
+				Twunches.DEFAULT_SORT);
 	}
 
 	@Override

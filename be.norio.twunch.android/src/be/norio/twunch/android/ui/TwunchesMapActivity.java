@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
-import be.norio.twunch.android.R.drawable;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.util.TwunchItemizedOverlay;
 import be.norio.twunch.android.util.TwunchOverlayItem;
@@ -62,7 +61,7 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 
 		setContentView(mapView);
 
-		cursor = getContentResolver().query(Twunches.CONTENT_URI, columns, null, null, Twunches.DEFAULT_SORT);
+		cursor = getContentResolver().query(Twunches.buildFutureTwunchesUri(), columns, null, null, null);
 		startManagingCursor(cursor);
 
 		List<Overlay> mapOverlays = mapView.getOverlays();
