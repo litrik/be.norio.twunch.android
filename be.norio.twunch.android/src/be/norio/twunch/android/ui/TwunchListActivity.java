@@ -45,6 +45,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 
 	TwunchListFragment[] mFragments = new TwunchListFragment[2];
 	String[] mSort = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
+	Tab[] mTabs = new Tab[2];
 
 	MenuItem refreshMenuItem;
 
@@ -57,11 +58,17 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		final ActionBar bar = getSupportActionBar();
-		bar.addTab(bar.newTab().setText("By Date").setTabListener(this));
-		bar.addTab(bar.newTab().setText("By Distance").setTabListener(this));
+		mTabs[0] = bar.newTab().setText("By Date").setTabListener(this);
+		bar.addTab(mTabs[0], false);
+		mTabs[1] = bar.newTab().setText("By Distance").setTabListener(this);
+		bar.addTab(mTabs[1], false);
+
+		bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
 
 		resultReceiver = new DetachableResultReceiver(new Handler());
 		resultReceiver.setReceiver(new SyncResultReceiver());
+
+		System.out.println(PrefsUtils.getLastTab());
 	}
 
 	@Override
@@ -72,16 +79,14 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 			Bundle args = new Bundle();
 			args.putString(TwunchListFragment.EXTRA_SORT, mSort[pos]);
 			mFragments[pos].setArguments(args);
-		} else {
-			//
 		}
+		PrefsUtils.setLastTab(pos);
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mFragments[pos]).commit();
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab) {
-		// int pos = tab.getPosition();
-		// getSupportFragmentManager().beginTransaction().detach(mFragments[pos]);
+		// Do nothing
 	}
 
 	@Override
@@ -107,7 +112,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 			startActivity(new Intent(this, TwunchesMapActivity.class));
 			return true;
 		}
-		return false;
+		return super.onOptionsItemSelected(item);
 	}
 
 	public void refreshTwunches(boolean force) {
