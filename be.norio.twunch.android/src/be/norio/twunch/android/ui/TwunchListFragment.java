@@ -24,10 +24,6 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
@@ -44,7 +40,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.util.Util;
 
 public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -52,39 +47,9 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 	private CursorAdapter mAdapter;
 
-	LocationManager locationManager;
-	LocationListener locationListener;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setHasOptionsMenu(true);
-
-		// Acquire a reference to the system Location Manager
-		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
-		// Define a listener that responds to location updates
-		locationListener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				Cursor cursor = ((CursorAdapter) getListAdapter()).getCursor();
-				if (cursor != null) {
-					cursor.requery();
-				}
-			}
-
-			public void onStatusChanged(String provider, int status, Bundle extras) {
-				// Do nothing
-			}
-
-			public void onProviderEnabled(String provider) {
-				// Do nothing
-			}
-
-			public void onProviderDisabled(String provider) {
-				// Do nothing
-			}
-		};
 
 	}
 
@@ -114,16 +79,15 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 		int _TOKEN = 0x1;
 
 		String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
-				Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.NEW };
+				Twunches.NEW, Twunches.DISTANCE };
 
 		int _ID = 0;
 		int NAME = 1;
 		int ADDRESS = 2;
 		int DATE = 3;
 		int NUMPARTICIPANTS = 4;
-		int LATITUDE = 5;
-		int LONGITUDE = 6;
-		int NEW = 7;
+		int NEW = 5;
+		int DISTANCE = 6;
 	}
 
 	private static class ViewHolder {
@@ -162,10 +126,11 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 			vh.address.setText(cursor.getString(TwunchesQuery.ADDRESS));
 			vh.address.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
-			Float distance = Util.getDistanceToTwunch(view.getContext(), cursor.getFloat(TwunchesQuery.LATITUDE),
-					cursor.getFloat(TwunchesQuery.LONGITUDE));
-			vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance));
-			vh.distance.setVisibility(distance == null ? View.INVISIBLE : View.VISIBLE);
+			vh.distance.setText(String.format(view.getContext().getString(R.string.distance),
+					cursor.getLong(TwunchesQuery.DISTANCE) / 1000f));
+			// FIXME:
+			// vh.distance.setVisibility(distance == null ? View.INVISIBLE :
+			// View.VISIBLE);
 			// Date
 			vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
@@ -192,18 +157,13 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 	public void onResume() {
 		super.onResume();
 		getActivity().getContentResolver().registerContentObserver(Twunches.CONTENT_URI, true, mChangesObserver);
-		// Start listening for location updates
-		String provider = locationManager.getBestProvider(new Criteria(), true);
-		if (provider != null) {
-			locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
-		}
+
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 		getActivity().getContentResolver().unregisterContentObserver(mChangesObserver);
-		locationManager.removeUpdates(locationListener);
 	}
 
 	@Override

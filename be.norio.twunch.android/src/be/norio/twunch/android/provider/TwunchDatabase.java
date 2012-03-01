@@ -29,7 +29,7 @@ public class TwunchDatabase extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "twunches.db";
 
-	private static final int VER_LAUNCH = 2;
+	private static final int VER_LAUNCH = 4;
 
 	private static final int DATABASE_VERSION = VER_LAUNCH;
 
@@ -48,8 +48,8 @@ public class TwunchDatabase extends SQLiteOpenHelper {
 				+ " INTEGER," + TwunchesColumns.NEW + " INTEGER," + TwunchesColumns.TITLE + " VARCHAR(255)," + TwunchesColumns.ADDRESS
 				+ " VARCHAR(255)," + TwunchesColumns.NOTE + " VARCHAR(1024)," + TwunchesColumns.PARTICIPANTS + " VARCHAR(2048),"
 				+ TwunchesColumns.NUMPARTICIPANTS + " INTEGER," + TwunchesColumns.DATE + " INTEGER," + TwunchesColumns.LINK
-				+ " VARCHAR(255)," + TwunchesColumns.CLOSED + " INTEGER," + TwunchesColumns.LATITUDE + " DECIMAL(10,7),"
-				+ TwunchesColumns.LONGITUDE + " DECIMAL(10,7)" + ");");
+				+ " VARCHAR(255)," + TwunchesColumns.CLOSED + " INTEGER," + TwunchesColumns.DISTANCE + " INTEGER,"
+				+ TwunchesColumns.LATITUDE + " DECIMAL(10,7)," + TwunchesColumns.LONGITUDE + " DECIMAL(10,7)" + ");");
 	}
 
 	@Override

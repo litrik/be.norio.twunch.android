@@ -17,19 +17,32 @@
 
 package be.norio.twunch.android.ui;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.RemoteException;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
+import be.norio.twunch.android.provider.TwunchContract;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
 import be.norio.twunch.android.util.PrefsUtils;
@@ -40,16 +53,19 @@ import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
+import com.google.android.apps.iosched.util.Lists;
 
 public class TwunchListActivity extends BaseActivity implements TabListener {
 
 	TwunchListFragment[] mFragments = new TwunchListFragment[2];
-	String[] mSort = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
-	Tab[] mTabs = new Tab[2];
+	private final static String[] SORTS = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
 
 	MenuItem refreshMenuItem;
 
 	private DetachableResultReceiver resultReceiver;
+
+	LocationManager locationManager;
+	LocationListener locationListener;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +74,47 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		final ActionBar bar = getSupportActionBar();
-		mTabs[0] = bar.newTab().setText("By Date").setTabListener(this);
-		bar.addTab(mTabs[0], false);
-		mTabs[1] = bar.newTab().setText("By Distance").setTabListener(this);
-		bar.addTab(mTabs[1], false);
+		bar.addTab(bar.newTab().setText("By Date").setTabListener(this), false);
+		bar.addTab(bar.newTab().setText("By Distance").setTabListener(this), false);
 
 		bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
 
 		resultReceiver = new DetachableResultReceiver(new Handler());
 		resultReceiver.setReceiver(new SyncResultReceiver());
 
-		System.out.println(PrefsUtils.getLastTab());
+		// Acquire a reference to the system Location Manager
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		// Define a listener that responds to location updates
+		locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+				if (location != null) {
+					new UpdateDistancesTask().execute(location);
+				}
+			}
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+				// Do nothing
+			}
+
+			public void onProviderEnabled(String provider) {
+				// Do nothing
+			}
+
+			public void onProviderDisabled(String provider) {
+				// Do nothing
+			}
+		};
+
+	}
+
+	private interface TwunchesQuery {
+
+		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
+
+		int _ID = 0;
+		int LATITUDE = 1;
+		int LONGITUDE = 2;
 	}
 
 	@Override
@@ -77,7 +123,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		if (mFragments[pos] == null) {
 			mFragments[pos] = new TwunchListFragment();
 			Bundle args = new Bundle();
-			args.putString(TwunchListFragment.EXTRA_SORT, mSort[pos]);
+			args.putString(TwunchListFragment.EXTRA_SORT, SORTS[pos]);
 			mFragments[pos].setArguments(args);
 		}
 		PrefsUtils.setLastTab(pos);
@@ -142,9 +188,16 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 				break;
 			}
 			case SyncService.STATUS_FINISHED: {
-				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
-				refreshMenuItem.setActionView(null);
+				if (refreshMenuItem != null) {
+					if (refreshMenuItem.getActionView() != null) {
+						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable())
+								.stop();
+					}
+					refreshMenuItem.setActionView(null);
+				}
 				Toast.makeText(TwunchListActivity.this, getString(R.string.download_done), Toast.LENGTH_SHORT).show();
+				String provider = locationManager.getBestProvider(new Criteria(), true);
+				new UpdateDistancesTask().execute(locationManager.getLastKnownLocation(provider));
 				break;
 			}
 			case SyncService.STATUS_ERROR: {
@@ -166,10 +219,55 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		}
 	}
 
+	class UpdateDistancesTask extends AsyncTask<Location, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Location... params) {
+			Cursor c = getContentResolver().query(Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null, null);
+			if (!c.moveToFirst()) {
+				c.close();
+				return null;
+			}
+			final ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
+			do {
+				ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(Twunches.CONTENT_URI);
+				builder.withSelection(Twunches._ID + "=?", new String[] { Long.toString(c.getLong(TwunchesQuery._ID)) });
+				Location twunchLocation = new Location("");
+				twunchLocation.setLatitude(c.getDouble(TwunchesQuery.LATITUDE));
+				twunchLocation.setLongitude(c.getDouble(TwunchesQuery.LONGITUDE));
+				builder.withValue(Twunches.DISTANCE, (int) params[0].distanceTo(twunchLocation));
+				batch.add(builder.build());
+			} while (c.moveToNext());
+			c.close();
+			try {
+				getContentResolver().applyBatch(TwunchContract.CONTENT_AUTHORITY, batch);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		refreshTwunches(false);
+		// Start listening for location updates
+		String provider = locationManager.getBestProvider(new Criteria(), true);
+		if (provider != null) {
+			locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		locationManager.removeUpdates(locationListener);
 	}
 
 }

@@ -37,6 +37,7 @@ public class TwunchContract {
 		String NUMPARTICIPANTS = "numparticipants";
 		String NEW = "new";
 		String CLOSED = "closed";
+		String DISTANCE = "distance";
 	}
 
 	public static final String CONTENT_AUTHORITY = "be.norio.twunch.android";
@@ -53,7 +54,7 @@ public class TwunchContract {
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.twunch.twunch";
 
 		public static final String SORT_DATE = TwunchesColumns.DATE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
-		public static final String SORT_DISTANCE = TwunchesColumns.DATE + " DESC," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
+		public static final String SORT_DISTANCE = TwunchesColumns.DISTANCE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
 
 		public static Uri buildTwunchUri(String twunchId) {
 			return CONTENT_URI.buildUpon().appendPath(twunchId).build();
