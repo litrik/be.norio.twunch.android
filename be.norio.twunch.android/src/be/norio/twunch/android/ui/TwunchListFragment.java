@@ -19,14 +19,11 @@ package be.norio.twunch.android.ui;
 
 import java.util.Date;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -40,36 +37,23 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import be.norio.twunch.android.R;
-import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.service.SyncService;
-import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.iosched.util.DetachableResultReceiver;
 
 public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-	private CursorAdapter mAdapter;
+	public final static String EXTRA_SORT = "EXTRA_SORT";
 
-	private DetachableResultReceiver resultReceiver;
+	private CursorAdapter mAdapter;
 
 	LocationManager locationManager;
 	LocationListener locationListener;
-
-	MenuItem refreshMenuItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,8 +86,6 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 			}
 		};
 
-		resultReceiver = new DetachableResultReceiver(new Handler());
-		resultReceiver.setReceiver(new SyncResultReceiver());
 	}
 
 	private final ContentObserver mChangesObserver = new ContentObserver(new Handler()) {
@@ -210,7 +192,6 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 	public void onResume() {
 		super.onResume();
 		getActivity().getContentResolver().registerContentObserver(Twunches.CONTENT_URI, true, mChangesObserver);
-		refreshTwunches(false);
 		// Start listening for location updates
 		String provider = locationManager.getBestProvider(new Criteria(), true);
 		if (provider != null) {
@@ -232,81 +213,10 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 		startActivity(intent);
 	}
 
-	public void refreshTwunches(boolean force) {
-		long lastSync = PrefsUtils.getLastUpdate();
-		long now = (new Date()).getTime();
-		long oneDay = 1000 * 60 * 60 * 24;
-		if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
-			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
-			return;
-		}
-		if (refreshMenuItem != null) {
-			refreshMenuItem.setActionView(R.layout.actionbar_indeterminate_progress);
-			((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).start();
-		}
-		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
-		Intent intent = new Intent(getActivity(), SyncService.class);
-		intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, resultReceiver);
-		getActivity().startService(intent);
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_twunchlist, menu);
-		refreshMenuItem = menu.findItem(R.id.menuRefresh);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menuRefresh:
-			refreshTwunches(true);
-			return true;
-		case R.id.menuMap:
-			startActivity(new Intent(getActivity(), TwunchesMapActivity.class));
-			return true;
-		}
-		return false;
-	}
-
-	private class SyncResultReceiver implements DetachableResultReceiver.Receiver {
-
-		@Override
-		public void onReceiveResult(int resultCode, Bundle resultData) {
-			switch (resultCode) {
-			case SyncService.STATUS_RUNNING: {
-				break;
-			}
-			case SyncService.STATUS_FINISHED: {
-				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
-				refreshMenuItem.setActionView(null);
-				Toast.makeText(getActivity(), getString(R.string.download_done), Toast.LENGTH_SHORT).show();
-				break;
-			}
-			case SyncService.STATUS_ERROR: {
-				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
-				refreshMenuItem.setActionView(null);
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(R.string.download_error);
-				builder.setCancelable(false);
-				builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// Do nothing
-					}
-				});
-				builder.create().show();
-				break;
-			}
-			}
-
-		}
-	}
-
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null,
-				Twunches.DEFAULT_SORT);
+				args.getString(EXTRA_SORT));
 	}
 
 	@Override

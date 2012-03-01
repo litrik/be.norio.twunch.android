@@ -52,7 +52,8 @@ public class TwunchContract {
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.twunch.twunch";
 		public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.twunch.twunch";
 
-		public static final String DEFAULT_SORT = TwunchesColumns.DATE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
+		public static final String SORT_DATE = TwunchesColumns.DATE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
+		public static final String SORT_DISTANCE = TwunchesColumns.DATE + " DESC," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
 
 		public static Uri buildTwunchUri(String twunchId) {
 			return CONTENT_URI.buildUpon().appendPath(twunchId).build();
