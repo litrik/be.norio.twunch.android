@@ -168,27 +168,28 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		TextView daysView = (TextView) getView().findViewById(R.id.twunchDays);
 		daysView.setText(days == 0 ? getString(R.string.today) : String.format(
 				getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
-		daysView.setOnClickListener(new OnClickListener() {
+		if (Util.isIceCreamSandwich()) {
+			daysView.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				try {
-
-					Intent intent = new Intent(Intent.ACTION_INSERT)
-							.setData(Events.CONTENT_URI)
-							.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(TwunchDetailsQuery.DATE))
-							.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-									cursor.getLong(TwunchDetailsQuery.DATE) + DateUtils.HOUR_IN_MILLIS)
-							.putExtra(Events.TITLE, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
-							.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
-							.putExtra(Events.EVENT_LOCATION, cursor.getString(TwunchDetailsQuery.ADDRESS))
-							.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-					startActivity(intent);
-				} catch (Exception e) {
-					// FIXME: handle exception
+				@Override
+				public void onClick(View v) {
+					try {
+						Intent intent = new Intent(Intent.ACTION_INSERT)
+								.setData(Events.CONTENT_URI)
+								.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(TwunchDetailsQuery.DATE))
+								.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+										cursor.getLong(TwunchDetailsQuery.DATE) + DateUtils.HOUR_IN_MILLIS)
+								.putExtra(Events.TITLE, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
+								.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
+								.putExtra(Events.EVENT_LOCATION, cursor.getString(TwunchDetailsQuery.ADDRESS))
+								.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+						startActivity(intent);
+					} catch (Exception e) {
+						// FIXME: handle exception
+					}
 				}
-			}
-		});
+			});
+		}
 
 		// Note
 		TextView noteView = ((TextView) getView().findViewById(R.id.twunchNote));

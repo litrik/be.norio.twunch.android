@@ -21,8 +21,10 @@ import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 
 public class Util {
+
 	public static Float getDistanceToTwunch(Context context, double lat, double lon) {
 		if (lat == 0 && lon == 0) {
 			return null;
@@ -38,5 +40,13 @@ public class Util {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isIceCreamSandwich() {
+		// Can use static final constants like HONEYCOMB, declared in later
+		// versions
+		// of the OS since they are inlined at compile time. This is guaranteed
+		// behavior.
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 	}
 }
