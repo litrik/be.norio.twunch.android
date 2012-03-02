@@ -2,6 +2,17 @@
 Twunch for Android
 ==================
 
+Background
+----------
+
+### What is Twunch?
+
+A Twunch is an informal lunch organized via Twitter in restaurant where you can eat fast and cheap without making a reservation. To organize a Twunch you tweet a location and time and include [@twunch](http://twitter.com/twunch). If you want to join a Twunch you simply send a reply to [@twunch](http://twitter.com/twunch).
+
+### What does the Twunch app for Android do?
+
+The Twunch Android application lists upcoming Twunches. It shows the date, time, location and participants of each Twunch. You can join a Twunch from within the application and find the Twunch location on a map.
+
 Installation Instructions
 -------------------------
 
@@ -17,4 +28,18 @@ Coming soon...
 Legal Information
 -----------------
 
-See the [readme file](https://github.com/litrik/be.norio.twunch.android/blob/master/be.norio.twunch.android/assets/about.html) included in the app
+Copyright 2010-2012 [Norio BVBA](http://www.norio.be/)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the <a
+href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU General Public
+License</a> as published by the Free Software Foundation, either version
+3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a
+href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU General Public
+License</a> for more details.
+	
+See the [readme file](https://github.com/litrik/be.norio.twunch.android/blob/master/be.norio.twunch.android/assets/about.html) included in the app for information about third party licenses
