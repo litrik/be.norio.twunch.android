@@ -91,7 +91,8 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		int _TOKEN = 0x1;
 
 		String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
-				Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.PARTICIPANTS, Twunches.NOTE, Twunches.LINK, Twunches.CLOSED };
+				Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.PARTICIPANTS, Twunches.NOTE, Twunches.LINK, Twunches.CLOSED,
+				Twunches.DISTANCE };
 
 		int _ID = 0;
 		int TITLE = 1;
@@ -104,7 +105,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		int NOTE = 8;
 		int LINK = 9;
 		int CLOSED = 10;
-
+		int DISTANCE = 11;
 	}
 
 	@Override
@@ -153,10 +154,20 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		((TextView) getView().findViewById(R.id.twunchAddress)).setText(cursor.getString(TwunchDetailsQuery.ADDRESS));
 
 		// Distance
-		distance = Util.getDistanceToTwunch(getActivity(), cursor.getFloat(TwunchDetailsQuery.LATITUDE),
-				cursor.getFloat(TwunchDetailsQuery.LONGITUDE));
-		((TextView) getView().findViewById(R.id.twunchDistance)).setText(String.format(getString(R.string.distance), distance));
-		getView().findViewById(R.id.twunchDistance).setVisibility(distance == null ? View.GONE : View.VISIBLE);
+		TextView distanceView = (TextView) getView().findViewById(R.id.twunchDistance);
+		long distance = cursor.getLong(TwunchDetailsQuery.DISTANCE);
+		if (distance > 0) {
+			distanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
+			distanceView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					doMap();
+				}
+			});
+		} else {
+			distanceView.setVisibility(View.INVISIBLE);
+		}
 
 		// Date
 		((TextView) getView().findViewById(R.id.twunchDate)).setText(String.format(
