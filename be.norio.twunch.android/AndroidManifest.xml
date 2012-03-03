@@ -26,27 +26,21 @@
         android:theme="@style/Theme.Twunch" >
         <uses-library android:name="com.google.android.maps" />
 
-        <activity
-            android:name=".ui.TwunchListActivity"
-            android:label="@string/app_name" >
+        <activity android:name=".ui.TwunchListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.TwunchesMapActivity"
-            android:label="@string/activity_twunches" />
-        <activity
-            android:name=".ui.TwunchDetailsActivity"
-            android:label="@string/activity_twunch" />
+        <activity android:name=".ui.TwunchesMapActivity" />
+        <activity android:name=".ui.TwunchDetailsActivity" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/activity_about" />
 
         <service android:name=".service.SyncService" />
-        
+
         <provider
             android:name=".provider.TwunchProvider"
             android:authorities="be.norio.twunch.android" />
