@@ -17,6 +17,10 @@
 
 package be.norio.twunch.android.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -48,5 +52,22 @@ public class Util {
 		// of the OS since they are inlined at compile time. This is guaranteed
 		// behavior.
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+	}
+
+	public static String readTextFromResource(Context context, int resourceId) {
+		InputStream raw = context.getResources().openRawResource(resourceId);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		int i;
+		try {
+			i = raw.read();
+			while (i != -1) {
+				stream.write(i);
+				i = raw.read();
+			}
+			raw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return stream.toString();
 	}
 }

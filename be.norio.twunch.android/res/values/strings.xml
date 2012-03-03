@@ -21,6 +21,7 @@
     <string name="download_done">Twunch data is now up-to-date</string>
     <string name="download_error">There was an error downloading Twunch data. Please
 		try again later.</string>
+    <string name="whats_new">What\'s new?</string>
 
     <plurals name="numberOfParticipants">
         <item quantity="one">1 person</item>

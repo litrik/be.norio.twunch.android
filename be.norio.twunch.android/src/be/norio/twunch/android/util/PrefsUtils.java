@@ -40,6 +40,7 @@ public class PrefsUtils {
 	// Keys
 	public static final String KEY_LAST_UPDATE = "last_update";
 	public static final String KEY_LAST_TAB = "last_tab";
+	private static final String KEY_LAST_RUN_VERSION = "last_run_version";
 
 	// Default values
 	public static final long DEFAULT_LAST_UPDATE = 0;
@@ -108,6 +109,14 @@ public class PrefsUtils {
 
 	public static void setLastTab(int value) {
 		PrefsUtils.apply(getPrefs().edit().putInt(KEY_LAST_TAB, value));
+	}
+
+	public static int getLastRunVersion() {
+		return getPrefs().getInt(KEY_LAST_RUN_VERSION, 0);
+	}
+
+	public static void setLastRunVersion(int value) {
+		PrefsUtils.apply(getPrefs().edit().putInt(KEY_LAST_RUN_VERSION, value));
 	}
 
 }

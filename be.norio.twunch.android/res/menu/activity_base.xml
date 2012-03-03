@@ -5,5 +5,9 @@
         android:id="@+id/menuAbout"
         android:showAsAction="never"
         android:title="@string/menu_about"/>
+    <item
+        android:id="@+id/menuWhatsNew"
+        android:showAsAction="never"
+        android:title="@string/whats_new"/>
 
 </menu>

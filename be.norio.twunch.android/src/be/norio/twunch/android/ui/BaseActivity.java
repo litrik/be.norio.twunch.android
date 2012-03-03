@@ -17,11 +17,18 @@
 
 package be.norio.twunch.android.ui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.webkit.WebView;
 import be.norio.twunch.android.AboutActivity;
+import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.util.PrefsUtils;
+import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
 
 import com.actionbarsherlock.view.Menu;
@@ -31,7 +38,12 @@ import com.google.android.apps.iosched.util.GoogleAnalyticsSessionManager;
 
 public abstract class BaseActivity extends FragmentActivity {
 
+	private static final String TAG = BaseActivity.class.getSimpleName();
+	private final static boolean LOGV = true;
+
 	protected final String GA_VAR_KLANTID = "KLANTID";
+
+	private final int DIALOG_WHATS_NEW = 56479952;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +54,8 @@ public abstract class BaseActivity extends FragmentActivity {
 			getSupportActionBar().setHomeButtonEnabled(true);
 		}
 		ViewServer.get(getApplicationContext()).addWindow(this);
+
+		showWhatsNew();
 	}
 
 	@Override
@@ -77,6 +91,9 @@ public abstract class BaseActivity extends FragmentActivity {
 		case R.id.menuAbout:
 			startActivity(new Intent(this, AboutActivity.class));
 			break;
+		case R.id.menuWhatsNew:
+			showDialog(DIALOG_WHATS_NEW);
+			break;
 		default:
 			break;
 		}
@@ -87,6 +104,33 @@ public abstract class BaseActivity extends FragmentActivity {
 		Intent intent = new Intent(this, TwunchListActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
+	}
+
+	private void showWhatsNew() {
+		final int currentVersion = Integer.parseInt(BuildProperties.VERSION_CODE);
+		if (currentVersion > PrefsUtils.getLastRunVersion()) {
+			if (LOGV)
+				Log.v(TAG, "This is the first time we run version " + BuildProperties.VERSION_CODE);
+			showDialog(DIALOG_WHATS_NEW);
+		}
+		PrefsUtils.setLastRunVersion(currentVersion);
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		Dialog dialog;
+		switch (id) {
+		case DIALOG_WHATS_NEW:
+			WebView webView = new WebView(this);
+			final String htmlContent = Util.readTextFromResource(this, R.raw.whats_new);
+			webView.loadDataWithBaseURL(null, htmlContent, "text/html", "utf-8", null);
+			dialog = new AlertDialog.Builder(this).setTitle(R.string.whats_new).setView(webView)
+					.setPositiveButton(android.R.string.ok, null).create();
+			break;
+		default:
+			dialog = null;
+		}
+		return dialog;
 	}
 
 }
