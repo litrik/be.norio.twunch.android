@@ -51,20 +51,20 @@
             android:drawableLeft="@drawable/ic_menu_today" />
 
         <TextView
-            style="@style/TwunchClickable.DetailAction"
-            android:id="@+id/twunchDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_menu_directions" />
-
-        <TextView
             android:id="@+id/twunchNumberParticipants"
             style="@style/TwunchClickable.DetailAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
+            android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_menu_allfriends" />
+
+        <TextView
+            android:id="@+id/twunchDistance"
+            style="@style/TwunchClickable.DetailAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:drawableLeft="@drawable/ic_menu_directions" />
     </FrameLayout>
 
     <ListView
