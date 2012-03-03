@@ -28,4 +28,16 @@ public class AnalyticsUtils {
 		public static final String WHATS_NEW = "WhatsNew";
 	}
 
+	public interface EventCategories {
+		public static final String TWUNCH_DETAILS = "TwunchDetails";
+	}
+
+	public interface EventActions {
+		public static final String SHOW_MAP = "ShowMap";
+		public static final String SHOW_DIRECTIONS = "ShowDirections";
+		public static final String ADD_TO_CALENDAR = "AddToCalendar";
+		public static final String SHARE = "Share";
+		public static final String REGISTER = "Register";
+	}
+
 }
