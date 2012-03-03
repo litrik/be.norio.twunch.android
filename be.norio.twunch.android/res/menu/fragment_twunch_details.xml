@@ -14,6 +14,7 @@
     <item
         android:id="@+id/menuMap"
         android:icon="@drawable/ic_action_locate"
+        android:showAsAction="ifRoom|withText"
         android:title="@string/menu_map"/>
     <item
         android:id="@+id/menuDirections"
