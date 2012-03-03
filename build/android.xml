@@ -31,6 +31,7 @@
 
 	<!-- Must be done even before -pre-build gets called -->
 	<copy file="${root}/AndroidManifest.xml" tofile="AndroidManifest.xml" />
+	<property file="${root}/project.properties" prefix="project"/>
 	<copy file="${root}/project.properties" tofile="project.properties">
 		<filterchain>
 			<linecontains negate="true">
@@ -73,7 +74,7 @@
 
 		<!-- Copy ActionBarSherlock files -->
 		<copy todir="${work}">
-			<fileset dir="${root}/../../ActionBarSherlock">
+			<fileset dir="${root}/${project.android.library.reference.1}">
 				<include name="src/**" />
 				<include name="res/**" />
 			</fileset>
