@@ -35,9 +35,6 @@
         </activity>
         <activity android:name=".ui.TwunchesMapActivity" />
         <activity android:name=".ui.TwunchDetailsActivity" />
-        <activity
-            android:name=".AboutActivity"
-            android:label="@string/activity_about" />
 
         <service android:name=".service.SyncService" />
 

@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.webkit.WebView;
-import be.norio.twunch.android.AboutActivity;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.util.PrefsUtils;
@@ -44,6 +43,7 @@ public abstract class BaseActivity extends FragmentActivity {
 	protected final String GA_VAR_KLANTID = "KLANTID";
 
 	private final int DIALOG_WHATS_NEW = 56479952;
+	private final int DIALOG_ABOUT = 3267613;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,7 @@ public abstract class BaseActivity extends FragmentActivity {
 			goHome();
 			return true;
 		case R.id.menuAbout:
-			startActivity(new Intent(this, AboutActivity.class));
+			showDialog(DIALOG_ABOUT);
 			break;
 		case R.id.menuWhatsNew:
 			showDialog(DIALOG_WHATS_NEW);
@@ -121,11 +121,10 @@ public abstract class BaseActivity extends FragmentActivity {
 		Dialog dialog;
 		switch (id) {
 		case DIALOG_WHATS_NEW:
-			WebView webView = new WebView(this);
-			final String htmlContent = Util.readTextFromResource(this, R.raw.whats_new);
-			webView.loadDataWithBaseURL(null, htmlContent, "text/html", "utf-8", null);
-			dialog = new AlertDialog.Builder(this).setTitle(R.string.whats_new).setView(webView)
-					.setPositiveButton(android.R.string.ok, null).create();
+			dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, "WhatsNew");
+			break;
+		case DIALOG_ABOUT:
+			dialog = createHtmlDialog(getString(R.string.about, BuildProperties.VERSION_NAME), R.raw.about, "About");
 			break;
 		default:
 			dialog = null;
@@ -133,4 +132,10 @@ public abstract class BaseActivity extends FragmentActivity {
 		return dialog;
 	}
 
+	private Dialog createHtmlDialog(String title, int contentResourceId, String pageName) {
+		GoogleAnalyticsTracker.getInstance().trackPageView(pageName);
+		WebView webView = new WebView(this);
+		webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
+		return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null).create();
+	}
 }
