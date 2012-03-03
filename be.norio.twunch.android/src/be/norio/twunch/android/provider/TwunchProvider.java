@@ -41,7 +41,7 @@ import com.google.android.apps.iosched.util.SelectionBuilder;
 
 public class TwunchProvider extends ContentProvider {
 	private static final String TAG = TwunchProvider.class.getSimpleName();
-	private static final boolean LOGV = true;
+	private static final boolean LOGV = false;
 
 	private TwunchDatabase mOpenHelper;
 
