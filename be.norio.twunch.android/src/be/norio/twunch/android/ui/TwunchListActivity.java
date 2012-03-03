@@ -222,7 +222,10 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	class UpdateDistancesTask extends AsyncTask<Location, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Location... params) {
+		protected Void doInBackground(Location... locations) {
+			if (locations[0] == null) {
+				return null;
+			}
 			Cursor c = getContentResolver().query(Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null, null);
 			if (!c.moveToFirst()) {
 				c.close();
@@ -235,7 +238,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 				Location twunchLocation = new Location("");
 				twunchLocation.setLatitude(c.getDouble(TwunchesQuery.LATITUDE));
 				twunchLocation.setLongitude(c.getDouble(TwunchesQuery.LONGITUDE));
-				builder.withValue(Twunches.DISTANCE, (int) params[0].distanceTo(twunchLocation));
+				builder.withValue(Twunches.DISTANCE, (int) locations[0].distanceTo(twunchLocation));
 				batch.add(builder.build());
 			} while (c.moveToNext());
 			c.close();
@@ -250,7 +253,6 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 			}
 			return null;
 		}
-
 	}
 
 	@Override

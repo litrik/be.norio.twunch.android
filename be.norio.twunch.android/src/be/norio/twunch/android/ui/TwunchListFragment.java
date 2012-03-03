@@ -126,11 +126,13 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 			vh.address.setText(cursor.getString(TwunchesQuery.ADDRESS));
 			vh.address.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
-			vh.distance.setText(String.format(view.getContext().getString(R.string.distance),
-					cursor.getLong(TwunchesQuery.DISTANCE) / 1000f));
-			// FIXME:
-			// vh.distance.setVisibility(distance == null ? View.INVISIBLE :
-			// View.VISIBLE);
+			long distance = cursor.getLong(TwunchesQuery.DISTANCE);
+			if (distance > 0) {
+				vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance / 1000f));
+				vh.distance.setVisibility(View.VISIBLE);
+			} else {
+				vh.distance.setVisibility(View.INVISIBLE);
+			}
 			// Date
 			vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
@@ -157,7 +159,6 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 	public void onResume() {
 		super.onResume();
 		getActivity().getContentResolver().registerContentObserver(Twunches.CONTENT_URI, true, mChangesObserver);
-
 	}
 
 	@Override
