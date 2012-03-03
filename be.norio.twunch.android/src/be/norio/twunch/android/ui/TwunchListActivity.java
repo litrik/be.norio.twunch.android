@@ -148,7 +148,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		getSupportMenuInflater().inflate(R.menu.fragment_twunchlist, menu);
+		getSupportMenuInflater().inflate(R.menu.fragment_twunch_list, menu);
 		refreshMenuItem = menu.findItem(R.id.menuRefresh);
 		return true;
 	}

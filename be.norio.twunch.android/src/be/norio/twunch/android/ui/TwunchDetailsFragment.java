@@ -111,7 +111,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.twunch, menu);
+		inflater.inflate(R.menu.fragment_twunch_details, menu);
 	}
 
 	@Override
