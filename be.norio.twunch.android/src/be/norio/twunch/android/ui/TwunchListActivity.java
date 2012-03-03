@@ -45,6 +45,7 @@ import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.provider.TwunchContract;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
+import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -52,6 +53,7 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
 import com.google.android.apps.iosched.util.Lists;
 
@@ -59,6 +61,8 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 
 	TwunchListFragment[] mFragments = new TwunchListFragment[2];
 	private final static String[] SORTS = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
+	private final static String[] PAGES = new String[] { AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
+			AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE };
 
 	MenuItem refreshMenuItem;
 
@@ -128,6 +132,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		}
 		PrefsUtils.setLastTab(pos);
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mFragments[pos]).commit();
+		GoogleAnalyticsTracker.getInstance().trackPageView(PAGES[pos]);
 	}
 
 	@Override

@@ -51,12 +51,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.FragmentUtils;
 import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.imageloader.ImageLoader;
 
 public class TwunchDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -69,6 +71,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+		GoogleAnalyticsTracker.getInstance().trackPageView(AnalyticsUtils.Pages.TWUNCH_DETAILS);
 	}
 
 	@Override

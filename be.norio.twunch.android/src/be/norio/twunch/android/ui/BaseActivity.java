@@ -26,6 +26,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
@@ -49,7 +50,6 @@ public abstract class BaseActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
-		GoogleAnalyticsTracker.getInstance().trackPageView(getPageName());
 		if (!(this instanceof TwunchListActivity)) {
 			getSupportActionBar().setHomeButtonEnabled(true);
 		}
@@ -70,10 +70,6 @@ public abstract class BaseActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		ViewServer.get(getApplicationContext()).setFocusedWindow(this);
-	}
-
-	protected String getPageName() {
-		return this.getClass().getSimpleName();
 	}
 
 	@Override
@@ -121,10 +117,10 @@ public abstract class BaseActivity extends FragmentActivity {
 		Dialog dialog;
 		switch (id) {
 		case DIALOG_WHATS_NEW:
-			dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, "WhatsNew");
+			dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW);
 			break;
 		case DIALOG_ABOUT:
-			dialog = createHtmlDialog(getString(R.string.about, BuildProperties.VERSION_NAME), R.raw.about, "About");
+			dialog = createHtmlDialog(getString(R.string.about, BuildProperties.VERSION_NAME), R.raw.about, AnalyticsUtils.Pages.ABOUT);
 			break;
 		default:
 			dialog = null;

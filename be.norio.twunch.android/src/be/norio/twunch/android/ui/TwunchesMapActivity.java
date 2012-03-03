@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2011 Norio bvba
+ *	Copyright 2010-2012 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,10 +26,12 @@ import android.provider.BaseColumns;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.TwunchItemizedOverlay;
 import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
@@ -50,10 +52,8 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// FIXME
-		// GoogleAnalyticsTracker.getInstance().start(BuildProperties.GA_TRACKING,
-		// 60, this);
-		// GoogleAnalyticsTracker.getInstance().trackPageView("TwunchesMap");
+
+		GoogleAnalyticsTracker.getInstance().trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
 
 		mapView = new MapView(this, BuildProperties.MAPS_KEY);
 		mapView.setClickable(true);
@@ -83,14 +83,6 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		mapView.getController().animateTo(itemizedoverlay.getCenter());
 
 		getSupportActionBar().setHomeButtonEnabled(true);
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		// FIXME
-		// GoogleAnalyticsTracker.getInstance().dispatch();
-		// GoogleAnalyticsTracker.getInstance().stop();
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2012 Norio bvba
+ *	Copyright 2012 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,22 +15,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android.ui;
+package be.norio.twunch.android.util;
 
-import android.os.Bundle;
-import be.norio.twunch.android.util.FragmentUtils;
+public class AnalyticsUtils {
 
-public class TwunchDetailsActivity extends BaseActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		if (getSupportFragmentManager().findFragmentById(android.R.id.content) == null) {
-			TwunchDetailsFragment fragment = new TwunchDetailsFragment();
-			fragment.setArguments(FragmentUtils.intentToFragmentArguments(getIntent()));
-			getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
-		}
+	public interface Pages {
+		public static final String TWUNCH_LIST_DATE = "TwunchListByDate";
+		public static final String TWUNCH_LIST_DISTANCE = "TwunchListByDistance";
+		public static final String TWUNCH_DETAILS = "TwunchDetails";
+		public static final String TWUNCH_MAP = "TwunchMap";
+		public static final String ABOUT = "About";
+		public static final String WHATS_NEW = "WhatsNew";
 	}
 
 }
