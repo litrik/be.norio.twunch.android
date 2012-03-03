@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -88,8 +90,7 @@ public class TwunchesHandler extends XmlHandler {
 
 		final int depth = parser.getDepth();
 
-		String participants = "";
-		int numParticipants = 0;
+		Set<String> particiants = new HashSet<String>();
 		String tag = null;
 		int type;
 		while (((type = parser.next()) != END_TAG || parser.getDepth() > depth) && type != END_DOCUMENT) {
@@ -121,13 +122,16 @@ public class TwunchesHandler extends XmlHandler {
 				} else if (Tags.LON.equals(tag)) {
 					builder.withValue(Twunches.LONGITUDE, text);
 				} else if (Tags.PARTICIPANT.equals(tag)) {
-					numParticipants++;
-					participants = participants + text + " ";
+					particiants.add(text.trim());
 				}
 			}
 		}
-		builder.withValue(Twunches.NUMPARTICIPANTS, numParticipants);
-		builder.withValue(Twunches.PARTICIPANTS, participants);
+		builder.withValue(Twunches.NUMPARTICIPANTS, particiants.size());
+		String allParticipants = "";
+		for (String p : particiants) {
+			allParticipants = allParticipants + p + " ";
+		}
+		builder.withValue(Twunches.PARTICIPANTS, allParticipants);
 		builder.withValue(Twunches.ADDED, timestamp);
 		builder.withValue(Twunches.SYNCED, timestamp);
 		return builder.build();
