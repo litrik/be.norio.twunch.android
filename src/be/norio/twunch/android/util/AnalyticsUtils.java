@@ -17,6 +17,8 @@
 
 package be.norio.twunch.android.util;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 public class AnalyticsUtils {
 
 	public interface Pages {
@@ -40,4 +42,11 @@ public class AnalyticsUtils {
 		public static final String REGISTER = "Register";
 	}
 
+	public static void trackPageView(String page) {
+		try {
+			GoogleAnalyticsTracker.getInstance().trackPageView(page);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -31,7 +31,6 @@ import be.norio.twunch.android.util.TwunchItemizedOverlay;
 import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
@@ -53,7 +52,7 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		GoogleAnalyticsTracker.getInstance().trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
+		AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
 
 		mapView = new MapView(this, BuildProperties.MAPS_KEY);
 		mapView.setClickable(true);

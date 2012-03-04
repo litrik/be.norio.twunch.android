@@ -129,7 +129,7 @@ public abstract class BaseActivity extends FragmentActivity {
 	}
 
 	private Dialog createHtmlDialog(String title, int contentResourceId, String pageName) {
-		GoogleAnalyticsTracker.getInstance().trackPageView(pageName);
+		AnalyticsUtils.trackPageView(pageName);
 		WebView webView = new WebView(this);
 		webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
 		return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null).create();

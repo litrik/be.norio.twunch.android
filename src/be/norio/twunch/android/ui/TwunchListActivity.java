@@ -53,7 +53,6 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
 import com.google.android.apps.iosched.util.Lists;
 
@@ -132,7 +131,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		}
 		PrefsUtils.setLastTab(pos);
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mFragments[pos]).commit();
-		GoogleAnalyticsTracker.getInstance().trackPageView(PAGES[pos]);
+		AnalyticsUtils.trackPageView(PAGES[pos]);
 	}
 
 	@Override

@@ -71,7 +71,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		GoogleAnalyticsTracker.getInstance().trackPageView(AnalyticsUtils.Pages.TWUNCH_DETAILS);
+		AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_DETAILS);
 	}
 
 	@Override
