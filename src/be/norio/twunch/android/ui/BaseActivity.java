@@ -21,7 +21,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.webkit.WebView;
 import be.norio.twunch.android.BuildProperties;
@@ -31,12 +30,13 @@ import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.google.android.apps.iosched.util.GoogleAnalyticsSessionManager;
 
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends SherlockFragmentActivity {
 
 	private static final String TAG = BaseActivity.class.getSimpleName();
 	private final static boolean LOGV = true;

@@ -27,7 +27,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -41,7 +40,9 @@ import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 
-public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+import com.actionbarsherlock.app.SherlockListFragment;
+
+public class TwunchListFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public final static String EXTRA_SORT = "EXTRA_SORT";
 
@@ -53,6 +54,7 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
 	}
 
+	// FIXME: ContentObserver is not needed when using LoaderManager
 	private final ContentObserver mChangesObserver = new ContentObserver(new Handler()) {
 		@Override
 		public void onChange(boolean selfChange) {

@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -121,7 +122,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	}
 
 	@Override
-	public void onTabSelected(Tab tab) {
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		int pos = tab.getPosition();
 		if (mFragments[pos] == null) {
 			mFragments[pos] = new TwunchListFragment();
@@ -135,12 +136,12 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	}
 
 	@Override
-	public void onTabUnselected(Tab tab) {
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		// Do nothing
 	}
 
 	@Override
-	public void onTabReselected(Tab tab) {
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// Do nothing
 	}
 
