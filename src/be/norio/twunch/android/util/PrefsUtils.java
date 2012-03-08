@@ -27,6 +27,7 @@ public class PrefsUtils {
 
 	private static final String TAG = PrefsUtils.class.getSimpleName();
 	private static final boolean LOGV = true;
+	private static final boolean LOGD = false;
 
 	private static final int VER_LEGACY = 0;
 	private static final int VER_LAUNCH = 1;
@@ -62,11 +63,11 @@ public class PrefsUtils {
 
 	public static void apply(SharedPreferences.Editor editor) {
 		if (APPLY_AVAILABLE) {
-			if (LOGV)
+			if (LOGD)
 				Log.v(TAG, "Using apply");
 			editor.apply();
 		} else {
-			if (LOGV)
+			if (LOGD)
 				Log.v(TAG, "Using commit");
 			editor.commit();
 		}
