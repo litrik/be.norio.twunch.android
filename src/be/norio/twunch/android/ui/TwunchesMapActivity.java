@@ -19,6 +19,7 @@ package be.norio.twunch.android.ui;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import be.norio.twunch.android.util.TwunchItemizedOverlay;
 import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
@@ -38,15 +40,21 @@ import com.google.android.maps.Overlay;
 
 public class TwunchesMapActivity extends SherlockMapActivity {
 
-	Cursor cursor;
+	Cursor mCursor;
 
 	MapView mapView;
 	TwunchItemizedOverlay itemizedoverlay;
 	MyLocationOverlay myLocationOverlay;
 
-	private static String[] columns = new String[] { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
-	private static final int COLUMN_DISPLAY_LATITUDE = 1;
-	private static final int COLUMN_DISPLAY_LONGITUDE = 2;
+	private interface TwunchesQuery {
+		int _TOKEN = 0x1;
+
+		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
+
+		int _ID = 0;
+		int LATITUDE = 1;
+		int LONGITUDE = 2;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -60,18 +68,17 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 
 		setContentView(mapView);
 
-		cursor = getContentResolver().query(Twunches.buildFutureTwunchesUri(), columns, null, null, null);
-		startManagingCursor(cursor);
+		mCursor = managedQuery(Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null, null);
 
 		List<Overlay> mapOverlays = mapView.getOverlays();
 		Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
 		itemizedoverlay = new TwunchItemizedOverlay(drawable, this);
-		while (cursor.moveToNext()) {
-			if (cursor.getFloat(COLUMN_DISPLAY_LATITUDE) != 0 && cursor.getFloat(COLUMN_DISPLAY_LONGITUDE) != 0) {
-				System.out.println(cursor.getFloat(COLUMN_DISPLAY_LATITUDE) + ":" + cursor.getFloat(COLUMN_DISPLAY_LONGITUDE));
-				GeoPoint point = new GeoPoint(new Double(cursor.getFloat(COLUMN_DISPLAY_LATITUDE) * 1E6).intValue(), new Double(
-						cursor.getFloat(COLUMN_DISPLAY_LONGITUDE) * 1E6).intValue());
-				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, cursor.getInt(0));
+		while (mCursor.moveToNext()) {
+			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
+				System.out.println(mCursor.getFloat(TwunchesQuery.LATITUDE) + ":" + mCursor.getFloat(TwunchesQuery.LONGITUDE));
+				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
+						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
+				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getInt(0));
 				itemizedoverlay.addOverlay(overlayitem);
 			}
 		}
@@ -101,4 +108,21 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		myLocationOverlay.enableMyLocation();
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			goHome();
+			return true;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	protected void goHome() {
+		Intent intent = new Intent(this, TwunchListActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+	}
 }
