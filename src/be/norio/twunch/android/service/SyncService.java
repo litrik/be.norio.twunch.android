@@ -104,7 +104,6 @@ public class SyncService extends IntentService {
 		if (receiver != null)
 			receiver.send(STATUS_RUNNING, Bundle.EMPTY);
 
-		final Context context = this;
 		try {
 			final long startRemote = System.currentTimeMillis();
 			mRemoteExecutor.executeGet(URL, new TwunchesHandler());
