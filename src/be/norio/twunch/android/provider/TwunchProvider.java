@@ -103,7 +103,9 @@ public class TwunchProvider extends ContentProvider {
 		default: {
 			// Most cases are handled with simple SelectionBuilder
 			final SelectionBuilder builder = buildExpandedSelection(uri, match);
-			return builder.where(selection, selectionArgs).query(db, projection, sortOrder);
+			Cursor query = builder.where(selection, selectionArgs).query(db, projection, sortOrder);
+			query.setNotificationUri(getContext().getContentResolver(), uri);
+			return query;
 		}
 		}
 	}

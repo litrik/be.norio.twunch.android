@@ -21,11 +21,9 @@ import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -53,17 +51,6 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 		super.onCreate(savedInstanceState);
 
 	}
-
-	// FIXME: ContentObserver is not needed when using LoaderManager
-	private final ContentObserver mChangesObserver = new ContentObserver(new Handler()) {
-		@Override
-		public void onChange(boolean selfChange) {
-			Cursor cursor = ((CursorAdapter) getListAdapter()).getCursor();
-			if (cursor != null) {
-				cursor.requery();
-			}
-		}
-	};
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -155,18 +142,6 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 			new ViewHolder(view);
 			return view;
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		getActivity().getContentResolver().registerContentObserver(Twunches.CONTENT_URI, true, mChangesObserver);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		getActivity().getContentResolver().unregisterContentObserver(mChangesObserver);
 	}
 
 	@Override
