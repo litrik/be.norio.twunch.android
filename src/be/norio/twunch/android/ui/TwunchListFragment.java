@@ -102,7 +102,7 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 	class TwunchAdapter extends CursorAdapter {
 
 		public TwunchAdapter(Context context) {
-			super(context, null);
+			super(context, null, 0);
 		}
 
 		@Override
