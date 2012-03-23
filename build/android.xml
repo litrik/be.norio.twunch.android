@@ -77,6 +77,7 @@
 			<fileset dir="${root}/${project.android.library.reference.1}">
 				<include name="src/**" />
 				<include name="res/**" />
+				<include name="libs/**" />
 			</fileset>
 		</copy>
 		<replaceregexp match="com.actionbarsherlock.R" replace="be.norio.twunch.android.R" flags="g">
