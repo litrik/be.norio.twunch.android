@@ -16,9 +16,10 @@ The Twunch Android application lists upcoming Twunches. It shows the date, time,
 Installation Instructions
 -------------------------
 
-You can simply download the app from the [Android Market](https://market.android.com/details?id=be.norio.twunch.android).
+<a href="http://play.google.com/store/apps/details?id=be.norio.twunch.android"><img alt="Get it on Google Play" src="http://www.android.com/images/brand/get_it_on_play_logo_small.png" /></a>
+       You can download the app from the [Google Play](https://play.google.com/store/apps/details?id=be.norio.twunch.android).
 
-![QR code](https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://market.android.com/details?id=be.norio.twunch.android)
+![QR code](https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://play.google.com/store/apps/details?id=be.norio.twunch.android)
 
 Build Instructions
 ------------------
