@@ -13,7 +13,7 @@
         android:title="@string/menu_share"/>
     <item
         android:id="@+id/menuMap"
-        android:icon="@drawable/ic_action_locate"
+        android:icon="@drawable/ic_action_location_map"
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_map"/>
     <item
