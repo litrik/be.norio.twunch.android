@@ -75,7 +75,6 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		itemizedoverlay = new TwunchItemizedOverlay(drawable, this);
 		while (mCursor.moveToNext()) {
 			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
-				System.out.println(mCursor.getFloat(TwunchesQuery.LATITUDE) + ":" + mCursor.getFloat(TwunchesQuery.LONGITUDE));
 				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
 						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
 				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getInt(0));
