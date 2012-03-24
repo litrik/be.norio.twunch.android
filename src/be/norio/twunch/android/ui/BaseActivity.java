@@ -19,7 +19,10 @@ package be.norio.twunch.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
@@ -132,6 +135,13 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 		AnalyticsUtils.trackPageView(pageName);
 		WebView webView = new WebView(this);
 		webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
-		return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null).create();
+		return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null)
+				.setNeutralButton(R.string.rate, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+					}
+				}).create();
 	}
 }

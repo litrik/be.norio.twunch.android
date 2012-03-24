@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Twunch</string>
+    <string name="rate">Rate This App</string>
     <string name="menu_refresh">Refresh</string>
     <string name="menu_about">About</string>
     <string name="menu_share">Share</string>
