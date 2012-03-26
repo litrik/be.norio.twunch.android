@@ -1,6 +1,6 @@
 bin
 gen
 build/local.*
+build/libs
 work
 dist
-

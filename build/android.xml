@@ -79,6 +79,10 @@
 				<include name="res/**" />
 				<include name="libs/**" />
 			</fileset>
+			<!-- Workaround for bug in ADT 17: Current dir is used instead of basedir -->
+			<fileset dir="${root}/build/libs">
+				<include name="${root}/${project.android.library.reference.1}/libs/**" />
+			</fileset>
 		</copy>
 		<replaceregexp match="com.actionbarsherlock.R" replace="be.norio.twunch.android.R" flags="g">
 			<fileset dir="${work}">
