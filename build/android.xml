@@ -31,7 +31,7 @@
 
 	<!-- Must be done even before -pre-build gets called -->
 	<copy file="${root}/AndroidManifest.xml" tofile="AndroidManifest.xml" />
-	<property file="${root}/project.properties" prefix="project"/>
+	<property file="${root}/project.properties" prefix="project" />
 	<copy file="${root}/project.properties" tofile="project.properties">
 		<filterchain>
 			<linecontains negate="true">
@@ -79,10 +79,6 @@
 				<include name="res/**" />
 				<include name="libs/**" />
 			</fileset>
-			<!-- Workaround for bug in ADT 17: Current dir is used instead of basedir -->
-			<fileset dir="${root}/build/libs">
-				<include name="${root}/${project.android.library.reference.1}/libs/**" />
-			</fileset>
 		</copy>
 		<replaceregexp match="com.actionbarsherlock.R" replace="be.norio.twunch.android.R" flags="g">
 			<fileset dir="${work}">
@@ -94,6 +90,18 @@
 				<include name="src/com/actionbarsherlock/*.java" />
 			</fileset>
 		</replaceregexp>
+
+		<!-- Workaround for bug in ADT 17: Current dir is used instead of basedir -->
+		<delete dir="${root}/build/libs/**" />
+		<copy todir="${root}/build/libs">
+			<fileset dir="${root}/libs">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${root}/${project.android.library.reference.1}/libs/">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<!-- End of workaround -->
 	</target>
 
 	<target name="build-release" depends="release" description="Build release">

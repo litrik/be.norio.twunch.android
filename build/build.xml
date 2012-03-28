@@ -9,12 +9,6 @@
 	<macrodef name="build.android">
 		<attribute name="env" />
 		<sequential>
-			<copy todir="build/libs">
-				<!-- Workaround for bug in ADT 17: Current dir is used instead of basedir -->
-				<fileset dir="libs">
-					<include name="*.jar" />
-				</fileset>
-			</copy>
 			<mkdir dir="work/@{env}" />
 			<ant antfile="${basedir}/build/android.xml" target="build-release" inheritall="false" inheritrefs="false" dir="work/@{env}">
 				<property name="root" value="${basedir}" />
