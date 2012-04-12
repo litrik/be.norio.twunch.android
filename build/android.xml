@@ -22,6 +22,17 @@
 	<property file="local.properties" />
 
 	<fail unless="sdk.dir" message="${sdk.dir} is not set in local.properties" />
+	<!-- BEGIN WORKAROUND ADT 18 -->
+
+	<target name="-dex" depends="-compile, -post-compile, -obfuscate">
+		<dex-helper>
+			<external-libs>
+				<fileset dir="${extensible.libs.classpath}" includes="*.jar" />
+			</external-libs>
+		</dex-helper>
+	</target>
+	<!-- END WORKAROUND ADT 18 -->
+
 	<import file="${sdk.dir}/tools/ant/build.xml" />
 
 	<target name="clean" description="Clean up">
@@ -90,18 +101,6 @@
 				<include name="src/com/actionbarsherlock/*.java" />
 			</fileset>
 		</replaceregexp>
-
-		<!-- Workaround for bug in ADT 17: Current dir is used instead of basedir -->
-		<delete dir="${root}/build/libs/**" />
-		<copy todir="${root}/build/libs">
-			<fileset dir="${root}/libs">
-				<include name="*.jar" />
-			</fileset>
-			<fileset dir="${root}/${project.android.library.reference.1}/libs/">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-		<!-- End of workaround -->
 	</target>
 
 	<target name="build-release" depends="release" description="Build release">
