@@ -206,8 +206,13 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 				break;
 			}
 			case SyncService.STATUS_ERROR: {
-				((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).stop();
-				refreshMenuItem.setActionView(null);
+				if (refreshMenuItem != null) {
+					if (refreshMenuItem.getActionView() != null) {
+						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable())
+								.stop();
+					}
+					refreshMenuItem.setActionView(null);
+				}
 				AlertDialog.Builder builder = new AlertDialog.Builder(TwunchListActivity.this);
 				builder.setMessage(R.string.download_error);
 				builder.setCancelable(false);
