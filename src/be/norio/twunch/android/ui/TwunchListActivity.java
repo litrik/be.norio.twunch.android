@@ -202,7 +202,12 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 				}
 				Toast.makeText(TwunchListActivity.this, getString(R.string.download_done), Toast.LENGTH_SHORT).show();
 				String provider = locationManager.getBestProvider(new Criteria(), true);
-				new UpdateDistancesTask().execute(locationManager.getLastKnownLocation(provider));
+				if (provider != null) {
+					Location location = locationManager.getLastKnownLocation(provider);
+					if (location != null) {
+						new UpdateDistancesTask().execute(location);
+					}
+				}
 				break;
 			}
 			case SyncService.STATUS_ERROR: {
