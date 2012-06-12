@@ -46,7 +46,7 @@
 	<copy file="${root}/project.properties" tofile="project.properties">
 		<filterchain>
 			<linecontains negate="true">
-				<contains value="ActionBarSherlock" />
+				<contains value="android.library.reference" />
 			</linecontains>
 		</filterchain>
 	</copy>
@@ -72,25 +72,39 @@
 		</xslt>
 	</target>
 
-	<target name="-pre-build" depends="generate-build-properties">
-		<!-- Copy all files -->
+	<target name="copy-source">
+		<mkdir dir="${work}/src/be/norio/twunch/android" />
+		<copy todir="${work}/src/be/norio/twunch/android">
+			<fileset dir="${root}/src/be/norio/twunch/android">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copy-other">
 		<copy todir="${work}">
 			<fileset dir="${root}">
 				<include name=".classpath" />
 				<include name="src/**" />
 				<include name="res/**" />
 				<include name="libs/**" />
+				<include name="assets/**" />
+				<exclude name="src/be/norio/twunch/android" />
 			</fileset>
 		</copy>
+	</target>
 
-		<!-- Copy ActionBarSherlock files -->
-		<copy todir="${work}">
-			<fileset dir="${root}/${project.android.library.reference.1}">
-				<include name="src/**" />
-				<include name="res/**" />
-				<include name="libs/**" />
+	<target name="copy-abs">
+		<unzip dest="${work}">
+			<fileset dir="${root}/ext">
+				<include name="JakeWharton-ActionBarSherlock-*.zip" />
 			</fileset>
-		</copy>
+			<patternset>
+				<include name="*/library/src/**" />
+				<include name="*/library/res/**" />
+			</patternset>
+			<cutdirsmapper dirs="2" />
+		</unzip>
 		<replaceregexp match="com.actionbarsherlock.R" replace="be.norio.twunch.android.R" flags="g">
 			<fileset dir="${work}">
 				<include name="src/**" />
@@ -102,6 +116,9 @@
 			</fileset>
 		</replaceregexp>
 	</target>
+
+
+	<target name="-pre-build" depends="generate-build-properties, copy-source, copy-other, copy-abs" />
 
 	<target name="build-release" depends="release" description="Build release">
 		<copy file="${out.final.file}" tofile="${dist}/be.norio.twunch.android-${twunch.version.name}-${env}.apk" />
