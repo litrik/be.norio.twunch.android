@@ -45,4 +45,40 @@
 		</ant>
 	</target>
 
+	<macrodef name="generate-ext-project">
+		<attribute name="project" />
+		<attribute name="zip" />
+		<sequential>
+			<echo message="Generating project @{project} from @{zip}" />
+			<mkdir dir="../@{project}"/>
+			<unzip dest="../@{project}">
+				<fileset dir="ext">
+					<include name="@{zip}" />
+				</fileset>
+				<patternset>
+					<include name="*/library/src/**" />
+					<include name="*/library/res/**" />
+					<include name="*/library/libs/**" />
+					<include name="*/library/AndroidManifest.xml" />
+					<include name="*/library/project.properties" />
+				</patternset>
+				<cutdirsmapper dirs="2" />
+			</unzip>
+			<copy todir="../@{project}/libs" file="libs/android-support-v4.jar" />
+			<copy todir="../@{project}">
+				<fileset dir="ext">
+					<include name=".project" />
+					<include name=".classpath" />
+				</fileset>
+			    <filterset>
+			      <filter token="PROJECT" value="@{project}"/>
+			    </filterset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<target name="ext-projects" description="Extract all external dependencies for use in Eclipse">
+		<generate-ext-project project="ActionBarSherlock" zip="JakeWharton-ActionBarSherlock-*.zip" />
+	</target>
+
 </project>
