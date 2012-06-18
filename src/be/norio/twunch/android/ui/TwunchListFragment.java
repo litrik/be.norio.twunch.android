@@ -47,19 +47,11 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 	private CursorAdapter mAdapter;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-	}
-
-	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
 		mAdapter = new TwunchAdapter(getActivity());
 		setListAdapter(mAdapter);
-
-		setListShown(false);
 
 		getLoaderManager().initLoader(TwunchesQuery._TOKEN, getArguments(), this);
 	}
@@ -160,11 +152,6 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		mAdapter.swapCursor(cursor);
-		if (isResumed()) {
-			setListShown(true);
-		} else {
-			setListShownNoAnimation(true);
-		}
 	}
 
 	@Override
