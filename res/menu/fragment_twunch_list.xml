@@ -6,10 +6,5 @@
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="ifRoom"
         android:title="@string/menu_refresh"/>
-    <item
-        android:id="@+id/menuMap"
-        android:icon="@drawable/ic_action_location_map"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_map"/>
 
 </menu>

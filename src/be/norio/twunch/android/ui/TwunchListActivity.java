@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.widget.ImageView;
@@ -59,10 +60,10 @@ import com.google.android.apps.iosched.util.Lists;
 
 public class TwunchListActivity extends BaseActivity implements TabListener {
 
-	TwunchListFragment[] mFragments = new TwunchListFragment[2];
+	Fragment[] mFragments = new Fragment[3];
 	private final static String[] SORTS = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
 	private final static String[] PAGES = new String[] { AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
-			AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE };
+			AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE, AnalyticsUtils.Pages.TWUNCH_MAP };
 
 	MenuItem refreshMenuItem;
 
@@ -80,6 +81,7 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		final ActionBar bar = getSupportActionBar();
 		bar.addTab(bar.newTab().setText("By Date").setTabListener(this), false);
 		bar.addTab(bar.newTab().setText("By Distance").setTabListener(this), false);
+		bar.addTab(bar.newTab().setText("Map").setTabListener(this), false);
 
 		bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
 
@@ -125,10 +127,14 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		int pos = tab.getPosition();
 		if (mFragments[pos] == null) {
-			mFragments[pos] = new TwunchListFragment();
-			Bundle args = new Bundle();
-			args.putString(TwunchListFragment.EXTRA_SORT, SORTS[pos]);
-			mFragments[pos].setArguments(args);
+			if (pos == 0 || pos == 1) {
+				mFragments[pos] = new TwunchListFragment();
+				Bundle args = new Bundle();
+				args.putString(TwunchListFragment.EXTRA_SORT, SORTS[pos]);
+				mFragments[pos].setArguments(args);
+			} else {
+				mFragments[pos] = new TwunchesMapFragment();
+			}
 		}
 		PrefsUtils.setLastTab(pos);
 		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mFragments[pos]).commit();
@@ -158,9 +164,6 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		switch (item.getItemId()) {
 		case R.id.menuRefresh:
 			refreshTwunches(true);
-			return true;
-		case R.id.menuMap:
-			startActivity(new Intent(this, TwunchesMapActivity.class));
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

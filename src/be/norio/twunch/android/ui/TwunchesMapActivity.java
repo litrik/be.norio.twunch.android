@@ -19,20 +19,19 @@ package be.norio.twunch.android.ui;
 
 import java.util.List;
 
-import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.BaseColumns;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.TwunchItemizedOverlay;
 import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
@@ -42,9 +41,11 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 
 	Cursor mCursor;
 
-	MapView mapView;
-	TwunchItemizedOverlay itemizedoverlay;
-	MyLocationOverlay myLocationOverlay;
+	MapView mMapView;
+	TwunchItemizedOverlay mItemizedOverlay;
+	MyLocationOverlay mMyLocationOverlay;
+
+	private Drawable mDrawable;
 
 	private interface TwunchesQuery {
 		int _TOKEN = 0x1;
@@ -60,34 +61,45 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
+		mMapView = new MapView(this, BuildProperties.MAPS_KEY);
+		mMapView.setClickable(true);
+		mMapView.setBuiltInZoomControls(true);
 
-		mapView = new MapView(this, BuildProperties.MAPS_KEY);
-		mapView.setClickable(true);
-		mapView.setBuiltInZoomControls(true);
+		setContentView(mMapView);
 
-		setContentView(mapView);
+		mDrawable = getResources().getDrawable(R.drawable.marker);
+		mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
 
-		mCursor = managedQuery(Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null, null);
+		getContentResolver().registerContentObserver(Twunches.buildFutureTwunchesUri(), true, new ContentObserver(new Handler()) {
+			public void onChange(boolean selfChange) {
+				mCursor.requery();
+				showOverlays(false);
+			};
+		});
 
-		List<Overlay> mapOverlays = mapView.getOverlays();
-		Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
-		itemizedoverlay = new TwunchItemizedOverlay(drawable, this);
+		mCursor = getContentResolver().query(Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null, null);
+		startManagingCursor(mCursor);
+		showOverlays(true);
+	}
+
+	protected void showOverlays(boolean first) {
+		List<Overlay> mapOverlays = mMapView.getOverlays();
+		mapOverlays.clear();
+		mItemizedOverlay = new TwunchItemizedOverlay(mDrawable, this);
 		while (mCursor.moveToNext()) {
 			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
 				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
 						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
 				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getInt(0));
-				itemizedoverlay.addOverlay(overlayitem);
+				mItemizedOverlay.addOverlay(overlayitem);
 			}
 		}
-		mapOverlays.add(itemizedoverlay);
-		myLocationOverlay = new MyLocationOverlay(this, mapView);
-		mapOverlays.add(myLocationOverlay);
-		mapView.getController().zoomToSpan(itemizedoverlay.getLatSpanE6(), itemizedoverlay.getLonSpanE6());
-		mapView.getController().animateTo(itemizedoverlay.getCenter());
-
-		getSupportActionBar().setHomeButtonEnabled(true);
+		mapOverlays.add(mItemizedOverlay);
+		mapOverlays.add(mMyLocationOverlay);
+		if (first) {
+			mMapView.getController().zoomToSpan(mItemizedOverlay.getLatSpanE6(), mItemizedOverlay.getLonSpanE6());
+			mMapView.getController().animateTo(mItemizedOverlay.getCenter());
+		}
 	}
 
 	@Override
@@ -98,30 +110,13 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		myLocationOverlay.disableMyLocation();
+		mMyLocationOverlay.disableMyLocation();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		myLocationOverlay.enableMyLocation();
+		mMyLocationOverlay.enableMyLocation();
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			goHome();
-			return true;
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	protected void goHome() {
-		Intent intent = new Intent(this, TwunchListActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(intent);
-	}
 }
