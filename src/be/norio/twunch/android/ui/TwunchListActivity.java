@@ -79,9 +79,9 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		final ActionBar bar = getSupportActionBar();
-		bar.addTab(bar.newTab().setText("By Date").setTabListener(this), false);
-		bar.addTab(bar.newTab().setText("By Distance").setTabListener(this), false);
-		bar.addTab(bar.newTab().setText("Map").setTabListener(this), false);
+		bar.addTab(bar.newTab().setText(R.string.tab_date).setTabListener(this), false);
+		bar.addTab(bar.newTab().setText(R.string.tab_distance).setTabListener(this), false);
+		bar.addTab(bar.newTab().setText(R.string.menu_map).setTabListener(this), false);
 
 		bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
 
