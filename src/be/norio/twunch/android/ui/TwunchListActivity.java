@@ -38,7 +38,11 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -58,9 +62,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
 import com.google.android.apps.iosched.util.Lists;
 
-public class TwunchListActivity extends BaseActivity implements TabListener {
+public class TwunchListActivity extends BaseActivity implements TabListener, OnPageChangeListener {
 
-	Fragment[] mFragments = new Fragment[3];
 	private final static String[] SORTS = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
 	private final static String[] PAGES = new String[] { AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
 			AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE, AnalyticsUtils.Pages.TWUNCH_MAP };
@@ -72,9 +75,19 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	LocationManager locationManager;
 	LocationListener locationListener;
 
+	private ViewPager mViewPager;
+	private MyAdapter mMyAdapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_twunch_list);
+		mViewPager = (ViewPager) findViewById(R.id.home_pager);
+		mMyAdapter = new MyAdapter(getSupportFragmentManager());
+		mViewPager.setAdapter(mMyAdapter);
+		mViewPager.setOffscreenPageLimit(2);
+		mViewPager.setOnPageChangeListener(this);
 
 		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -114,6 +127,31 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 
 	}
 
+	public static class MyAdapter extends FragmentPagerAdapter {
+		public MyAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public int getCount() {
+			return 3;
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+
+			if (position == 0 || position == 1) {
+				TwunchListFragment fragment = new TwunchListFragment();
+				Bundle args = new Bundle();
+				args.putString(TwunchListFragment.EXTRA_SORT, SORTS[position]);
+				fragment.setArguments(args);
+				return fragment;
+			} else {
+				return new TwunchesMapFragment();
+			}
+		}
+	}
+
 	private interface TwunchesQuery {
 
 		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
@@ -125,20 +163,12 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		int pos = tab.getPosition();
-		if (mFragments[pos] == null) {
-			if (pos == 0 || pos == 1) {
-				mFragments[pos] = new TwunchListFragment();
-				Bundle args = new Bundle();
-				args.putString(TwunchListFragment.EXTRA_SORT, SORTS[pos]);
-				mFragments[pos].setArguments(args);
-			} else {
-				mFragments[pos] = new TwunchesMapFragment();
-			}
+		int position = tab.getPosition();
+		PrefsUtils.setLastTab(position);
+		if (mViewPager.getCurrentItem() != position) {
+			mViewPager.setCurrentItem(position, true);
+			AnalyticsUtils.trackPageView(PAGES[position]);
 		}
-		PrefsUtils.setLastTab(pos);
-		getSupportFragmentManager().beginTransaction().replace(android.R.id.content, mFragments[pos]).commit();
-		AnalyticsUtils.trackPageView(PAGES[pos]);
 	}
 
 	@Override
@@ -149,6 +179,21 @@ public class TwunchListActivity extends BaseActivity implements TabListener {
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// Do nothing
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// Do nothing
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// Do nothing
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		getSupportActionBar().setSelectedNavigationItem(position);
 	}
 
 	@Override
