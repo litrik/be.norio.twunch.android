@@ -59,7 +59,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-import com.google.android.imageloader.ImageLoader;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class TwunchDetailsFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -321,8 +321,6 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 
 	private class ParticipantAdapter extends BaseAdapter {
 
-		ImageLoader mImageLoader = new ImageLoader();
-
 		@Override
 		public int getCount() {
 			return mParticipants.length;
@@ -373,8 +371,8 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 					}
 				}
 			});
-			mImageLoader.bind(vh.avatar, "http://api.twitter.com/1/users/profile_image?screen_name=" + mParticipants[position]
-					+ "&size=bigger", null);
+			UrlImageViewHelper.setUrlDrawable(vh.avatar, "http://api.twitter.com/1/users/profile_image?screen_name="
+					+ mParticipants[position] + "&size=bigger");
 			return view;
 		}
 	}
