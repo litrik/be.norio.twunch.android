@@ -17,6 +17,8 @@
 
 package be.norio.twunch.android.util;
 
+import android.text.TextUtils;
+
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 public class AnalyticsUtils {
@@ -43,6 +45,9 @@ public class AnalyticsUtils {
 	}
 
 	public static void trackPageView(String page) {
+		if (TextUtils.isEmpty(page)) {
+			return;
+		}
 		try {
 			GoogleAnalyticsTracker.getInstance().trackPageView(page);
 		} catch (Exception e) {
