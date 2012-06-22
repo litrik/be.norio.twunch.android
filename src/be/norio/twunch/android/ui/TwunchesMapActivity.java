@@ -47,6 +47,8 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 
 	private Drawable mDrawable;
 
+	private ContentObserver mObserver;
+
 	private interface TwunchesQuery {
 		int _TOKEN = 0x1;
 
@@ -70,13 +72,12 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 		mDrawable = getResources().getDrawable(R.drawable.marker);
 		mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
 
-		getContentResolver().registerContentObserver(Twunches.buildFutureTwunchesUri(), true, new ContentObserver(new Handler()) {
+		mObserver = new ContentObserver(new Handler()) {
 			public void onChange(boolean selfChange) {
 				mCursor.requery();
 				showOverlays(false);
 			};
-		});
-
+		};
 		mCursor = getContentResolver().query(Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null, null);
 		startManagingCursor(mCursor);
 		showOverlays(true);
@@ -111,12 +112,14 @@ public class TwunchesMapActivity extends SherlockMapActivity {
 	protected void onPause() {
 		super.onPause();
 		mMyLocationOverlay.disableMyLocation();
+		getContentResolver().unregisterContentObserver(mObserver);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		mMyLocationOverlay.enableMyLocation();
+		getContentResolver().registerContentObserver(Twunches.buildFutureTwunchesUri(), true, mObserver);
 	}
 
 }
