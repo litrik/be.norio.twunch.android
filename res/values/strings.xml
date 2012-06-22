@@ -7,8 +7,8 @@
     <string name="menu_about">About</string>
     <string name="menu_share">Share</string>
     <string name="menu_directions">Directions</string>
-    <string name="tab_date">By Date</string>
-    <string name="tab_distance">By Distance</string>
+    <string name="tab_date">Date</string>
+    <string name="tab_distance">Distance</string>
     <string name="menu_map">Map</string>
     <string name="menu_register">Register</string>
     <string name="about">About Twunch %1$s</string>
