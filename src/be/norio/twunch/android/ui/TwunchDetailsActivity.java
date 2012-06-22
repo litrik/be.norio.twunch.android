@@ -18,6 +18,7 @@
 package be.norio.twunch.android.ui;
 
 import android.os.Bundle;
+import be.norio.twunch.android.ui.fragment.TwunchDetailsFragment;
 import be.norio.twunch.android.util.FragmentUtils;
 
 public class TwunchDetailsActivity extends BaseActivity {

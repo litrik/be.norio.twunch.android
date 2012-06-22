@@ -51,6 +51,8 @@ import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.provider.TwunchContract;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
+import be.norio.twunch.android.ui.fragment.TwunchListFragment;
+import be.norio.twunch.android.ui.fragment.TwunchesMapFragment;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 

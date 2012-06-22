@@ -17,8 +17,10 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android.ui;
+package be.norio.twunch.android.ui.fragment;
 
+import be.norio.twunch.android.ui.TwunchesMapActivity;
+import be.norio.twunch.android.ui.fragment.map.ActivityHostFragment;
 import android.app.Activity;
 
 public class TwunchesMapFragment extends ActivityHostFragment {

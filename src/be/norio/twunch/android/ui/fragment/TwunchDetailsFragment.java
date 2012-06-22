@@ -15,7 +15,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android.ui;
+package be.norio.twunch.android.ui.fragment;
 
 import java.util.Arrays;
 import java.util.Date;

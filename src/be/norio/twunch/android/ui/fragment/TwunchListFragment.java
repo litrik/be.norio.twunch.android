@@ -15,7 +15,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package be.norio.twunch.android.ui;
+package be.norio.twunch.android.ui.fragment;
 
 import java.util.Date;
 
@@ -37,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.ui.TwunchDetailsActivity;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
