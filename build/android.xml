@@ -22,16 +22,6 @@
 	<property file="local.properties" />
 
 	<fail unless="sdk.dir" message="${sdk.dir} is not set in local.properties" />
-	<!-- BEGIN WORKAROUND ADT 18 -->
-
-	<target name="-dex" depends="-compile, -post-compile, -obfuscate">
-		<dex-helper>
-			<external-libs>
-				<fileset dir="${extensible.libs.classpath}" includes="*.jar" />
-			</external-libs>
-		</dex-helper>
-	</target>
-	<!-- END WORKAROUND ADT 18 -->
 
 	<import file="${sdk.dir}/tools/ant/build.xml" />
 
@@ -118,7 +108,14 @@
 	</target>
 
 
-	<target name="-pre-build" depends="generate-build-properties, copy-source, copy-other, copy-abs" />
+	<target name="-pre-build" depends="generate-build-properties, copy-source, copy-other, copy-abs">
+		<!-- BEGIN WORKAROUND ADT 20 -->
+		<path id="project.all.jars.path">
+			<fileset dir="libs" includes="*.jar" />
+			<fileset dir="${sdk.dir}/tools/support" includes="annotations.jar" />
+      </path>
+		<!-- END WORKAROUND ADT 20 -->
+	</target>
 
 	<target name="build-release" depends="release" description="Build release">
 		<copy file="${out.final.file}" tofile="${dist}/be.norio.twunch.android-${twunch.version.name}-${env}.apk" />
