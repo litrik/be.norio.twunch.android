@@ -75,6 +75,7 @@
 		<copy todir="${work}">
 			<fileset dir="${root}">
 				<include name=".classpath" />
+				<include name="proguard-project.txt" />
 				<include name="src/**" />
 				<include name="res/**" />
 				<include name="libs/**" />
