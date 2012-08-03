@@ -75,15 +75,15 @@ public class TwunchesMapActivity extends MapActivity {
 		mObserver = new ContentObserver(new Handler()) {
 			public void onChange(boolean selfChange) {
 				mCursor.requery();
-				showOverlays(false);
+				showOverlays();
 			};
 		};
 		mCursor = getContentResolver().query(Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null, null);
 		startManagingCursor(mCursor);
-		showOverlays(true);
+		showOverlays();
 	}
 
-	protected void showOverlays(boolean first) {
+	protected void showOverlays() {
 		List<Overlay> mapOverlays = mMapView.getOverlays();
 		mapOverlays.clear();
 		mItemizedOverlay = new TwunchItemizedOverlay(mDrawable, this);
@@ -97,10 +97,8 @@ public class TwunchesMapActivity extends MapActivity {
 		}
 		mapOverlays.add(mItemizedOverlay);
 		mapOverlays.add(mMyLocationOverlay);
-		if (first) {
-			mMapView.getController().zoomToSpan(mItemizedOverlay.getLatSpanE6(), mItemizedOverlay.getLonSpanE6());
-			mMapView.getController().animateTo(mItemizedOverlay.getCenter());
-		}
+		mMapView.getController().zoomToSpan(mItemizedOverlay.getLatSpanE6(), mItemizedOverlay.getLonSpanE6());
+		mMapView.getController().animateTo(mItemizedOverlay.getCenter());
 	}
 
 	@Override
