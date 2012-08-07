@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Twunch</string>
-    <string name="rate">Beoordeel deze app</string>
+    <string name="rate">Beoordeel Deze App</string>
     <string name="menu_refresh">Vernieuwen</string>
     <string name="menu_about">Over</string>
     <string name="menu_share">Delen</string>
