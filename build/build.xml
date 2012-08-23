@@ -79,6 +79,7 @@
 
 	<target name="ext-projects" description="Extract all external dependencies for use in Eclipse">
 		<generate-ext-project project="ActionBarSherlock" zip="JakeWharton-ActionBarSherlock-*.zip" />
+		<generate-ext-project project="android-mapviewballoons" zip="jgilfelt-android-mapviewballoons-stable-*.zip" />
 	</target>
 
 </project>
