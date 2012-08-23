@@ -22,19 +22,19 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.ui.TwunchDetailsActivity;
 
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapView;
+import com.readystatesoftware.mapviewballoons.BalloonItemizedOverlay;
 
-public class TwunchItemizedOverlay extends ItemizedOverlay<TwunchOverlayItem> {
+public class TwunchItemizedOverlay extends BalloonItemizedOverlay<TwunchOverlayItem> {
 
 	private final ArrayList<TwunchOverlayItem> items = new ArrayList<TwunchOverlayItem>();
 	private final Context context;
 
-	public TwunchItemizedOverlay(Drawable defaultMarker, Context context) {
-		super(boundCenter(defaultMarker));
+	public TwunchItemizedOverlay(MapView mapView, Drawable defaultMarker, Context context) {
+		super(boundCenter(defaultMarker), mapView);
 		this.context = context;
 	}
 
@@ -54,10 +54,9 @@ public class TwunchItemizedOverlay extends ItemizedOverlay<TwunchOverlayItem> {
 	}
 
 	@Override
-	protected boolean onTap(int index) {
-		TwunchOverlayItem item = items.get(index);
+	protected boolean onBalloonTap(int index, TwunchOverlayItem item) {
 		Intent intent = new Intent(context, TwunchDetailsActivity.class);
-		intent.setData(Twunches.buildTwunchUri(Integer.toString(item.getTwunchId())));
+		intent.setData(item.getUri());
 		context.startActivity(intent);
 		return true;
 	}

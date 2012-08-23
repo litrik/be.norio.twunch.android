@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2011 Norio bvba
+ *	Copyright 2010-2012 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -17,20 +17,22 @@
 
 package be.norio.twunch.android.util;
 
+import android.net.Uri;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 
 public class TwunchOverlayItem extends OverlayItem {
 
-	private final int twunchId;
+	private final Uri mUri;
 
-	public TwunchOverlayItem(GeoPoint point, int id) {
-		super(point, "", "");
-		twunchId = id;
+	public TwunchOverlayItem(GeoPoint point, String title, String subtitle, Uri uri) {
+		super(point, title, subtitle);
+		mUri = uri;
 	}
 
-	public int getTwunchId() {
-		return twunchId;
+	public Uri getUri() {
+		return mUri;
 	}
 
 }

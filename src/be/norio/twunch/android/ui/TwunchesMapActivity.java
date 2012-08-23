@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.view.MotionEvent;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
@@ -33,15 +34,16 @@ import be.norio.twunch.android.util.TwunchOverlayItem;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
+import com.readystatesoftware.maps.OnSingleTapListener;
+import com.readystatesoftware.maps.TapControlledMapView;
 
 public class TwunchesMapActivity extends MapActivity {
 
 	Cursor mCursor;
 
-	MapView mMapView;
+	TapControlledMapView mMapView;
 	TwunchItemizedOverlay mItemizedOverlay;
 	MyLocationOverlay mMyLocationOverlay;
 
@@ -52,21 +54,29 @@ public class TwunchesMapActivity extends MapActivity {
 	private interface TwunchesQuery {
 		int _TOKEN = 0x1;
 
-		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE };
+		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.TITLE, Twunches.ADDRESS };
 
 		int _ID = 0;
 		int LATITUDE = 1;
 		int LONGITUDE = 2;
+		int TITLE = 3;
+		int ADDRESS = 4;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mMapView = new MapView(this, BuildProperties.MAPS_KEY);
+		mMapView = new TapControlledMapView(this, BuildProperties.MAPS_KEY);
 		mMapView.setClickable(true);
 		mMapView.setBuiltInZoomControls(true);
-
+		mMapView.setOnSingleTapListener(new OnSingleTapListener() {
+			@Override
+			public boolean onSingleTap(MotionEvent e) {
+				mItemizedOverlay.hideAllBalloons();
+				return true;
+			}
+		});
 		setContentView(mMapView);
 
 		mDrawable = getResources().getDrawable(R.drawable.marker);
@@ -86,12 +96,16 @@ public class TwunchesMapActivity extends MapActivity {
 	protected void showOverlays() {
 		List<Overlay> mapOverlays = mMapView.getOverlays();
 		mapOverlays.clear();
-		mItemizedOverlay = new TwunchItemizedOverlay(mDrawable, this);
+		mItemizedOverlay = new TwunchItemizedOverlay(mMapView, mDrawable, this);
+		mItemizedOverlay.setShowClose(false);
+		mItemizedOverlay.setShowDisclosure(true);
 		while (mCursor.moveToNext()) {
 			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
 				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
 						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
-				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getInt(0));
+				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getString(TwunchesQuery.TITLE),
+						mCursor.getString(TwunchesQuery.ADDRESS), Twunches.buildTwunchUri(Integer.toString(mCursor
+								.getInt(TwunchesQuery._ID))));
 				mItemizedOverlay.addOverlay(overlayitem);
 			}
 		}
