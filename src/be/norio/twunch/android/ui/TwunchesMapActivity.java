@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.BaseColumns;
+import android.text.format.DateUtils;
 import android.view.MotionEvent;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
@@ -54,13 +55,13 @@ public class TwunchesMapActivity extends MapActivity {
 	private interface TwunchesQuery {
 		int _TOKEN = 0x1;
 
-		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.TITLE, Twunches.ADDRESS };
+		String[] PROJECTION = { BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.TITLE, Twunches.DATE };
 
 		int _ID = 0;
 		int LATITUDE = 1;
 		int LONGITUDE = 2;
 		int TITLE = 3;
-		int ADDRESS = 4;
+		int DATE = 4;
 	}
 
 	@Override
@@ -103,9 +104,12 @@ public class TwunchesMapActivity extends MapActivity {
 			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
 				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
 						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
-				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getString(TwunchesQuery.TITLE),
-						mCursor.getString(TwunchesQuery.ADDRESS), Twunches.buildTwunchUri(Integer.toString(mCursor
-								.getInt(TwunchesQuery._ID))));
+				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getString(TwunchesQuery.TITLE), String.format(
+						getString(R.string.date),
+						DateUtils.formatDateTime(this, mCursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+								| DateUtils.FORMAT_SHOW_DATE),
+						DateUtils.formatDateTime(this, mCursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_TIME)),
+						Twunches.buildTwunchUri(Integer.toString(mCursor.getInt(TwunchesQuery._ID))));
 				mItemizedOverlay.addOverlay(overlayitem);
 			}
 		}
