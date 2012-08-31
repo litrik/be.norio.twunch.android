@@ -20,7 +20,6 @@ package be.norio.twunch.android.provider;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
@@ -36,6 +35,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.provider.TwunchDatabase.Tables;
+import be.norio.twunch.android.util.Util;
 
 import com.google.android.apps.iosched.util.SelectionBuilder;
 
@@ -192,8 +192,7 @@ public class TwunchProvider extends ContentProvider {
 			return builder.table(Tables.TWUNCHES).where(Twunches._ID + "=?", twunchId);
 		}
 		case TWUNCHES_FUTURE: {
-			long now = new Date().getTime();
-			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " > ?", Long.toString(now));
+			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " >= ?", Long.toString(Util.getStartOfToday()));
 		}
 		default: {
 			throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -217,8 +216,7 @@ public class TwunchProvider extends ContentProvider {
 			return builder.table(Tables.TWUNCHES).where(Twunches._ID + "=?", twunchId);
 		}
 		case TWUNCHES_FUTURE: {
-			long now = new Date().getTime();
-			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " > ?", Long.toString(now));
+			return builder.table(Tables.TWUNCHES).where(Twunches.DATE + " >= ?", Long.toString(Util.getStartOfToday()));
 		}
 		default: {
 			throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.os.Build;
+import android.text.format.Time;
 
 public class Util {
 
@@ -49,5 +50,14 @@ public class Util {
 			e.printStackTrace();
 		}
 		return stream.toString();
+	}
+
+	public static long getStartOfToday() {
+		Time t = new Time(Time.getCurrentTimezone());
+		t.setToNow();
+		t.hour = 0;
+		t.minute = 0;
+		t.second = 0;
+		return t.toMillis(false);
 	}
 }

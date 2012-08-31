@@ -17,8 +17,6 @@
 
 package be.norio.twunch.android.ui.fragment;
 
-import java.util.Date;
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,6 +36,7 @@ import android.widget.TextView;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.ui.TwunchDetailsActivity;
+import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
@@ -123,8 +122,7 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_TIME)));
 			vh.date.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Days
-			final long msInDay = 86400000;
-			int days = (int) (cursor.getLong(TwunchesQuery.DATE) / msInDay - new Date().getTime() / msInDay);
+			int days = (int) ((cursor.getLong(TwunchesQuery.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
 			vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
 					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
 		}
