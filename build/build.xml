@@ -41,6 +41,7 @@
 	<target name="eclipse" description="Build eclipse env">
 		<ant antfile="${basedir}/build/android.xml" target="generate-build-properties" inheritall="false" inheritrefs="false" dir="${basedir}">
 			<property name="root" value="${basedir}" />
+			<property file="${basedir}/build/local.properties" />
 			<property file="${basedir}/build/properties/dev.properties" />
 		</ant>
 	</target>
