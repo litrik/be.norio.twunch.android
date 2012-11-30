@@ -17,6 +17,7 @@
 
 package be.norio.twunch.android.util;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -61,6 +62,7 @@ public class PrefsUtils {
 	private PrefsUtils() {
 	}
 
+	@SuppressLint("NewApi")
 	public static void apply(SharedPreferences.Editor editor) {
 		if (APPLY_AVAILABLE) {
 			if (LOGD)

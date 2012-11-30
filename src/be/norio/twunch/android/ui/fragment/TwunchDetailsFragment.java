@@ -20,11 +20,13 @@ package be.norio.twunch.android.ui.fragment;
 import java.util.Arrays;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
@@ -185,6 +187,7 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		if (Util.isIceCreamSandwich()) {
 			daysView.setOnClickListener(new OnClickListener() {
 
+				@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 				@Override
 				public void onClick(View v) {
 					try {
@@ -218,9 +221,11 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		}
 
 		// Number of participants
-		((TextView) getView().findViewById(R.id.twunchNumberParticipants)).setText(String.format(
-				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)),
-				cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)));
+		((TextView) getView().findViewById(R.id.twunchNumberParticipants))
+				.setText(String.format(
+						getResources().getQuantityString(R.plurals.numberOfParticipants,
+								cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)),
+						cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)));
 
 		// Participants
 		ListView participantsView = ((ListView) getView().findViewById(R.id.twunchParticipants));
