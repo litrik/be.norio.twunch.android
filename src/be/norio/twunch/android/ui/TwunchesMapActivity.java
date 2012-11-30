@@ -102,8 +102,8 @@ public class TwunchesMapActivity extends MapActivity {
 		mItemizedOverlay.setShowDisclosure(true);
 		while (mCursor.moveToNext()) {
 			if (mCursor.getFloat(TwunchesQuery.LATITUDE) != 0 && mCursor.getFloat(TwunchesQuery.LONGITUDE) != 0) {
-				GeoPoint point = new GeoPoint(new Double(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), new Double(
-						mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
+				GeoPoint point = new GeoPoint(Double.valueOf(mCursor.getFloat(TwunchesQuery.LATITUDE) * 1E6).intValue(), Double
+						.valueOf(mCursor.getFloat(TwunchesQuery.LONGITUDE) * 1E6).intValue());
 				TwunchOverlayItem overlayitem = new TwunchOverlayItem(point, mCursor.getString(TwunchesQuery.TITLE), String.format(
 						getString(R.string.date),
 						DateUtils.formatDateTime(this, mCursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
