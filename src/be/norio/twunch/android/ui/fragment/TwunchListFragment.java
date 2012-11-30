@@ -18,7 +18,6 @@
 package be.norio.twunch.android.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -34,8 +33,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.otto.BusProvider;
+import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.ui.TwunchDetailsActivity;
 import be.norio.twunch.android.util.Util;
 
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -137,9 +137,9 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Intent intent = new Intent(getActivity(), TwunchDetailsActivity.class);
-		intent.setData(Twunches.buildTwunchUri(Integer.toString(((Cursor) mAdapter.getItem(position)).getInt(TwunchesQuery._ID))));
-		startActivity(intent);
+		BusProvider.getInstance().post(
+				new OnTwunchClickedEvent(Twunches.buildTwunchUri(Integer.toString(((Cursor) mAdapter.getItem(position))
+						.getInt(TwunchesQuery._ID)))));
 	}
 
 	@Override

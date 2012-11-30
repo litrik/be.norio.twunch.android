@@ -20,9 +20,9 @@ package be.norio.twunch.android.util;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import be.norio.twunch.android.ui.TwunchDetailsActivity;
+import be.norio.twunch.android.otto.BusProvider;
+import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
@@ -55,9 +55,7 @@ public class TwunchItemizedOverlay extends BalloonItemizedOverlay<TwunchOverlayI
 
 	@Override
 	protected boolean onBalloonTap(int index, TwunchOverlayItem item) {
-		Intent intent = new Intent(context, TwunchDetailsActivity.class);
-		intent.setData(item.getUri());
-		context.startActivity(intent);
+		BusProvider.getInstance().post(new OnTwunchClickedEvent(item.getUri()));
 		return true;
 	}
 

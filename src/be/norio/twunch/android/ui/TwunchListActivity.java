@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
+import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 import be.norio.twunch.android.provider.TwunchContract;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.service.SyncService;
@@ -63,6 +64,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.iosched.util.DetachableResultReceiver;
 import com.google.android.apps.iosched.util.Lists;
+import com.squareup.otto.Subscribe;
 
 public class TwunchListActivity extends BaseActivity implements TabListener, OnPageChangeListener {
 
@@ -245,8 +247,8 @@ public class TwunchListActivity extends BaseActivity implements TabListener, OnP
 			case SyncService.STATUS_FINISHED: {
 				if (refreshMenuItem != null) {
 					if (refreshMenuItem.getActionView() != null) {
-						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable())
-								.stop();
+						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
+								.getDrawable()).stop();
 					}
 					refreshMenuItem.setActionView(null);
 				}
@@ -263,8 +265,8 @@ public class TwunchListActivity extends BaseActivity implements TabListener, OnP
 			case SyncService.STATUS_ERROR: {
 				if (refreshMenuItem != null) {
 					if (refreshMenuItem.getActionView() != null) {
-						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable())
-								.stop();
+						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
+								.getDrawable()).stop();
 					}
 					refreshMenuItem.setActionView(null);
 				}
@@ -335,6 +337,13 @@ public class TwunchListActivity extends BaseActivity implements TabListener, OnP
 	public void onPause() {
 		super.onPause();
 		locationManager.removeUpdates(locationListener);
+	}
+
+	@Subscribe
+	public void onTwunchClicked(OnTwunchClickedEvent event) {
+		Intent intent = new Intent(this, TwunchDetailsActivity.class);
+		intent.setData(event.getUri());
+		startActivity(intent);
 	}
 
 }

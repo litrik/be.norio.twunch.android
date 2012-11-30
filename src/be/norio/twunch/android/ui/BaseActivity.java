@@ -28,6 +28,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import be.norio.twunch.android.BuildProperties;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
@@ -70,8 +71,15 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 	}
 
 	@Override
+	protected void onPause() {
+		super.onPause();
+		BusProvider.getInstance().unregister(this);
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
+		BusProvider.getInstance().register(this);
 		ViewServer.get(getApplicationContext()).setFocusedWindow(this);
 	}
 
@@ -123,7 +131,8 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 			dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW);
 			break;
 		case DIALOG_ABOUT:
-			dialog = createHtmlDialog(getString(R.string.about, BuildProperties.VERSION_NAME), R.raw.about, AnalyticsUtils.Pages.ABOUT);
+			dialog = createHtmlDialog(getString(R.string.about, BuildProperties.VERSION_NAME), R.raw.about,
+					AnalyticsUtils.Pages.ABOUT);
 			break;
 		default:
 			dialog = null;
