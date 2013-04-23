@@ -80,7 +80,7 @@ public class TwunchMapFragment extends SupportMapFragment implements LoaderManag
 		if (cursor.getCount() == 0) {
 			return;
 		}
-		LatLngBounds.Builder builder = LatLngBounds.builder();
+		final LatLngBounds.Builder builder = LatLngBounds.builder();
 		while (cursor.moveToNext()) {
 			final float lat = cursor.getFloat(Twunches.Query.LATITUDE);
 			final float lon = cursor.getFloat(Twunches.Query.LONGITUDE);
@@ -99,9 +99,17 @@ public class TwunchMapFragment extends SupportMapFragment implements LoaderManag
 				builder.include(latLng);
 			}
 		}
-		CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(builder.build(),
-				getResources().getDimensionPixelSize(R.dimen.map_padding));
-		mMap.animateCamera(cu);
+		// http://stackoverflow.com/questions/14428766/at-what-time-in-the-application-lifecycle-can-should-you-use-layout-measurements
+		getView().post(new Runnable() {
+
+			@Override
+			public void run() {
+				CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(builder.build(),
+						getResources().getDimensionPixelSize(R.dimen.map_padding));
+				mMap.animateCamera(cu);
+			}
+		});
+
 	}
 
 	@Override
