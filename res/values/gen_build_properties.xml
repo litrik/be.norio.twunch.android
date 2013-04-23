@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><resources xmlns:tools="http://schemas.android.com/tools">
-<string name="build_properties_ga_tracking" tools:ignore="MissingTranslation">UA-1839065-14</string>
-<string name="build_properties_maps_key" tools:ignore="MissingTranslation">AIzaSyBIhcU-MKeBiX_huxj6n75Pfm2YTkY-8FU</string>
-<string name="build_properties_version_code" tools:ignore="MissingTranslation">21</string>
-<string name="build_properties_version_name" tools:ignore="MissingTranslation">2.4.0</string>
-</resources>
