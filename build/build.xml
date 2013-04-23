@@ -9,7 +9,25 @@
 	<macrodef name="build.android">
 		<attribute name="env" />
 		<sequential>
+			<property file="build/local.properties" />
 			<mkdir dir="work/@{env}" />
+			<copy file="AndroidManifest.xml" tofile="work/@{env}/AndroidManifest.xml" />
+			<copy file="project.properties" tofile="work/@{env}/project.properties">
+				<filterchain>
+					<linecontains negate="true">
+						<contains value="android.library.reference" />
+					</linecontains>
+				</filterchain>
+			</copy>
+			<copy todir="work">
+				<fileset dir="ext">
+					<include name="google-play-services_lib/**" />
+				</fileset>
+			</copy>
+			<exec executable="${sdk.dir}/tools/android">
+				<arg line="update lib-project -p work/google-play-services_lib" />
+			</exec>
+			<echo file="work/@{env}/project.properties" append="true" message="android.library.reference.1=../google-play-services_lib" />
 			<ant antfile="${basedir}/build/android.xml" target="build-release" inheritall="false" inheritrefs="false" dir="work/@{env}">
 				<property name="root" value="${basedir}" />
 				<property name="env" value="@{env}" />
@@ -51,7 +69,7 @@
 		<attribute name="zip" />
 		<sequential>
 			<echo message="Generating project @{project} from @{zip}" />
-			<mkdir dir="../@{project}"/>
+			<mkdir dir="../@{project}" />
 			<unzip dest="../@{project}">
 				<fileset dir="ext">
 					<include name="@{zip}" />
@@ -71,16 +89,15 @@
 					<include name=".project" />
 					<include name=".classpath" />
 				</fileset>
-			    <filterset>
-			      <filter token="PROJECT" value="@{project}"/>
-			    </filterset>
+				<filterset>
+					<filter token="PROJECT" value="@{project}" />
+				</filterset>
 			</copy>
 		</sequential>
 	</macrodef>
 
 	<target name="ext-projects" description="Extract all external dependencies for use in Eclipse">
 		<generate-ext-project project="ActionBarSherlock" zip="JakeWharton-ActionBarSherlock-*.zip" />
-		<generate-ext-project project="android-mapviewballoons" zip="jgilfelt-android-mapviewballoons-stable-*.zip" />
 	</target>
 
 </project>

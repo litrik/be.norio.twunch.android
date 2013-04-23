@@ -56,6 +56,23 @@ public class TwunchContract {
 		public static final String SORT_DATE = TwunchesColumns.DATE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
 		public static final String SORT_DISTANCE = TwunchesColumns.DISTANCE + "," + TwunchesColumns.NUMPARTICIPANTS + " DESC";
 
+		public interface Query {
+			int _TOKEN = 0x1;
+
+			String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
+					Twunches.NEW, Twunches.DISTANCE, Twunches.LATITUDE, Twunches.LONGITUDE };
+
+			int _ID = 0;
+			int NAME = 1;
+			int ADDRESS = 2;
+			int DATE = 3;
+			int NUMPARTICIPANTS = 4;
+			int NEW = 5;
+			int DISTANCE = 6;
+			int LATITUDE = 7;
+			int LONGITUDE = 8;
+		}
+
 		public static Uri buildTwunchUri(String twunchId) {
 			return CONTENT_URI.buildUpon().appendPath(twunchId).build();
 		}

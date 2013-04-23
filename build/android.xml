@@ -30,18 +30,7 @@
 		<delete dir="dist" />
 	</target>
 
-	<!-- Must be done even before -pre-build gets called -->
-	<copy file="${root}/AndroidManifest.xml" tofile="AndroidManifest.xml" />
-	<property file="${root}/project.properties" prefix="project" />
-	<copy file="${root}/project.properties" tofile="project.properties">
-		<filterchain>
-			<linecontains negate="true">
-				<contains value="android.library.reference" />
-			</linecontains>
-		</filterchain>
-	</copy>
-	<property file="project.properties" />
-
+	<property file="${work}/project.properties" />
 
 	<target name="generate-build-properties">
 		<!-- Generate BuildProperties.java -->
@@ -52,14 +41,17 @@
 		<xpath input="${root}/AndroidManifest.xml" expression="/manifest/@android:versionName" output="twunch.version.name" />
 		<xpath input="${root}/AndroidManifest.xml" expression="/manifest/@android:versionCode" output="twunch.version.code" />
 
+		<mkdir dir="${work}/gen" />
 		<echoproperties format="xml" destfile="${work}/gen/BuildProperties.xml">
 			<propertyset>
 				<propertyref prefix="twunch." />
 			</propertyset>
 		</echoproperties>
-		<xslt style="${root}/build/properties2java.xsl" in="${work}/gen/BuildProperties.xml" out="${work}/gen/be/norio/twunch/android/BuildProperties.java" force="true">
+		<xslt style="${root}/build/properties2java.xsl" in="${work}/gen/BuildProperties.xml" out="${work}/gen/be/norio/twunch/android/BuildProperties.java"
+			force="true">
 			<param name="package" expression="be.norio.twunch.android" />
 		</xslt>
+		<xslt style="${root}/build/properties2resource.xsl" in="${work}/gen/BuildProperties.xml" out="${work}/res/values/gen_build_properties.xml" force="true" />
 	</target>
 
 	<target name="copy-source">
@@ -108,35 +100,12 @@
 		</replaceregexp>
 	</target>
 
-	<target name="copy-balloon">
-		<unzip dest="${work}">
-			<fileset dir="${root}/ext">
-				<include name="jgilfelt-android-mapviewballoons-*.zip" />
-			</fileset>
-			<patternset>
-				<include name="*/android-mapviewballoons/src/**" />
-				<include name="*/android-mapviewballoons/res/**" />
-			</patternset>
-			<cutdirsmapper dirs="2" />
-		</unzip>
-		<replaceregexp match="com.readystatesoftware.mapviewballoons.R" replace="be.norio.twunch.android.R" flags="g">
-			<fileset dir="${work}">
-				<include name="src/**" />
-			</fileset>
-		</replaceregexp>
-		<replaceregexp match="package com.readystatesoftware.mapviewballoons;" replace="package com.readystatesoftware.mapviewballoons; import be.norio.twunch.android.R;" flags="g">
-			<fileset dir="${work}">
-				<include name="src/com/readystatesoftware/mapviewballoons/*.java" />
-			</fileset>
-		</replaceregexp>
-	</target>
-
-	<target name="-pre-build" depends="generate-build-properties, copy-source, copy-other, copy-abs, copy-balloon">
+	<target name="-pre-build" depends="generate-build-properties, copy-source, copy-other, copy-abs">
 		<!-- BEGIN WORKAROUND ADT 20 -->
 		<path id="project.all.jars.path">
 			<fileset dir="libs" includes="*.jar" />
 			<fileset dir="${sdk.dir}/tools/support" includes="annotations.jar" />
-      </path>
+		</path>
 		<!-- END WORKAROUND ADT 20 -->
 	</target>
 

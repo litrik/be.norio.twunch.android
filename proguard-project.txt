@@ -30,3 +30,10 @@
 -keep interface com.actionbarsherlock.** { *; }
 
 -keepattributes *Annotation*
+
+# Google Play services 
+# http://developer.android.com/google/play-services/setup.html
+
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}

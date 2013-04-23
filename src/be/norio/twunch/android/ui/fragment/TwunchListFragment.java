@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2012 Norio bvba
+ *	Copyright 2010-2013 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -53,22 +52,7 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 		mAdapter = new TwunchAdapter(getActivity());
 		setListAdapter(mAdapter);
 
-		getLoaderManager().initLoader(TwunchesQuery._TOKEN, getArguments(), this);
-	}
-
-	private interface TwunchesQuery {
-		int _TOKEN = 0x1;
-
-		String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
-				Twunches.NEW, Twunches.DISTANCE };
-
-		int _ID = 0;
-		int NAME = 1;
-		int ADDRESS = 2;
-		int DATE = 3;
-		int NUMPARTICIPANTS = 4;
-		int NEW = 5;
-		int DISTANCE = 6;
+		getLoaderManager().initLoader(Twunches.Query._TOKEN, getArguments(), this);
 	}
 
 	private static class ViewHolder {
@@ -102,12 +86,12 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 
 			ViewHolder vh = (ViewHolder) view.getTag();
 			// Title
-			vh.title.setText(cursor.getString(TwunchesQuery.NAME));
+			vh.title.setText(cursor.getString(Twunches.Query.NAME));
 			// Address
-			vh.address.setText(cursor.getString(TwunchesQuery.ADDRESS));
-			vh.address.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
+			vh.address.setText(cursor.getString(Twunches.Query.ADDRESS));
+			vh.address.setTypeface(null, cursor.getInt(Twunches.Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Distance
-			long distance = cursor.getLong(TwunchesQuery.DISTANCE);
+			long distance = cursor.getLong(Twunches.Query.DISTANCE);
 			if (distance > 0) {
 				vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance / 1000f));
 				vh.distance.setVisibility(View.VISIBLE);
@@ -117,12 +101,12 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 			// Date
 			vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
-					DateUtils.formatDateTime(view.getContext(), cursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Twunches.Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 							| DateUtils.FORMAT_SHOW_DATE),
-					DateUtils.formatDateTime(view.getContext(), cursor.getLong(TwunchesQuery.DATE), DateUtils.FORMAT_SHOW_TIME)));
-			vh.date.setTypeface(null, cursor.getInt(TwunchesQuery.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
+					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Twunches.Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
+			vh.date.setTypeface(null, cursor.getInt(Twunches.Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 			// Days
-			int days = (int) ((cursor.getLong(TwunchesQuery.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+			int days = (int) ((cursor.getLong(Twunches.Query.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
 			vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
 					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
 		}
@@ -139,12 +123,12 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		BusProvider.getInstance().post(
 				new OnTwunchClickedEvent(Twunches.buildTwunchUri(Integer.toString(((Cursor) mAdapter.getItem(position))
-						.getInt(TwunchesQuery._ID)))));
+						.getInt(Twunches.Query._ID)))));
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), TwunchesQuery.PROJECTION, null, null,
+		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), Twunches.Query.PROJECTION, null, null,
 				args.getString(EXTRA_SORT));
 	}
 

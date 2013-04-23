@@ -5,6 +5,12 @@
     android:versionCode="21"
     android:versionName="2.4.0" >
 
+    <permission
+        android:name="be.norio.twunch.android.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="be.norio.twunch.android.permission.MAPS_RECEIVE" />
+
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -21,6 +27,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:name=".TwunchApplication"
@@ -28,9 +40,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Twunch" >
-        <uses-library android:name="com.google.android.maps" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/build_properties_maps_key" />
 
-        <activity android:name=".ui.TwunchListActivity" >
+        <activity android:name=".ui.HomeActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

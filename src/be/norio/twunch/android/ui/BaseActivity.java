@@ -54,7 +54,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
-		if (!(this instanceof TwunchListActivity)) {
+		if (!(this instanceof HomeActivity)) {
 			getSupportActionBar().setHomeButtonEnabled(true);
 		}
 		ViewServer.get(getApplicationContext()).addWindow(this);
@@ -108,7 +108,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 	}
 
 	protected void goHome() {
-		Intent intent = new Intent(this, TwunchListActivity.class);
+		Intent intent = new Intent(this, HomeActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
