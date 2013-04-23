@@ -43,6 +43,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -51,7 +52,7 @@ import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 import be.norio.twunch.android.provider.TwunchContract;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.service.SyncService;
+import be.norio.twunch.android.service.TwunchService;
 import be.norio.twunch.android.ui.fragment.TwunchListFragment;
 import be.norio.twunch.android.ui.fragment.TwunchMapFragment;
 import be.norio.twunch.android.util.AnalyticsUtils;
@@ -152,11 +153,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 		public Fragment getItem(int position) {
 
 			if (position == 0 || position == 1) {
-				TwunchListFragment fragment = new TwunchListFragment();
-				Bundle args = new Bundle();
-				args.putString(TwunchListFragment.EXTRA_SORT, SORTS[position]);
-				fragment.setArguments(args);
-				return fragment;
+				return TwunchListFragment.newInstance(SORTS[position]);
 			} else {
 				return new TwunchMapFragment();
 			}
@@ -228,8 +225,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 	public void refreshTwunches(boolean force) {
 		long lastSync = PrefsUtils.getLastUpdate();
 		long now = (new Date()).getTime();
-		long oneDay = 1000 * 60 * 60 * 24;
-		if (!force && lastSync != 0 && (now - lastSync < oneDay)) {
+		if (!force && lastSync != 0 && (now - lastSync < DateUtils.DAY_IN_MILLIS)) {
 			Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
 			return;
 		}
@@ -238,8 +234,8 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 			((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).start();
 		}
 		Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
-		Intent intent = new Intent(this, SyncService.class);
-		intent.putExtra(SyncService.EXTRA_STATUS_RECEIVER, resultReceiver);
+		Intent intent = new Intent(this, TwunchService.class);
+		intent.putExtra(TwunchService.EXTRA_STATUS_RECEIVER, resultReceiver);
 		startService(intent);
 	}
 
@@ -248,10 +244,10 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 		@Override
 		public void onReceiveResult(int resultCode, Bundle resultData) {
 			switch (resultCode) {
-			case SyncService.STATUS_RUNNING: {
+			case TwunchService.STATUS_RUNNING: {
 				break;
 			}
-			case SyncService.STATUS_FINISHED: {
+			case TwunchService.STATUS_FINISHED: {
 				if (refreshMenuItem != null) {
 					if (refreshMenuItem.getActionView() != null) {
 						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
@@ -269,7 +265,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 				}
 				break;
 			}
-			case SyncService.STATUS_ERROR: {
+			case TwunchService.STATUS_ERROR: {
 				if (refreshMenuItem != null) {
 					if (refreshMenuItem.getActionView() != null) {
 						((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
@@ -348,9 +344,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 
 	@Subscribe
 	public void onTwunchClicked(OnTwunchClickedEvent event) {
-		Intent intent = new Intent(this, TwunchDetailsActivity.class);
-		intent.setData(event.getUri());
-		startActivity(intent);
+		TwunchDetailsActivity.start(this, event.getUri());
 	}
 
 }

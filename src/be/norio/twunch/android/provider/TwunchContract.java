@@ -1,5 +1,5 @@
 /**
- *	Copyright 2012 Norio bvba
+ *	Copyright 2012-2013 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -60,7 +60,8 @@ public class TwunchContract {
 			int _TOKEN = 0x1;
 
 			String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
-					Twunches.NEW, Twunches.DISTANCE, Twunches.LATITUDE, Twunches.LONGITUDE };
+					Twunches.NEW, Twunches.DISTANCE, Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.TITLE, Twunches.NOTE,
+					Twunches.PARTICIPANTS, Twunches.CLOSED, Twunches.LINK };
 
 			int _ID = 0;
 			int NAME = 1;
@@ -71,6 +72,11 @@ public class TwunchContract {
 			int DISTANCE = 6;
 			int LATITUDE = 7;
 			int LONGITUDE = 8;
+			int TITLE = 9;
+			int NOTE = 10;
+			int PARTICIPANTS = 11;
+			int CLOSED = 12;
+			int LINK = 13;
 		}
 
 		public static Uri buildTwunchUri(String twunchId) {

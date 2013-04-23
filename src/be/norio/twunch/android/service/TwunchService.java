@@ -64,8 +64,8 @@ import com.google.android.apps.iosched.io.RemoteExecutor;
  * {@link ScheduleProvider}. Reads data from both local {@link Resources} and
  * from remote sources, such as a spreadsheet.
  */
-public class SyncService extends IntentService {
-	private static final String TAG = SyncService.class.getSimpleName();
+public class TwunchService extends IntentService {
+	private static final String TAG = TwunchService.class.getSimpleName();
 
 	private final static String URL = "http://twunch.be/events.xml?when=future";
 
@@ -82,7 +82,7 @@ public class SyncService extends IntentService {
 
 	private RemoteExecutor mRemoteExecutor;
 
-	public SyncService() {
+	public TwunchService() {
 		super(TAG);
 	}
 

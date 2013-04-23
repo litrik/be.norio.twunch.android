@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2012 Norio bvba
+ *	Copyright 2010-2013 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
@@ -40,6 +39,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -51,7 +51,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import be.norio.twunch.android.R;
-import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import be.norio.twunch.android.provider.TwunchContract.Twunches.Query;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.FragmentUtils;
 import be.norio.twunch.android.util.Util;
@@ -86,28 +86,7 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		getLoaderManager().initLoader(TwunchDetailsQuery._TOKEN, getArguments(), this);
-	}
-
-	private interface TwunchDetailsQuery {
-		int _TOKEN = 0x1;
-
-		String[] PROJECTION = { BaseColumns._ID, Twunches.TITLE, Twunches.ADDRESS, Twunches.DATE, Twunches.NUMPARTICIPANTS,
-				Twunches.LATITUDE, Twunches.LONGITUDE, Twunches.PARTICIPANTS, Twunches.NOTE, Twunches.LINK, Twunches.CLOSED,
-				Twunches.DISTANCE };
-
-		int _ID = 0;
-		int TITLE = 1;
-		int ADDRESS = 2;
-		int DATE = 3;
-		int NUMPARTICIPANTS = 4;
-		int LATITUDE = 5;
-		int LONGITUDE = 6;
-		int PARTICIPANTS = 7;
-		int NOTE = 8;
-		int LINK = 9;
-		int CLOSED = 10;
-		int DISTANCE = 11;
+		getLoaderManager().initLoader(Query._TOKEN, getArguments(), this);
 	}
 
 	@Override
@@ -137,8 +116,8 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), (Uri) args.getParcelable(FragmentUtils.ARGUMENT_URI), TwunchDetailsQuery.PROJECTION,
-				null, null, null);
+		return new CursorLoader(getActivity(), (Uri) args.getParcelable(FragmentUtils.ARGUMENT_URI), Query.PROJECTION, null, null,
+				null);
 	}
 
 	@Override
@@ -150,14 +129,14 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		mCursor = cursor;
 
 		// Title
-		((TextView) getView().findViewById(R.id.twunchTitle)).setText(cursor.getString(TwunchDetailsQuery.TITLE));
+		((TextView) getView().findViewById(R.id.twunchTitle)).setText(cursor.getString(Query.TITLE));
 
 		// Address
-		((TextView) getView().findViewById(R.id.twunchAddress)).setText(cursor.getString(TwunchDetailsQuery.ADDRESS));
+		((TextView) getView().findViewById(R.id.twunchAddress)).setText(cursor.getString(Query.ADDRESS));
 
 		// Distance
 		TextView distanceView = (TextView) getView().findViewById(R.id.twunchDistance);
-		long distance = cursor.getLong(TwunchDetailsQuery.DISTANCE);
+		long distance = cursor.getLong(Query.DISTANCE);
 		if (distance > 0) {
 			distanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
 			distanceView.setOnClickListener(new OnClickListener() {
@@ -174,13 +153,13 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		// Date
 		((TextView) getView().findViewById(R.id.twunchDate)).setText(String.format(
 				getString(R.string.date),
-				DateUtils.formatDateTime(getActivity(), cursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+				DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 						| DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(getActivity(), cursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_TIME)));
+				DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
 
 		// Days
 		final long msInDay = 86400000;
-		int days = (int) (cursor.getLong(TwunchDetailsQuery.DATE) / msInDay - new Date().getTime() / msInDay);
+		int days = (int) (cursor.getLong(Query.DATE) / msInDay - new Date().getTime() / msInDay);
 		TextView daysView = (TextView) getView().findViewById(R.id.twunchDays);
 		daysView.setText(days == 0 ? getString(R.string.today) : String.format(
 				getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
@@ -195,12 +174,12 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 								AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
 						Intent intent = new Intent(Intent.ACTION_INSERT)
 								.setData(Events.CONTENT_URI)
-								.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(TwunchDetailsQuery.DATE))
+								.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(Query.DATE))
 								.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-										cursor.getLong(TwunchDetailsQuery.DATE) + DateUtils.HOUR_IN_MILLIS)
-								.putExtra(Events.TITLE, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
-								.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(TwunchDetailsQuery.TITLE))
-								.putExtra(Events.EVENT_LOCATION, cursor.getString(TwunchDetailsQuery.ADDRESS))
+										cursor.getLong(Query.DATE) + DateUtils.HOUR_IN_MILLIS)
+								.putExtra(Events.TITLE, "Twunch " + cursor.getString(Query.TITLE))
+								.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(Query.TITLE))
+								.putExtra(Events.EVENT_LOCATION, cursor.getString(Query.ADDRESS))
 								.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
 						startActivity(intent);
 					} catch (Exception e) {
@@ -212,24 +191,23 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 
 		// Note
 		TextView noteView = ((TextView) getView().findViewById(R.id.twunchNote));
-		if (cursor.getString(TwunchDetailsQuery.NOTE) == null || cursor.getString(TwunchDetailsQuery.NOTE).length() == 0) {
+		final String note = cursor.getString(Query.NOTE);
+		if (TextUtils.isEmpty(note)) {
 			noteView.setVisibility(View.GONE);
 		} else {
 			noteView.setMovementMethod(LinkMovementMethod.getInstance());
-			noteView.setText(Html.fromHtml(cursor.getString(TwunchDetailsQuery.NOTE)));
+			noteView.setText(Html.fromHtml(note));
 			noteView.setVisibility(View.VISIBLE);
 		}
 
 		// Number of participants
-		((TextView) getView().findViewById(R.id.twunchNumberParticipants))
-				.setText(String.format(
-						getResources().getQuantityString(R.plurals.numberOfParticipants,
-								cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)),
-						cursor.getInt(TwunchDetailsQuery.NUMPARTICIPANTS)));
+		((TextView) getView().findViewById(R.id.twunchNumberParticipants)).setText(String.format(
+				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(Query.NUMPARTICIPANTS)),
+				cursor.getInt(Query.NUMPARTICIPANTS)));
 
 		// Participants
 		ListView participantsView = ((ListView) getView().findViewById(R.id.twunchParticipants));
-		mParticipants = cursor.getString(TwunchDetailsQuery.PARTICIPANTS).split(" ");
+		mParticipants = cursor.getString(Query.PARTICIPANTS).split(" ");
 		Arrays.sort(mParticipants, String.CASE_INSENSITIVE_ORDER);
 		participantsView.setAdapter(new ParticipantAdapter());
 	}
@@ -246,7 +224,7 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
 				AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
 		final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
-				+ mCursor.getDouble(TwunchDetailsQuery.LATITUDE) + "," + mCursor.getDouble(TwunchDetailsQuery.LONGITUDE)));
+				+ mCursor.getDouble(Query.LATITUDE) + "," + mCursor.getDouble(Query.LONGITUDE)));
 		startActivity(myIntent);
 	}
 
@@ -257,14 +235,14 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
 				AnalyticsUtils.EventActions.SHOW_DIRECTIONS, null, 1);
 		startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="
-				+ mCursor.getDouble(TwunchDetailsQuery.LATITUDE) + "," + mCursor.getDouble(TwunchDetailsQuery.LONGITUDE))));
+				+ mCursor.getDouble(Query.LATITUDE) + "," + mCursor.getDouble(Query.LONGITUDE))));
 	}
 
 	/**
 	 * Register for this Twunch.
 	 */
 	private void doRegister() {
-		if (mCursor.getInt(TwunchDetailsQuery.CLOSED) == 1) {
+		if (mCursor.getInt(Query.CLOSED) == 1) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setMessage(R.string.register_closed);
 			builder.setCancelable(false);
@@ -280,10 +258,8 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 					AnalyticsUtils.EventActions.REGISTER, null, 1);
 			final Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(
-					Intent.EXTRA_TEXT,
-					String.format(getString(R.string.register_text), mCursor.getString(TwunchDetailsQuery.TITLE),
-							mCursor.getString(TwunchDetailsQuery.LINK)));
+			intent.putExtra(Intent.EXTRA_TEXT,
+					String.format(getString(R.string.register_text), mCursor.getString(Query.TITLE), mCursor.getString(Query.LINK)));
 			startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
 
 		}
@@ -298,13 +274,15 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 
 		final Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, String.format(
-				getString(R.string.share_text),
-				mCursor.getString(TwunchDetailsQuery.TITLE),
-				DateUtils.formatDateTime(getActivity(), mCursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
-						| DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(getActivity(), mCursor.getLong(TwunchDetailsQuery.DATE), DateUtils.FORMAT_SHOW_TIME),
-				mCursor.getString(TwunchDetailsQuery.LINK)));
+		intent.putExtra(
+				Intent.EXTRA_TEXT,
+				String.format(
+						getString(R.string.share_text),
+						mCursor.getString(Query.TITLE),
+						DateUtils.formatDateTime(getActivity(), mCursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+								| DateUtils.FORMAT_SHOW_DATE),
+						DateUtils.formatDateTime(getActivity(), mCursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME),
+						mCursor.getString(Query.LINK)));
 		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
 		intent.putExtra(Intent.EXTRA_EMAIL, "");
 		startActivity(Intent.createChooser(intent, getString(R.string.share_title)));

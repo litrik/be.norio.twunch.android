@@ -54,7 +54,7 @@
         <activity android:name=".ui.TwunchesMapActivity" />
         <activity android:name=".ui.TwunchDetailsActivity" />
 
-        <service android:name=".service.SyncService" />
+        <service android:name=".service.TwunchService" />
 
         <provider
             android:name=".provider.TwunchProvider"
