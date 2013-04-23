@@ -4,3 +4,4 @@ build/local.*
 build/libs
 work
 dist
+res/values/gen_*
