@@ -35,7 +35,10 @@
 	<target name="generate-build-properties">
 		<!-- Generate BuildProperties.java -->
 		<path id="android.antlibs">
+			<!-- ADT up to revision 22 -->
 			<pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
+			<!-- ADT starting from revision 23 -->
+			<pathelement path="${sdk.dir}/tools/lib/ant-tasks.jar" />
 		</path>
 		<taskdef name="xpath" classname="com.android.ant.XPathTask" classpathref="android.antlibs" />
 		<xpath input="${root}/AndroidManifest.xml" expression="/manifest/@android:versionName" output="twunch.version.name" />
