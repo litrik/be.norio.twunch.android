@@ -21,6 +21,9 @@
 
 -dontobfuscate
 
+# Keep our own code
+-keep public class be.norio.**
+
 # Action Bar Sherlock
 # http://actionbarsherlock.com/faq.html
 
@@ -31,9 +34,21 @@
 
 -keepattributes *Annotation*
 
+# Needed by google-api-client to keep generic types and @Key annotations accessed via reflection
+
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+
+# Needed by Otto
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}
+
 # Google Play services 
 # http://developer.android.com/google/play-services/setup.html
-
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();
 }
