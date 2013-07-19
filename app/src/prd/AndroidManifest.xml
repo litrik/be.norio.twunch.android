@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDO0ayEojLORKpv7K403tAWz3B-SaW9U7Q" />
+
+        <provider
+                android:name="be.norio.twunch.android.provider.TwunchProvider"
+                android:authorities="be.norio.twunch.android"
+                android:exported="false" />
+
+    </application>
+
+</manifest>

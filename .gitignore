@@ -1,7 +1,5 @@
-bin
-gen
-build/local.*
-build/libs
-work
-dist
-res/values/gen_*
+.gradle
+.idea
+local.properties
+*.iml
+**/build
