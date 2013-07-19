@@ -34,12 +34,9 @@
 
 -keepattributes *Annotation*
 
-# Needed by google-api-client to keep generic types and @Key annotations accessed via reflection
-
--keepclassmembers class * {
-  @com.google.api.client.util.Key <fields>;
-}
--keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+# http://stackoverflow.com/questions/5701126/compile-with-proguard-gives-simexception-unexpected-top-level-exception
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault,LocalVariableTable,LocalVariableTypeTable
+-optimizations !field/removal/writeonly,!field/marking/private,!class/merging/*,!code/allocation/variable
 
 # Needed by Otto
 -keepclassmembers class ** {

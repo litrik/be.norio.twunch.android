@@ -42,6 +42,8 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.norio
+            runProguard true
+            proguardFile "proguard-project.txt"
         }
     }
 
