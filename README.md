@@ -24,12 +24,14 @@ Installation Instructions
 Build Instructions
 ------------------
 
-Coming soon...
+1. git clone git@github.com:litrik/be.norio.twunch.android.git
+1. cd be.norio.twunch.android
+1. ./gradlew clean build
 
 Legal Information
 -----------------
 
-Copyright 2010-2012 [Norio BVBA](http://www.norio.be/)
+Copyright 2010-2013 [Norio BVBA](http://www.norio.be/)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the <a
