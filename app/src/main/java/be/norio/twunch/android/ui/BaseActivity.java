@@ -33,6 +33,7 @@ import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
+import butterknife.Views;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -84,7 +85,13 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 		ViewServer.get(getApplicationContext()).setFocusedWindow(this);
 	}
 
-	@Override
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
+        Views.inject(this);
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.activity_base, menu);
 		return true;

@@ -62,14 +62,31 @@ import be.norio.twunch.android.provider.TwunchContract.Twunches.Query;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.FragmentUtils;
 import be.norio.twunch.android.util.Util;
+import butterknife.InjectView;
+import butterknife.Views;
 
 public class TwunchDetailsFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	Cursor mCursor;
 	String[] mParticipants;
-	Float distance;
+    @InjectView(R.id.twunchTitle)
+    public TextView mTitleView;
+    @InjectView(R.id.twunchAddress)
+    public TextView mAddressView;
+    @InjectView(R.id.twunchDistance)
+    public TextView mDistanceView;
+    @InjectView(R.id.twunchDate)
+    public TextView mDateView;
+    @InjectView(R.id.twunchDays)
+    public TextView mDaysView;
+    @InjectView(R.id.twunchNote)
+    public TextView mNoteView;
+    @InjectView(R.id.twunchNumberParticipants)
+    public TextView mNumParticipantsView;
+    @InjectView(R.id.twunchParticipants)
+    public ListView mParticipantsView;
 
-	@Override
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
@@ -89,7 +106,13 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		getLoaderManager().initLoader(Query._TOKEN, getArguments(), this);
 	}
 
-	@Override
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Views.inject(this, view);
+    }
+
+    @Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.fragment_twunch_details, menu);
@@ -129,87 +152,83 @@ public class TwunchDetailsFragment extends SherlockFragment implements LoaderMan
 		mCursor = cursor;
 
 		// Title
-		((TextView) getView().findViewById(R.id.twunchTitle)).setText(cursor.getString(Query.TITLE));
+        mTitleView.setText(cursor.getString(Query.TITLE));
 
 		// Address
-		((TextView) getView().findViewById(R.id.twunchAddress)).setText(cursor.getString(Query.ADDRESS));
+        mAddressView.setText(cursor.getString(Query.ADDRESS));
 
 		// Distance
-		TextView distanceView = (TextView) getView().findViewById(R.id.twunchDistance);
 		long distance = cursor.getLong(Query.DISTANCE);
 		if (distance > 0) {
-			distanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
-			distanceView.setOnClickListener(new OnClickListener() {
+			mDistanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
+			mDistanceView.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					doMap();
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    doMap();
+                }
+            });
 		} else {
-			distanceView.setVisibility(View.INVISIBLE);
+			mDistanceView.setVisibility(View.INVISIBLE);
 		}
 
 		// Date
-		((TextView) getView().findViewById(R.id.twunchDate)).setText(String.format(
-				getString(R.string.date),
-				DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
-						| DateUtils.FORMAT_SHOW_DATE),
-				DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
+        mDateView.setText(String.format(
+                getString(R.string.date),
+                DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+                        | DateUtils.FORMAT_SHOW_DATE),
+                DateUtils.formatDateTime(getActivity(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
 
 		// Days
 		final long msInDay = 86400000;
 		int days = (int) (cursor.getLong(Query.DATE) / msInDay - new Date().getTime() / msInDay);
-		TextView daysView = (TextView) getView().findViewById(R.id.twunchDays);
-		daysView.setText(days == 0 ? getString(R.string.today) : String.format(
-				getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
+		mDaysView.setText(days == 0 ? getString(R.string.today) : String.format(
+                getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
 		if (Util.isIceCreamSandwich()) {
-			daysView.setOnClickListener(new OnClickListener() {
+			mDaysView.setOnClickListener(new OnClickListener() {
 
-				@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-				@Override
-				public void onClick(View v) {
-					try {
-						GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-								AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
-						Intent intent = new Intent(Intent.ACTION_INSERT)
-								.setData(Events.CONTENT_URI)
-								.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(Query.DATE))
-								.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-										cursor.getLong(Query.DATE) + DateUtils.HOUR_IN_MILLIS)
-								.putExtra(Events.TITLE, "Twunch " + cursor.getString(Query.TITLE))
-								.putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(Query.TITLE))
-								.putExtra(Events.EVENT_LOCATION, cursor.getString(Query.ADDRESS))
-								.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-						startActivity(intent);
-					} catch (Exception e) {
-						// FIXME: handle exception
-					}
-				}
-			});
+                @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+                @Override
+                public void onClick(View v) {
+                    try {
+                        GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
+                                AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
+                        Intent intent = new Intent(Intent.ACTION_INSERT)
+                                .setData(Events.CONTENT_URI)
+                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cursor.getLong(Query.DATE))
+                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                        cursor.getLong(Query.DATE) + DateUtils.HOUR_IN_MILLIS)
+                                .putExtra(Events.TITLE, "Twunch " + cursor.getString(Query.TITLE))
+                                .putExtra(Events.DESCRIPTION, "Twunch " + cursor.getString(Query.TITLE))
+                                .putExtra(Events.EVENT_LOCATION, cursor.getString(Query.ADDRESS))
+                                .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        // FIXME: handle exception
+                    }
+                }
+            });
 		}
 
 		// Note
-		TextView noteView = ((TextView) getView().findViewById(R.id.twunchNote));
 		final String note = cursor.getString(Query.NOTE);
 		if (TextUtils.isEmpty(note)) {
-			noteView.setVisibility(View.GONE);
+			mNoteView.setVisibility(View.GONE);
 		} else {
-			noteView.setMovementMethod(LinkMovementMethod.getInstance());
-			noteView.setText(Html.fromHtml(note));
-			noteView.setVisibility(View.VISIBLE);
+			mNoteView.setMovementMethod(LinkMovementMethod.getInstance());
+			mNoteView.setText(Html.fromHtml(note));
+			mNoteView.setVisibility(View.VISIBLE);
 		}
 
 		// Number of participants
-		((TextView) getView().findViewById(R.id.twunchNumberParticipants)).setText(String.format(
-				getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(Query.NUMPARTICIPANTS)),
-				cursor.getInt(Query.NUMPARTICIPANTS)));
+        mNumParticipantsView.setText(String.format(
+                getResources().getQuantityString(R.plurals.numberOfParticipants, cursor.getInt(Query.NUMPARTICIPANTS)),
+                cursor.getInt(Query.NUMPARTICIPANTS)));
 
 		// Participants
-		ListView participantsView = ((ListView) getView().findViewById(R.id.twunchParticipants));
 		mParticipants = cursor.getString(Query.PARTICIPANTS).split(" ");
 		Arrays.sort(mParticipants, String.CASE_INSENSITIVE_ORDER);
-		participantsView.setAdapter(new ParticipantAdapter());
+		mParticipantsView.setAdapter(new ParticipantAdapter());
 	}
 
 	@Override

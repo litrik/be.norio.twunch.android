@@ -27,10 +27,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
+import android.view.View;
+
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
+import butterknife.Views;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,7 +52,7 @@ public class TwunchMapFragment extends SupportMapFragment implements LoaderManag
 	Map<Marker, Uri> mMarkers = new HashMap<Marker, Uri>();
 	private GoogleMap mMap;
 
-	@Override
+    @Override
 	public void onResume() {
 		super.onResume();
 		setUpMapIfNeeded();

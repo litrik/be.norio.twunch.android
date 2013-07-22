@@ -37,6 +37,8 @@ import be.norio.twunch.android.otto.OnTwunchClickedEvent;
 import be.norio.twunch.android.provider.TwunchContract.Twunches;
 import be.norio.twunch.android.provider.TwunchContract.Twunches.Query;
 import be.norio.twunch.android.util.Util;
+import butterknife.InjectView;
+import butterknife.Views;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 
@@ -64,25 +66,24 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 		getLoaderManager().initLoader(Query._TOKEN, getArguments(), this);
 	}
 
-	private static class ViewHolder {
+    static class ViewHolder {
 		public View rootView;
+        @InjectView(R.id.twunchTitle)
 		public TextView title;
+        @InjectView(R.id.twunchAddress)
 		public TextView address;
+        @InjectView(R.id.twunchDistance)
 		public TextView distance;
+        @InjectView(R.id.twunchDate)
 		public TextView date;
+        @InjectView(R.id.twunchDays)
 		public TextView days;
 
-		public ViewHolder(View view) {
-			rootView = view;
-			title = (TextView) view.findViewById(R.id.twunchTitle);
-			address = (TextView) view.findViewById(R.id.twunchAddress);
-			distance = (TextView) view.findViewById(R.id.twunchDistance);
-			date = (TextView) view.findViewById(R.id.twunchDate);
-			days = (TextView) view.findViewById(R.id.twunchDays);
-
-			view.setTag(this);
-		}
-	}
+        public ViewHolder(View v) {
+            Views.inject(this, v);
+            v.setTag(this);
+        }
+    }
 
 	class TwunchAdapter extends CursorAdapter {
 
@@ -94,13 +95,13 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 		public void bindView(View view, Context context, Cursor cursor) {
 
 			ViewHolder vh = (ViewHolder) view.getTag();
-			// Title
-			vh.title.setText(cursor.getString(Query.NAME));
-			// Address
-			vh.address.setText(cursor.getString(Query.ADDRESS));
+
+            vh.title.setText(cursor.getString(Query.NAME));
+
+            vh.address.setText(cursor.getString(Query.ADDRESS));
 			vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
-			// Distance
-			final double lat = cursor.getDouble(Query.LATITUDE);
+
+            final double lat = cursor.getDouble(Query.LATITUDE);
 			final double lon = cursor.getDouble(Query.LONGITUDE);
 			long distance = cursor.getLong(Query.DISTANCE);
 			if (lat != 0 && lon != 0 && distance > 0) {
@@ -109,24 +110,24 @@ public class TwunchListFragment extends SherlockListFragment implements LoaderMa
 			} else {
 				vh.distance.setVisibility(View.INVISIBLE);
 			}
-			// Date
-			vh.date.setText(String.format(
+
+            vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
 							| DateUtils.FORMAT_SHOW_DATE),
 					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
 			vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
-			// Days
-			int days = (int) ((cursor.getLong(Query.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+
+            int days = (int) ((cursor.getLong(Query.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
 			vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
 					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
 		}
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			View view = LayoutInflater.from(context).inflate(R.layout.listitem_twunch, parent, false);
-			new ViewHolder(view);
-			return view;
+			View v = LayoutInflater.from(context).inflate(R.layout.listitem_twunch, parent, false);
+			new ViewHolder(v);
+			return v;
 		}
 	}
 
