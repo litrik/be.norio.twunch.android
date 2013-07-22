@@ -5,6 +5,9 @@ project.archivesBaseName="$appPackageName" + "-$appVersionName"
 
 buildscript {
     repositories {
+        maven {
+            url 'https://raw.github.com/ark/ark/master/releases/'
+        }
         mavenCentral()
     }
     dependencies {
