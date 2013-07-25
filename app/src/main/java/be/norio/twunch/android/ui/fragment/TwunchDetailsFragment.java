@@ -32,6 +32,7 @@ import android.provider.ContactsContract.CommonDataKinds.Nickname;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.QuickContact;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -40,6 +41,9 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -48,10 +52,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 import java.util.Arrays;
@@ -65,7 +65,7 @@ import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
 import butterknife.Views;
 
-public class TwunchDetailsFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TwunchDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	Cursor mCursor;
 	String[] mParticipants;

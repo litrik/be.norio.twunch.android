@@ -24,14 +24,6 @@
 # Keep our own code
 -keep public class be.norio.**
 
-# Action Bar Sherlock
-# http://actionbarsherlock.com/faq.html
-
--keep class android.support.v4.app.** { *; }
--keep interface android.support.v4.app.** { *; }
--keep class com.actionbarsherlock.** { *; }
--keep interface com.actionbarsherlock.** { *; }
-
 -keepattributes *Annotation*
 
 # http://stackoverflow.com/questions/5701126/compile-with-proguard-gives-simexception-unexpected-top-level-exception
@@ -44,7 +36,7 @@
     @com.squareup.otto.Produce public *;
 }
 
-# Google Play services 
+# Google Play services
 # http://developer.android.com/google/play-services/setup.html
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();

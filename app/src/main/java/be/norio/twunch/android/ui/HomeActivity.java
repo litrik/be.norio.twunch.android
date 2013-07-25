@@ -17,9 +17,6 @@
 
 package be.norio.twunch.android.ui;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.app.AlertDialog;
 import android.content.ContentProviderOperation;
 import android.content.Context;
@@ -43,10 +40,23 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBar;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.apps.iosched.util.DetachableResultReceiver;
+import com.google.android.apps.iosched.util.Lists;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.Date;
+
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.otto.OnTwunchClickedEvent;
@@ -58,18 +68,7 @@ import be.norio.twunch.android.ui.fragment.TwunchMapFragment;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.ActionBar.TabListener;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.iosched.util.DetachableResultReceiver;
-import com.google.android.apps.iosched.util.Lists;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.squareup.otto.Subscribe;
-
-public class HomeActivity extends BaseActivity implements TabListener, OnPageChangeListener {
+public class HomeActivity extends BaseActivity implements ActionBar.TabListener, OnPageChangeListener {
 
 	private final static String[] SORTS = new String[] { Twunches.SORT_DATE, Twunches.SORT_DISTANCE };
 	private final static String[] PAGES = new String[] { AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
@@ -170,7 +169,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 	}
 
 	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 		int position = tab.getPosition();
 		PrefsUtils.setLastTab(position);
 		if (mViewPager.getCurrentItem() != position) {
@@ -180,12 +179,12 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 	}
 
 	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// Do nothing
 	}
 
 	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// Do nothing
 	}
 
@@ -207,7 +206,7 @@ public class HomeActivity extends BaseActivity implements TabListener, OnPageCha
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		getSupportMenuInflater().inflate(R.menu.fragment_twunch_list, menu);
+		getMenuInflater().inflate(R.menu.fragment_twunch_list, menu);
 		refreshMenuItem = menu.findItem(R.id.menuRefresh);
 		return true;
 	}

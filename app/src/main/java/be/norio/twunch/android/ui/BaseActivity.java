@@ -24,8 +24,15 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
+
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+import com.google.android.apps.iosched.util.GoogleAnalyticsSessionManager;
+
 import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.otto.BusProvider;
@@ -35,18 +42,10 @@ import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
 import butterknife.Views;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-import com.google.android.apps.iosched.util.GoogleAnalyticsSessionManager;
-
-public abstract class BaseActivity extends SherlockFragmentActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
 	private static final String TAG = BaseActivity.class.getSimpleName();
 	private final static boolean LOGV = true;
-
-	protected final String GA_VAR_KLANTID = "KLANTID";
 
 	private final int DIALOG_WHATS_NEW = 56479952;
 	private final int DIALOG_ABOUT = 3267613;
@@ -93,7 +92,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_base, menu);
+        getMenuInflater().inflate(R.menu.activity_base, menu);
 		return true;
 	}
 

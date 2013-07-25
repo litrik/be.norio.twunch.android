@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -40,9 +41,7 @@ import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
 import butterknife.Views;
 
-import com.actionbarsherlock.app.SherlockListFragment;
-
-public class TwunchListFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	private final static String EXTRA_SORT = "EXTRA_SORT";
 

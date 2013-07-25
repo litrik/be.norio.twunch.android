@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Twunch" parent="Theme.Sherlock.Light">
+    <style name="Theme.Twunch" parent="Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/ActionBarIPS</item>
     </style>
 
-    <style name="ActionBarIPS" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
+    <style name="ActionBarIPS" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:indeterminateProgressStyle">@android:style/Widget.ProgressBar.Small</item>
     </style>
 
