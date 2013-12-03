@@ -85,8 +85,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 	}
 
     @Override
-    public void onContentChanged() {
-        super.onContentChanged();
+    public void onSupportContentChanged() {
+        super.onSupportContentChanged();
         Views.inject(this);
     }
 
