@@ -373,6 +373,7 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 					}
 				}
 			});
+
 			return view;
 		}
 	}

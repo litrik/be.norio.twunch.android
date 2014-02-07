@@ -1,12 +1,26 @@
 apply from: "$System.env.HOME" + "/norio.gradle"
 apply plugin: 'android'
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:0.7.+"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 project.archivesBaseName="$appPackageName" + "-$appVersionName"
 
 dependencies {
     compile fileTree(dir: "libs", include: "*.jar")
     compile "com.android.support:support-v4:19.0.0"
-    compile "com.android.support:appcompat-v7:19.0.+"
+    compile "com.android.support:appcompat-v7:19.0.1"
     compile "com.google.android.gms:play-services:3.1.36"
     compile "com.squareup:otto:1.3.4"
     compile "com.jakewharton:butterknife:2.0.1"
@@ -19,7 +33,7 @@ configurations {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.0"
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
         versionCode Integer.valueOf("$appVersionCode")
@@ -27,8 +41,6 @@ android {
         versionName "$appVersionName"
         minSdkVersion 8
         targetSdkVersion 19
-        buildConfig "public final static int VERSION_CODE = " + Integer.valueOf("$appVersionCode") + ";" +\
-            "public final static String VERSION_NAME = \"" + "$appVersionName" + "\";"
     }
 
     buildTypes {
@@ -41,10 +53,10 @@ android {
 
     productFlavors {
         dev {
-            buildConfig "public static final String PROVIDER_AUTHORITY = \"" + "$appPackageName" + ".dev\";"
+            buildConfigField "String", "PROVIDER_AUTHORITY", "\"$appPackageName\" + \".dev\""
         }
         prd {
-            buildConfig "public static final String PROVIDER_AUTHORITY = \"" + "$appPackageName" + "\";"
+            buildConfigField "String", "PROVIDER_AUTHORITY", "$appPackageName"
         }
     }
 
