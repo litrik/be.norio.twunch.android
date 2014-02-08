@@ -53,17 +53,28 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.Date;
 
+import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.provider.TwunchContract.Twunches.Query;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.FragmentUtils;
+import be.norio.twunch.android.util.PrefsUtils;
+import be.norio.twunch.android.util.TwitterUtils;
 import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
 import butterknife.Views;
+import twitter4j.AsyncTwitter;
+import twitter4j.AsyncTwitterFactory;
+import twitter4j.TwitterAdapter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterMethod;
+import twitter4j.User;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TwunchDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -321,7 +332,24 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 		}
 	}
 
+    private class TwitterProfileListener extends TwitterAdapter {
+
+    }
+
 	private class ParticipantAdapter extends BaseAdapter {
+
+        private AsyncTwitter mTwitter;
+
+        public ParticipantAdapter() {
+            ConfigurationBuilder cb2 = new ConfigurationBuilder();
+            cb2.setApplicationOnlyAuthEnabled(true);
+            cb2.setOAuthConsumerKey(BuildConfig.TWITTER_CONSUMER_KEY);
+            cb2.setOAuthConsumerSecret(BuildConfig.TWITTER_CONSUMER_KEY);
+            cb2.setOAuth2TokenType("bearer");
+            cb2.setOAuth2AccessToken(PrefsUtils.getTwitterToken());
+            mTwitter = new AsyncTwitterFactory(cb2.build()).getInstance();
+        }
+
 
 		@Override
 		public int getCount() {
@@ -366,13 +394,28 @@ public class TwunchDetailsFragment extends Fragment implements LoaderManager.Loa
 						QuickContact.showQuickContact(TwunchDetailsFragment.this.getActivity(), vh.name, contactUri,
 								ContactsContract.QuickContact.MODE_LARGE, null);
 					} else {
-						// Show the twitter profile
-						final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://twitter.com/"
+						// Show the mTwitter profile
+						final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://mTwitter.com/"
 								+ mParticipants[position]));
 						startActivity(myIntent);
 					}
 				}
 			});
+
+            mTwitter.addListener(new TwitterProfileListener() {
+                @Override
+                public void gotUserDetail(User user) {
+                    super.gotUserDetail(user);
+                    Picasso.with(getActivity()).load(user.getBiggerProfileImageURL()).into(vh.avatar);
+                }
+
+                @Override
+                public void onException(TwitterException te, TwitterMethod method) {
+                    super.onException(te, method);
+                    te.printStackTrace();
+                }
+            });
+            //mTwitter.showUser(mParticipants[position]);
 
 			return view;
 		}
