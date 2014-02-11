@@ -18,25 +18,10 @@
 package be.norio.twunch.android.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 
-import be.norio.twunch.android.BuildConfig;
-import be.norio.twunch.android.R;
 import be.norio.twunch.android.otto.BusProvider;
-import be.norio.twunch.android.util.AnalyticsUtils;
-import be.norio.twunch.android.util.PrefsUtils;
-import be.norio.twunch.android.util.Util;
-import be.norio.twunch.android.util.ViewServer;
 import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends Activity {
@@ -51,9 +36,6 @@ public abstract class BaseActivity extends Activity {
 			getActionBar().setHomeButtonEnabled(true);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-		ViewServer.get(getApplicationContext()).addWindow(this);
-
-
 	}
 
 	@Override
@@ -62,7 +44,6 @@ public abstract class BaseActivity extends Activity {
         // FIXME
 		//GoogleAnalyticsTracker.getInstance().dispatch();
         // GoogleAnalyticsSessionManager.getInstance().decrementActivityCount();
-		ViewServer.get(getApplicationContext()).removeWindow(this);
 	}
 
 	@Override
@@ -75,7 +56,6 @@ public abstract class BaseActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		BusProvider.getInstance().register(this);
-		ViewServer.get(getApplicationContext()).setFocusedWindow(this);
 	}
 
     @Override
@@ -99,6 +79,5 @@ public abstract class BaseActivity extends Activity {
 	protected void goHome() {
 		finish();
 	}
-
 
 }
