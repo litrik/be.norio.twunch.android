@@ -8,7 +8,7 @@ import be.norio.twunch.android.data.model.Twunch;
 public class TwunchData {
 
     private List<Twunch> mTwunches;
-    private long mTwunchesTimestamp;
+    private long mTimestamp;
 
     public List<Twunch> getTwunches() {
         return new ArrayList<Twunch>(mTwunches);
@@ -16,7 +16,10 @@ public class TwunchData {
 
     public void setTwunches(List<Twunch> twunches) {
         mTwunches = twunches;
-        mTwunchesTimestamp = System.currentTimeMillis();
+        mTimestamp = System.currentTimeMillis();
     }
 
+    public long getTimestamp() {
+        return mTimestamp;
+    }
 }

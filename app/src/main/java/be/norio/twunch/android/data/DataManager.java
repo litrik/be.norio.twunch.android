@@ -1,14 +1,17 @@
 package be.norio.twunch.android.data;
 
 import android.content.Context;
+import android.text.format.DateUtils;
+
+import com.squareup.otto.Produce;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.data.model.Twunches;
 import be.norio.twunch.android.otto.BusProvider;
-import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
 import be.norio.twunch.android.util.PrefsUtils;
 import retrofit.Callback;
@@ -24,7 +27,6 @@ public class DataManager {
     private final Context mContext;
     private final TwunchServer mServer;
     private final TwunchData mTwunchData;
-    private int mOutstandingNetworkCalls = 0;
 
     public static DataManager getInstance() {
         if(instance == null) {
@@ -39,7 +41,7 @@ public class DataManager {
             mTwunchData = PrefsUtils.getData();
         } else {
             mTwunchData = new TwunchData();
-            loadTwunches();
+            loadTwunches(true);
         }
     }
 
@@ -58,36 +60,31 @@ public class DataManager {
         return new ArrayList<Twunch>(mTwunchData.getTwunches());
     }
 
-    public void loadTwunches() {
-        incrementOutstandingNetworkCalls();
+    public void loadTwunches(boolean force) {
+        long lastSync = mTwunchData.getTimestamp();
+        long now = (new Date()).getTime();
+        if (!force && lastSync != 0 && (now - lastSync < DateUtils.HOUR_IN_MILLIS)) {
+            return;
+        }
         mServer.loadTwunches(new Callback<Twunches>() {
             @Override
             public void success(Twunches twunches, Response response) {
-                decrementOutstandingNetworkCalls();
                 mTwunchData.setTwunches(twunches.twunches);
+                PrefsUtils.setData(mTwunchData);
                 BusProvider.getInstance().post(new TwunchesAvailableEvent(mTwunchData.getTwunches()));
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                decrementOutstandingNetworkCalls();
+                // FIXME: Show error in the UI
                 retrofitError.printStackTrace();
             }
         });
     }
 
-
-    private void incrementOutstandingNetworkCalls() {
-        mOutstandingNetworkCalls++;
-        BusProvider.getInstance().post(new NetworkStatusUpdatedEvent(mOutstandingNetworkCalls));
-    }
-
-    private void decrementOutstandingNetworkCalls() {
-        mOutstandingNetworkCalls--;
-        if (mOutstandingNetworkCalls == 0) {
-            PrefsUtils.setData(mTwunchData);
-        }
-        BusProvider.getInstance().post(new NetworkStatusUpdatedEvent(mOutstandingNetworkCalls));
+    @Produce
+    public TwunchesAvailableEvent produceTwunches() {
+        return new TwunchesAvailableEvent(mTwunchData.getTwunches());
     }
 
     interface TwunchServer {

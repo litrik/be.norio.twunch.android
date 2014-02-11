@@ -10,4 +10,8 @@ public class TwunchesAvailableEvent {
     public TwunchesAvailableEvent(List<Twunch> twunches) {
         mTwunches = twunches;
     }
+
+    public List<Twunch> getTwunches() {
+        return mTwunches;
+    }
 }

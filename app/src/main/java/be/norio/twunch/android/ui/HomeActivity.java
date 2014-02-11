@@ -118,21 +118,10 @@ public class HomeActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void refreshTwunches(boolean force) {
-        long lastSync = PrefsUtils.getLastUpdate();
-        long now = (new Date()).getTime();
-        if (!force && lastSync != 0 && (now - lastSync < DateUtils.DAY_IN_MILLIS)) {
-            Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
-            return;
-        }
-        Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
-        DataManager.getInstance().loadTwunches();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        refreshTwunches(false);
+        DataManager.getInstance().loadTwunches(false);
         // Start listening for location updates
         String provider = locationManager.getBestProvider(new Criteria(), true);
         if (provider != null) {

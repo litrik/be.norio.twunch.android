@@ -109,14 +109,6 @@ public class PrefsUtils {
 		return getPrefs().contains(key);
 	}
 
-	public static long getLastUpdate() {
-		return getPrefs().getLong(KEY_LAST_UPDATE, DEFAULT_LAST_UPDATE);
-	}
-
-	public static void setLastUpdate(long value) {
-		PrefsUtils.apply(getPrefs().edit().putLong(KEY_LAST_UPDATE, value));
-	}
-
 	public static int getLastRunVersion() {
 		return getPrefs().getInt(KEY_LAST_RUN_VERSION, 0);
 	}
