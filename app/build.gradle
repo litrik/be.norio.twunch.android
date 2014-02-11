@@ -46,7 +46,7 @@ android {
         versionCode Integer.valueOf("$appVersionCode")
         packageName "$appPackageName"
         versionName "$appVersionName"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 19
     }
 
