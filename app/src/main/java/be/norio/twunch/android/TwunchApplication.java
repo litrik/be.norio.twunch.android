@@ -27,8 +27,6 @@ import be.norio.twunch.android.util.PrefsUtils;
  */
 public class TwunchApplication extends Application {
 
-	public static final String LOG_TAG = "Twunch";
-
 	@Override
 	public void onCreate() {
 		super.onCreate();

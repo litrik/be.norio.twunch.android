@@ -43,8 +43,6 @@ public class PrefsUtils {
 
 	private static final String KEY_PREFS_VERSION = "prefs_version";
 
-	private static boolean APPLY_AVAILABLE = false;
-
 	// Keys
 	public static final String KEY_LAST_UPDATE = "last_update";
 	private static final String KEY_LAST_RUN_VERSION = "last_run_version";
@@ -56,35 +54,12 @@ public class PrefsUtils {
 
 	private static Context CONTEXT;
 
-	static {
-		try {
-			SharedPreferences.Editor.class.getMethod("apply", new Class[0]);
-			APPLY_AVAILABLE = true;
-		} catch (NoSuchMethodException e) {
-			APPLY_AVAILABLE = false;
-		}
-	}
-
 	private PrefsUtils() {
-	}
-
-	@SuppressLint("NewApi")
-	public static void apply(SharedPreferences.Editor editor) {
-		if (APPLY_AVAILABLE) {
-			if (LOGD)
-				Log.v(TAG, "Using apply");
-			editor.apply();
-		} else {
-			if (LOGD)
-				Log.v(TAG, "Using commit");
-			editor.commit();
-		}
 	}
 
 	private static SharedPreferences getPrefs() {
 		return PreferenceManager.getDefaultSharedPreferences(CONTEXT);
 	}
-
 
     public static Context getContext() {
         return CONTEXT;
@@ -102,7 +77,7 @@ public class PrefsUtils {
 			version = VER_LAUNCH;
 		}
 
-		PrefsUtils.apply(getPrefs().edit().putInt(KEY_PREFS_VERSION, version));
+		getPrefs().edit().putInt(KEY_PREFS_VERSION, version).apply();
 	}
 
 	private static boolean contains(String key) {
@@ -114,7 +89,7 @@ public class PrefsUtils {
 	}
 
 	public static void setLastRunVersion(int value) {
-		PrefsUtils.apply(getPrefs().edit().putInt(KEY_LAST_RUN_VERSION, value));
+		getPrefs().edit().putInt(KEY_LAST_RUN_VERSION, value).apply();
 	}
 
 	public static String getTwitterToken() {
@@ -122,7 +97,7 @@ public class PrefsUtils {
 	}
 
 	public static void setTwitterToken(String value) {
-		PrefsUtils.apply(getPrefs().edit().putString(KEY_TWITTER_TOKEN, value));
+		getPrefs().edit().putString(KEY_TWITTER_TOKEN, value).apply();
 	}
 
 
@@ -136,7 +111,7 @@ public class PrefsUtils {
 
     public static void setData(TwunchData data) {
         final String string = new Gson().toJson(data);
-        PrefsUtils.apply(getPrefs().edit().putString(KEY_DATA, string));
+        getPrefs().edit().putString(KEY_DATA, string).apply();
     }
     public static boolean isDataAvailable() {
         return !TextUtils.isEmpty(getPrefs().getString(KEY_DATA, null));

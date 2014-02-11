@@ -17,23 +17,14 @@
 
 package be.norio.twunch.android.util;
 
+import android.content.Context;
+import android.text.format.Time;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.content.Context;
-import android.os.Build;
-import android.text.format.Time;
-
 public class Util {
-
-	public static boolean isIceCreamSandwich() {
-		// Can use static final constants like HONEYCOMB, declared in later
-		// versions
-		// of the OS since they are inlined at compile time. This is guaranteed
-		// behavior.
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-	}
 
 	public static String readTextFromResource(Context context, int resourceId) {
 		InputStream raw = context.getResources().openRawResource(resourceId);

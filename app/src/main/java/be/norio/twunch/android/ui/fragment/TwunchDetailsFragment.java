@@ -61,7 +61,6 @@ import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
-import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
@@ -153,31 +152,29 @@ public class TwunchDetailsFragment extends BaseFragment {
         int days = (int) (date / msInDay - new Date().getTime() / msInDay);
         mDaysView.setText(days == 0 ? getString(R.string.today) : String.format(
                 getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
-        if (Util.isIceCreamSandwich()) {
-            mDaysView.setOnClickListener(new OnClickListener() {
+        mDaysView.setOnClickListener(new OnClickListener() {
 
-                @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                @Override
-                public void onClick(View v) {
-                    try {
-                        GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-                                AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
-                        Intent intent = new Intent(Intent.ACTION_INSERT)
-                                .setData(Events.CONTENT_URI)
-                                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
-                                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-                                        date + DateUtils.HOUR_IN_MILLIS)
-                                .putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle())
-                                .putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle())
-                                .putExtra(Events.EVENT_LOCATION, mTwunch.getAddress())
-                                .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        // FIXME: handle exception
-                    }
+            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            @Override
+            public void onClick(View v) {
+                try {
+                    GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
+                            AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
+                    Intent intent = new Intent(Intent.ACTION_INSERT)
+                            .setData(Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                    date + DateUtils.HOUR_IN_MILLIS)
+                            .putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle())
+                            .putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle())
+                            .putExtra(Events.EVENT_LOCATION, mTwunch.getAddress())
+                            .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // FIXME: handle exception
                 }
-            });
-        }
+            }
+        });
 
         // Note
         final String note = mTwunch.getNote();
