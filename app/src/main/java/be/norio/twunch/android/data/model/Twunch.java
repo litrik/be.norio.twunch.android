@@ -1,17 +1,20 @@
 package be.norio.twunch.android.data.model;
 
+import android.text.format.DateUtils;
+
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.List;
 
 @Root(strict = false)
 public class Twunch {
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMdd'T'HHmmss'Z'");
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
 
     @Element
     String id;
@@ -99,4 +102,35 @@ public class Twunch {
     public void setDistance(float distance) {
         this.distance = distance;
     }
+
+    public static Comparator COMPARATOR_DATE = new Comparator<Twunch>() {
+
+        @Override
+        public int compare(Twunch lhs, Twunch rhs) {
+            final long dateDiff = (lhs.getDate() - rhs.getDate()) / DateUtils.MINUTE_IN_MILLIS;
+            return (int) dateDiff;
+        }
+    };
+
+    public static Comparator COMPARATOR_DISTANCE = new Comparator<Twunch>() {
+
+        @Override
+        public int compare(Twunch lhs, Twunch rhs) {
+            return (int) (lhs.getDistance() - rhs.getDistance());
+        }
+    };
+
+    public static Comparator COMPARATOR_POPULARITY = new Comparator<Twunch>() {
+
+        @Override
+        public int compare(Twunch lhs, Twunch rhs) {
+            final int popularityCompare = (int) (rhs.getParticipants().size() - lhs.getParticipants().size());
+            if (popularityCompare != 0) {
+                return popularityCompare;
+            } else {
+                return COMPARATOR_DATE.compare(lhs, rhs);
+            }
+        }
+    };
+
 }

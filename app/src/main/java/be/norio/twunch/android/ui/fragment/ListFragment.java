@@ -21,6 +21,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,14 +33,13 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
-import java.util.List;
-
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
+import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,6 +55,17 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
     PullToRefreshLayout mPullToRefresh;
     @InjectView(R.id.list)
     ListView mListView;
+
+    int mCurrentSorting;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        mCurrentSorting = PrefsUtils.getSort();
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +86,42 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
                 .setup(mPullToRefresh);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_list, menu);
+        if (mCurrentSorting == PrefsUtils.SORT_DATE) {
+            menu.findItem(R.id.action_sort_date).setChecked(true);
+        } else if (mCurrentSorting == PrefsUtils.SORT_DISTANCE) {
+            menu.findItem(R.id.action_sort_distance).setChecked(true);
+        } else if (mCurrentSorting == PrefsUtils.SORT_POPULARITY) {
+            menu.findItem(R.id.action_sort_popularity).setChecked(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sort_date:
+                PrefsUtils.setSort(PrefsUtils.SORT_DATE);
+                item.setChecked(true);
+                sortData(PrefsUtils.SORT_DATE);
+                return true;
+            case R.id.action_sort_distance:
+                PrefsUtils.setSort(PrefsUtils.SORT_DISTANCE);
+                item.setChecked(true);
+                sortData(PrefsUtils.SORT_DISTANCE);
+                return true;
+            case R.id.action_sort_popularity:
+                PrefsUtils.setSort(PrefsUtils.SORT_POPULARITY);
+                item.setChecked(true);
+                sortData(PrefsUtils.SORT_POPULARITY);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
 
     static class ViewHolder {
         public View rootView;
@@ -159,6 +208,23 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
     public void onTwunchesAvailableEvent(TwunchesAvailableEvent event) {
         mAdapter.clear();
         mAdapter.addAll(event.getTwunches());
+        sortData(mCurrentSorting);
         mPullToRefresh.setRefreshComplete();
+    }
+
+
+    private void sortData(int sorting) {
+        switch (sorting) {
+            case PrefsUtils.SORT_DISTANCE:
+                mAdapter.sort(Twunch.COMPARATOR_DISTANCE);
+                return;
+            case PrefsUtils.SORT_POPULARITY:
+                mAdapter.sort(Twunch.COMPARATOR_POPULARITY);
+                return;
+            default:
+                mAdapter.sort(Twunch.COMPARATOR_DATE);
+                return;
+        }
+
     }
 }

@@ -31,6 +31,8 @@
     </plurals>
 
     <string name="today">Today</string>
+    <string name="sort">Sort</string>
+    <string name="popularity">Popularity</string>
 
     <plurals name="days_to_twunch">
         <item quantity="one">%d day</item>

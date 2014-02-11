@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/ic_action_sort"
+        android:showAsAction="ifRoom"
+        android:title="@string/sort">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:checked="true"
+                    android:id="@+id/action_sort_date"
+                    android:title="@string/tab_date" />
+                <item
+                    android:id="@+id/action_sort_distance"
+                    android:title="@string/tab_distance" />
+                <item
+                    android:id="@+id/action_sort_popularity"
+                    android:title="@string/popularity" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

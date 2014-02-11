@@ -48,9 +48,15 @@ public class PrefsUtils {
 	private static final String KEY_LAST_RUN_VERSION = "last_run_version";
 	private static final String KEY_TWITTER_TOKEN = "twitter_token";
     private static final String KEY_DATA = "data";
+    private static final String KEY_SORT = "sort";
 
 	// Default values
 	public static final long DEFAULT_LAST_UPDATE = 0;
+
+    // Values
+	public static final int SORT_DATE = 0;
+	public static final int SORT_DISTANCE= 1;
+	public static final int SORT_POPULARITY= 2;
 
 	private static Context CONTEXT;
 
@@ -115,6 +121,14 @@ public class PrefsUtils {
     }
     public static boolean isDataAvailable() {
         return !TextUtils.isEmpty(getPrefs().getString(KEY_DATA, null));
+    }
+
+    public static void setSort(int value) {
+        getPrefs().edit().putInt(KEY_SORT, value).apply();
+    }
+
+    public static int getSort() {
+        return getPrefs().getInt(KEY_SORT, SORT_DATE);
     }
 
 }
