@@ -43,6 +43,7 @@ public class DataManager {
             mTwunchData = new TwunchData();
             loadTwunches(true);
         }
+        BusProvider.getInstance().register(this);
     }
 
     public Twunch getTwunch(String id) {
