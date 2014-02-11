@@ -17,23 +17,13 @@
 
 package be.norio.twunch.android.ui;
 
-import android.app.AlertDialog;
-import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.OperationApplicationException;
-import android.database.Cursor;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RemoteException;
-import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -46,43 +36,29 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.google.android.apps.iosched.util.DetachableResultReceiver;
-import com.google.android.apps.iosched.util.Lists;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
+import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.otto.OnTwunchClickedEvent;
-import be.norio.twunch.android.provider.TwunchContract;
-import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.service.TwunchService;
 import be.norio.twunch.android.ui.fragment.TwunchListFragment;
 import be.norio.twunch.android.ui.fragment.TwunchMapFragment;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.TwitterUtils;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.OAuth2Token;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class HomeActivity extends BaseActivity implements ActionBar.TabListener, OnPageChangeListener {
 
-    private final static String[] SORTS = new String[]{Twunches.SORT_DATE, Twunches.SORT_DISTANCE};
     private final static String[] PAGES = new String[]{AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
             AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE, AnalyticsUtils.Pages.TWUNCH_MAP};
 
     MenuItem refreshMenuItem;
-
-    private DetachableResultReceiver resultReceiver;
 
     LocationManager locationManager;
     LocationListener locationListener;
@@ -111,9 +87,6 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
 
         bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
 
-        resultReceiver = new DetachableResultReceiver(new Handler());
-        resultReceiver.setReceiver(new SyncResultReceiver());
-
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -121,7 +94,8 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 if (location != null) {
-                    new UpdateDistancesTask().execute(location);
+                    // FIXME
+                    // new UpdateDistancesTask().execute(location);
                 }
             }
 
@@ -141,7 +115,6 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
         if (PrefsUtils.getTwitterToken() == null) {
             TwitterUtils.getToken();
         }
-
 
     }
 
@@ -163,20 +136,11 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
         public Fragment getItem(int position) {
 
             if (position == 0 || position == 1) {
-                return TwunchListFragment.newInstance(SORTS[position]);
+                return TwunchListFragment.newInstance();
             } else {
                 return new TwunchMapFragment();
             }
         }
-    }
-
-    private interface TwunchesQuery {
-
-        String[] PROJECTION = {BaseColumns._ID, Twunches.LATITUDE, Twunches.LONGITUDE};
-
-        int _ID = 0;
-        int LATITUDE = 1;
-        int LONGITUDE = 2;
     }
 
     @Override
@@ -240,99 +204,9 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
             return;
         }
         if (refreshMenuItem != null) {
-            refreshMenuItem.setActionView(R.layout.actionbar_indeterminate_progress);
-            ((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing)).getDrawable()).start();
         }
         Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
-        Intent intent = new Intent(this, TwunchService.class);
-        intent.putExtra(TwunchService.EXTRA_STATUS_RECEIVER, resultReceiver);
-        startService(intent);
-    }
-
-    private class SyncResultReceiver implements DetachableResultReceiver.Receiver {
-
-        @Override
-        public void onReceiveResult(int resultCode, Bundle resultData) {
-            switch (resultCode) {
-                case TwunchService.STATUS_RUNNING: {
-                    break;
-                }
-                case TwunchService.STATUS_FINISHED: {
-                    if (refreshMenuItem != null) {
-                        if (refreshMenuItem.getActionView() != null) {
-                            ((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
-                                    .getDrawable()).stop();
-                        }
-                        refreshMenuItem.setActionView(null);
-                    }
-                    Toast.makeText(HomeActivity.this, getString(R.string.download_done), Toast.LENGTH_SHORT).show();
-                    String provider = locationManager.getBestProvider(new Criteria(), true);
-                    if (provider != null) {
-                        Location location = locationManager.getLastKnownLocation(provider);
-                        if (location != null) {
-                            new UpdateDistancesTask().execute(location);
-                        }
-                    }
-                    break;
-                }
-                case TwunchService.STATUS_ERROR: {
-                    if (refreshMenuItem != null) {
-                        if (refreshMenuItem.getActionView() != null) {
-                            ((AnimationDrawable) ((ImageView) refreshMenuItem.getActionView().findViewById(R.id.refreshing))
-                                    .getDrawable()).stop();
-                        }
-                        refreshMenuItem.setActionView(null);
-                    }
-                    AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-                    builder.setMessage(R.string.download_error);
-                    builder.setCancelable(false);
-                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Do nothing
-                        }
-                    });
-                    builder.create().show();
-                    break;
-                }
-            }
-
-        }
-    }
-
-    class UpdateDistancesTask extends AsyncTask<Location, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Location... locations) {
-            if (locations[0] == null) {
-                return null;
-            }
-            Cursor c = getContentResolver().query(Twunches.CONTENT_URI, TwunchesQuery.PROJECTION, null, null, null);
-            if (!c.moveToFirst()) {
-                c.close();
-                return null;
-            }
-            final ArrayList<ContentProviderOperation> batch = Lists.newArrayList();
-            do {
-                ContentProviderOperation.Builder builder = ContentProviderOperation.newUpdate(Twunches.CONTENT_URI);
-                builder.withSelection(Twunches._ID + "=?", new String[]{Long.toString(c.getLong(TwunchesQuery._ID))});
-                Location twunchLocation = new Location("");
-                twunchLocation.setLatitude(c.getDouble(TwunchesQuery.LATITUDE));
-                twunchLocation.setLongitude(c.getDouble(TwunchesQuery.LONGITUDE));
-                builder.withValue(Twunches.DISTANCE, (int) locations[0].distanceTo(twunchLocation));
-                batch.add(builder.build());
-            } while (c.moveToNext());
-            c.close();
-            try {
-                getContentResolver().applyBatch(TwunchContract.CONTENT_AUTHORITY, batch);
-            } catch (RemoteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (OperationApplicationException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            return null;
-        }
+        DataManager.getInstance().loadTwunches();
     }
 
     @Override
@@ -354,7 +228,7 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
 
     @Subscribe
     public void onTwunchClicked(OnTwunchClickedEvent event) {
-        TwunchDetailsActivity.start(this, event.getUri());
+        TwunchDetailsActivity.start(this, event.getTwunch().getId());
     }
 
 }

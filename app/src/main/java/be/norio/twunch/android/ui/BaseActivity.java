@@ -31,7 +31,6 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-import com.google.android.apps.iosched.util.GoogleAnalyticsSessionManager;
 
 import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
@@ -40,7 +39,7 @@ import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
-import butterknife.Views;
+import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -53,7 +52,9 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
+
+        // FIXME
+		// GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
 		if (!(this instanceof HomeActivity)) {
 			getSupportActionBar().setHomeButtonEnabled(true);
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,8 +67,9 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		GoogleAnalyticsTracker.getInstance().dispatch();
-		GoogleAnalyticsSessionManager.getInstance().decrementActivityCount();
+        // FIXME
+		//GoogleAnalyticsTracker.getInstance().dispatch();
+        // GoogleAnalyticsSessionManager.getInstance().decrementActivityCount();
 		ViewServer.get(getApplicationContext()).removeWindow(this);
 	}
 
@@ -87,7 +89,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public void onSupportContentChanged() {
         super.onSupportContentChanged();
-        Views.inject(this);
+        ButterKnife.inject(this);
     }
 
     @Override

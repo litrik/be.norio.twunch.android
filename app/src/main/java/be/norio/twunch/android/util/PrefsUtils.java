@@ -22,7 +22,13 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import be.norio.twunch.android.data.TwunchData;
 
 public class PrefsUtils {
 
@@ -44,6 +50,7 @@ public class PrefsUtils {
 	public static final String KEY_LAST_TAB = "last_tab";
 	private static final String KEY_LAST_RUN_VERSION = "last_run_version";
 	private static final String KEY_TWITTER_TOKEN = "twitter_token";
+    private static final String KEY_DATA = "data";
 
 	// Default values
 	public static final long DEFAULT_LAST_UPDATE = 0;
@@ -79,6 +86,11 @@ public class PrefsUtils {
 	private static SharedPreferences getPrefs() {
 		return PreferenceManager.getDefaultSharedPreferences(CONTEXT);
 	}
+
+
+    public static Context getContext() {
+        return CONTEXT;
+    }
 
 	public static void initialize(Application application) {
 		CONTEXT = application;
@@ -130,5 +142,22 @@ public class PrefsUtils {
 	public static void setTwitterToken(String value) {
 		PrefsUtils.apply(getPrefs().edit().putString(KEY_TWITTER_TOKEN, value));
 	}
+
+
+    public static TwunchData getData() {
+        final String string = getPrefs().getString(KEY_DATA, null);
+        if(TextUtils.isEmpty(string)){
+            return new TwunchData();
+        } else
+            return (new GsonBuilder()).create().fromJson(string, TwunchData.class);
+    }
+
+    public static void setData(TwunchData data) {
+        final String string = new Gson().toJson(data);
+        PrefsUtils.apply(getPrefs().edit().putString(KEY_DATA, string));
+    }
+    public static boolean isDataAvailable() {
+        return !TextUtils.isEmpty(getPrefs().getString(KEY_DATA, null));
+    }
 
 }

@@ -6,11 +6,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCWyLhr552i4OfDpIcQ2YAcIZnWJFKFz5M" />
 
-        <provider
-                android:name="be.norio.twunch.android.provider.TwunchProvider"
-                android:authorities="be.norio.twunch.android.dev"
-                android:exported="false" />
-
     </application>
 
 </manifest>

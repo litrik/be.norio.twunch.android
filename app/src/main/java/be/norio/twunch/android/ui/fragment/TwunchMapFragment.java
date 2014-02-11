@@ -17,9 +17,6 @@
 
 package be.norio.twunch.android.ui.fragment;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,13 +24,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.view.View;
-
-import be.norio.twunch.android.R;
-import be.norio.twunch.android.otto.BusProvider;
-import be.norio.twunch.android.otto.OnTwunchClickedEvent;
-import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import butterknife.Views;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,10 +36,19 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class TwunchMapFragment extends SupportMapFragment implements LoaderManager.LoaderCallbacks<Cursor>,
-		OnInfoWindowClickListener {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-	Map<Marker, Uri> mMarkers = new HashMap<Marker, Uri>();
+import be.norio.twunch.android.R;
+import be.norio.twunch.android.data.DataManager;
+import be.norio.twunch.android.data.model.Twunch;
+import be.norio.twunch.android.otto.BusProvider;
+import be.norio.twunch.android.otto.OnTwunchClickedEvent;
+
+public class TwunchMapFragment extends SupportMapFragment implements OnInfoWindowClickListener {
+
+	Map<Marker, Twunch> mMarkers = new HashMap<Marker, Twunch>();
 	private GoogleMap mMap;
 
     @Override
@@ -65,40 +64,36 @@ public class TwunchMapFragment extends SupportMapFragment implements LoaderManag
 				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(50.85, 4.35), 6));
 				mMap.setMyLocationEnabled(true);
 				mMap.setOnInfoWindowClickListener(this);
-				getLoaderManager().restartLoader(Twunches.Query._TOKEN, getArguments(), this);
+				showMarkers();
 			}
 		}
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), Twunches.Query.PROJECTION, null, null,
-				Twunches.SORT_DATE);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		mMap.clear();
+	public void showMarkers() {
+        final List<Twunch> twunches = DataManager.getInstance().getTwunches();
+        mMap.clear();
 		mMarkers.clear();
-		if (cursor.getCount() == 0) {
+		if (twunches.size() == 0) {
 			return;
 		}
 		final LatLngBounds.Builder builder = LatLngBounds.builder();
-		while (cursor.moveToNext()) {
-			final float lat = cursor.getFloat(Twunches.Query.LATITUDE);
-			final float lon = cursor.getFloat(Twunches.Query.LONGITUDE);
+        for (int i = 0; i < twunches.size(); i++) {
+            Twunch twunch = twunches.get(i);
+
+			final double lat = twunch.getLatitude();
+			final double lon = twunch.getLongitude();
 			if (lat != 0 && lon != 0) {
 				final LatLng latLng = new LatLng(lat, lon);
 				final Marker marker = mMap.addMarker(new MarkerOptions()
 						.position(latLng)
 						.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-						.title(cursor.getString(Twunches.Query.NAME))
+						.title(twunch.getTitle())
 						.snippet(
 								String.format(getString(R.string.date), DateUtils.formatDateTime(getActivity(),
-										cursor.getLong(Twunches.Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+                                        twunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY
 												| DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(getActivity(),
-										cursor.getLong(Twunches.Query.DATE), DateUtils.FORMAT_SHOW_TIME))));
-				mMarkers.put(marker, Twunches.buildTwunchUri(Integer.toString(cursor.getInt(Twunches.Query._ID))));
+                                        twunch.getDate(), DateUtils.FORMAT_SHOW_TIME))));
+				mMarkers.put(marker, twunch);
 				builder.include(latLng);
 			}
 		}
@@ -113,11 +108,6 @@ public class TwunchMapFragment extends SupportMapFragment implements LoaderManag
 			}
 		});
 
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		mMap.clear();
 	}
 
 	@Override

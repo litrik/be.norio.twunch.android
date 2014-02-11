@@ -50,8 +50,6 @@
         </activity>
         <activity android:name=".ui.TwunchDetailsActivity" />
 
-        <service android:name=".service.TwunchService" />
-
     </application>
 
 </manifest>

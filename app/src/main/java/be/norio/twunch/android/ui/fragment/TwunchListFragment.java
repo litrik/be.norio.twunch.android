@@ -18,51 +18,44 @@
 package be.norio.twunch.android.ui.fragment;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.List;
+
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.data.DataManager;
+import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.OnTwunchClickedEvent;
-import be.norio.twunch.android.provider.TwunchContract.Twunches;
-import be.norio.twunch.android.provider.TwunchContract.Twunches.Query;
 import be.norio.twunch.android.util.Util;
+import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Views;
 
-public class TwunchListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TwunchListFragment extends ListFragment {
 
-	private final static String EXTRA_SORT = "EXTRA_SORT";
+	private TwunchAdapter mAdapter;
+    private List<Twunch> mTwunches;
 
-	private CursorAdapter mAdapter;
+    public static TwunchListFragment newInstance() {
+        TwunchListFragment f = new TwunchListFragment();
+        return f;
+    }
 
-	public static TwunchListFragment newInstance(String sort) {
-		TwunchListFragment fragment = new TwunchListFragment();
-		Bundle args = new Bundle();
-		args.putString(TwunchListFragment.EXTRA_SORT, sort);
-		fragment.setArguments(args);
-		return fragment;
-	}
-
-	@Override
+    @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mAdapter = new TwunchAdapter(getActivity());
+        mTwunches = DataManager.getInstance().getTwunches();
+		mAdapter = new TwunchAdapter(getActivity(), R.layout.listitem_twunch, mTwunches);
 		setListAdapter(mAdapter);
-
-		getLoaderManager().initLoader(Query._TOKEN, getArguments(), this);
 	}
 
     static class ViewHolder {
@@ -79,30 +72,38 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 		public TextView days;
 
         public ViewHolder(View v) {
-            Views.inject(this, v);
+            ButterKnife.inject(this, v);
             v.setTag(this);
         }
     }
+    private class TwunchAdapter extends ArrayAdapter<Twunch> {
 
-	class TwunchAdapter extends CursorAdapter {
+        public TwunchAdapter(Context context, int resource, List<Twunch> objects) {
+            super(context, resource, objects);
+        }
 
-		public TwunchAdapter(Context context) {
-			super(context, null, 0);
-		}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View view;
+            if (convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(getActivity());
+                view = inflater.inflate(R.layout.listitem_twunch, null);
+                new ViewHolder(view);
+            } else {
+                view = convertView;
+            }
+            final ViewHolder vh = (ViewHolder) view.getTag();
 
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
+            final Twunch twunch = getItem(position);
 
-			ViewHolder vh = (ViewHolder) view.getTag();
+            vh.title.setText(twunch.getTitle());
 
-            vh.title.setText(cursor.getString(Query.NAME));
+            vh.address.setText(twunch.getAddress());
+			//vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
-            vh.address.setText(cursor.getString(Query.ADDRESS));
-			vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
-
-            final double lat = cursor.getDouble(Query.LATITUDE);
-			final double lon = cursor.getDouble(Query.LONGITUDE);
-			long distance = cursor.getLong(Query.DISTANCE);
+            final double lat = twunch.getLatitude();
+			final double lon = twunch.getLongitude();
+			float distance = twunch.getDistance();
 			if (lat != 0 && lon != 0 && distance > 0) {
 				vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance / 1000f));
 				vh.distance.setVisibility(View.VISIBLE);
@@ -112,44 +113,23 @@ public class TwunchListFragment extends ListFragment implements LoaderManager.Lo
 
             vh.date.setText(String.format(
 					view.getContext().getString(R.string.date),
-					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_WEEKDAY
+					DateUtils.formatDateTime(view.getContext(), twunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY
 							| DateUtils.FORMAT_SHOW_DATE),
-					DateUtils.formatDateTime(view.getContext(), cursor.getLong(Query.DATE), DateUtils.FORMAT_SHOW_TIME)));
-			vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
+					DateUtils.formatDateTime(view.getContext(), twunch.getDate(), DateUtils.FORMAT_SHOW_TIME)));
+			//vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
-            int days = (int) ((cursor.getLong(Query.DATE) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+            int days = (int) ((twunch.getDate() - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
 			vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
 					getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
+            return view;
 		}
 
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			View v = LayoutInflater.from(context).inflate(R.layout.listitem_twunch, parent, false);
-			new ViewHolder(v);
-			return v;
-		}
 	}
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		BusProvider.getInstance().post(
-				new OnTwunchClickedEvent(Twunches.buildTwunchUri(Integer.toString(((Cursor) mAdapter.getItem(position))
-						.getInt(Query._ID)))));
+				new OnTwunchClickedEvent(mTwunches.get(position)));
 	}
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(getActivity(), Twunches.buildFutureTwunchesUri(), Query.PROJECTION, null, null,
-				args.getString(EXTRA_SORT));
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		mAdapter.swapCursor(cursor);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		mAdapter.swapCursor(null);
-	}
 }

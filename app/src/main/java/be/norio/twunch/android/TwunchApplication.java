@@ -18,6 +18,8 @@
 package be.norio.twunch.android;
 
 import android.app.Application;
+
+import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.util.PrefsUtils;
 
 /**
@@ -31,6 +33,7 @@ public class TwunchApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		PrefsUtils.initialize(this);
+        DataManager.getInstance();
 	}
 
 }
