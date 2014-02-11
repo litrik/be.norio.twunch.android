@@ -17,6 +17,7 @@
 
 package be.norio.twunch.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -24,13 +25,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
@@ -41,13 +39,7 @@ import be.norio.twunch.android.util.Util;
 import be.norio.twunch.android.util.ViewServer;
 import butterknife.ButterKnife;
 
-public abstract class BaseActivity extends ActionBarActivity {
-
-	private static final String TAG = BaseActivity.class.getSimpleName();
-	private final static boolean LOGV = true;
-
-	private final int DIALOG_WHATS_NEW = 56479952;
-	private final int DIALOG_ABOUT = 3267613;
+public abstract class BaseActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +48,12 @@ public abstract class BaseActivity extends ActionBarActivity {
         // FIXME
 		// GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
 		if (!(this instanceof HomeActivity)) {
-			getSupportActionBar().setHomeButtonEnabled(true);
-			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			getActionBar().setHomeButtonEnabled(true);
+			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		ViewServer.get(getApplicationContext()).addWindow(this);
 
-		showWhatsNew();
+
 	}
 
 	@Override
@@ -87,16 +79,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 	}
 
     @Override
-    public void onSupportContentChanged() {
-        super.onSupportContentChanged();
+    public void onContentChanged() {
+        super.onContentChanged();
         ButterKnife.inject(this);
     }
-
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_base, menu);
-		return true;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -104,12 +90,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 		case android.R.id.home:
 			goHome();
 			return true;
-		case R.id.menuAbout:
-			showDialog(DIALOG_ABOUT);
-			break;
-		case R.id.menuWhatsNew:
-			showDialog(DIALOG_WHATS_NEW);
-			break;
 		default:
 			break;
 		}
@@ -120,44 +100,5 @@ public abstract class BaseActivity extends ActionBarActivity {
 		finish();
 	}
 
-	private void showWhatsNew() {
-		final int currentVersion = BuildConfig.VERSION_CODE;
-		if (currentVersion > PrefsUtils.getLastRunVersion()) {
-			if (LOGV)
-				Log.v(TAG, "This is the first time we run version " + BuildConfig.VERSION_CODE);
-			showDialog(DIALOG_WHATS_NEW);
-		}
-		PrefsUtils.setLastRunVersion(currentVersion);
-	}
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		Dialog dialog;
-		switch (id) {
-		case DIALOG_WHATS_NEW:
-			dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW);
-			break;
-		case DIALOG_ABOUT:
-			dialog = createHtmlDialog(getString(R.string.about, BuildConfig.VERSION_NAME), R.raw.about,
-					AnalyticsUtils.Pages.ABOUT);
-			break;
-		default:
-			dialog = null;
-		}
-		return dialog;
-	}
-
-	private Dialog createHtmlDialog(String title, int contentResourceId, String pageName) {
-		AnalyticsUtils.trackPageView(pageName);
-		WebView webView = new WebView(this);
-		webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
-		return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null)
-				.setNeutralButton(R.string.rate, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-					}
-				}).create();
-	}
 }

@@ -47,14 +47,12 @@ public class PrefsUtils {
 
 	// Keys
 	public static final String KEY_LAST_UPDATE = "last_update";
-	public static final String KEY_LAST_TAB = "last_tab";
 	private static final String KEY_LAST_RUN_VERSION = "last_run_version";
 	private static final String KEY_TWITTER_TOKEN = "twitter_token";
     private static final String KEY_DATA = "data";
 
 	// Default values
 	public static final long DEFAULT_LAST_UPDATE = 0;
-	public static final int DEFAULT_LAST_TAB = 0;
 
 	private static Context CONTEXT;
 
@@ -117,14 +115,6 @@ public class PrefsUtils {
 
 	public static void setLastUpdate(long value) {
 		PrefsUtils.apply(getPrefs().edit().putLong(KEY_LAST_UPDATE, value));
-	}
-
-	public static int getLastTab() {
-		return getPrefs().getInt(KEY_LAST_TAB, DEFAULT_LAST_TAB);
-	}
-
-	public static void setLastTab(int value) {
-		PrefsUtils.apply(getPrefs().edit().putInt(KEY_LAST_TAB, value));
 	}
 
 	public static int getLastRunVersion() {

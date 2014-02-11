@@ -17,9 +17,9 @@
 
 package be.norio.twunch.android.ui.fragment;
 
+import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +34,7 @@ import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.BusProvider;
-import be.norio.twunch.android.otto.OnTwunchClickedEvent;
+import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.util.Util;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -43,11 +43,6 @@ public class TwunchListFragment extends ListFragment {
 
 	private TwunchAdapter mAdapter;
     private List<Twunch> mTwunches;
-
-    public static TwunchListFragment newInstance() {
-        TwunchListFragment f = new TwunchListFragment();
-        return f;
-    }
 
     @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -129,7 +124,7 @@ public class TwunchListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		BusProvider.getInstance().post(
-				new OnTwunchClickedEvent(mTwunches.get(position)));
+				new TwunchClickedEvent(mTwunches.get(position)));
 	}
 
 }

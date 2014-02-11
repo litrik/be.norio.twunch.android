@@ -17,19 +17,13 @@
 
 package be.norio.twunch.android.ui.fragment;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -44,9 +38,9 @@ import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.BusProvider;
-import be.norio.twunch.android.otto.OnTwunchClickedEvent;
+import be.norio.twunch.android.otto.TwunchClickedEvent;
 
-public class TwunchMapFragment extends SupportMapFragment implements OnInfoWindowClickListener {
+public class TwunchMapFragment extends MapFragment implements OnInfoWindowClickListener {
 
 	Map<Marker, Twunch> mMarkers = new HashMap<Marker, Twunch>();
 	private GoogleMap mMap;
@@ -112,6 +106,6 @@ public class TwunchMapFragment extends SupportMapFragment implements OnInfoWindo
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
-		BusProvider.getInstance().post(new OnTwunchClickedEvent(mMarkers.get(marker)));
+		BusProvider.getInstance().post(new TwunchClickedEvent(mMarkers.get(marker)));
 	}
 }

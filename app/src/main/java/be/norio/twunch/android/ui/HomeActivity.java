@@ -17,75 +17,51 @@
 
 package be.norio.twunch.android.ui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.app.ActionBar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
+import android.webkit.WebView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.Date;
 
+import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.data.DataManager;
-import be.norio.twunch.android.otto.OnTwunchClickedEvent;
-import be.norio.twunch.android.ui.fragment.TwunchListFragment;
-import be.norio.twunch.android.ui.fragment.TwunchMapFragment;
+import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.TwitterUtils;
+import be.norio.twunch.android.util.Util;
 
-public class HomeActivity extends BaseActivity implements ActionBar.TabListener, OnPageChangeListener {
+public class HomeActivity extends BaseActivity {
 
-    private final static String[] PAGES = new String[]{AnalyticsUtils.Pages.TWUNCH_LIST_DATE,
-            AnalyticsUtils.Pages.TWUNCH_LIST_DISTANCE, AnalyticsUtils.Pages.TWUNCH_MAP};
-
-    MenuItem refreshMenuItem;
+    private final int DIALOG_WHATS_NEW = 56479952;
+    private final int DIALOG_ABOUT = 3267613;
 
     LocationManager locationManager;
     LocationListener locationListener;
-
-    private ViewPager mViewPager;
-    private MyAdapter mMyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_twunch_list);
-        mViewPager = (ViewPager) findViewById(R.id.home_pager);
-        mMyAdapter = new MyAdapter(getSupportFragmentManager(),
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS);
-        mViewPager.setAdapter(mMyAdapter);
-        mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setOnPageChangeListener(this);
-
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        final ActionBar bar = getSupportActionBar();
-        bar.addTab(bar.newTab().setText(R.string.tab_date).setTabListener(this), false);
-        bar.addTab(bar.newTab().setText(R.string.tab_distance).setTabListener(this), false);
-        bar.addTab(bar.newTab().setText(R.string.menu_map).setTabListener(this), false);
-
-        bar.setSelectedNavigationItem(PrefsUtils.getLastTab());
+        setContentView(R.layout.activity_home);
+        // GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS
 
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -116,82 +92,28 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
             TwitterUtils.getToken();
         }
 
-    }
-
-    public static class MyAdapter extends FragmentPagerAdapter {
-
-        final private boolean mIsGooglePlayServicesAvailable;
-
-        public MyAdapter(FragmentManager fm, boolean b) {
-            super(fm);
-            mIsGooglePlayServicesAvailable = b;
-        }
-
-        @Override
-        public int getCount() {
-            return mIsGooglePlayServicesAvailable ? 3 : 2;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            if (position == 0 || position == 1) {
-                return TwunchListFragment.newInstance();
-            } else {
-                return new TwunchMapFragment();
-            }
-        }
-    }
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        int position = tab.getPosition();
-        PrefsUtils.setLastTab(position);
-        if (mViewPager.getCurrentItem() != position) {
-            mViewPager.setCurrentItem(position, true);
-            AnalyticsUtils.trackPageView(PAGES[position]);
-        }
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        // Do nothing
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-        // Do nothing
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int arg0) {
-        // Do nothing
-    }
-
-    @Override
-    public void onPageScrolled(int arg0, float arg1, int arg2) {
-        // Do nothing
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        getSupportActionBar().setSelectedNavigationItem(position);
+        showWhatsNew();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.fragment_twunch_list, menu);
-        refreshMenuItem = menu.findItem(R.id.menuRefresh);
+        getMenuInflater().inflate(R.menu.activity_home, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menuRefresh:
-                refreshTwunches(true);
-                return true;
+            case R.id.action_map:
+                MapActivity.start(this);
+                break;
+            case R.id.menuAbout:
+                showDialog(DIALOG_ABOUT);
+                break;
+            case R.id.menuWhatsNew:
+                showDialog(DIALOG_WHATS_NEW);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -202,8 +124,6 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
         if (!force && lastSync != 0 && (now - lastSync < DateUtils.DAY_IN_MILLIS)) {
             Log.d(TwunchApplication.LOG_TAG, "Not refreshing twunches");
             return;
-        }
-        if (refreshMenuItem != null) {
         }
         Log.d(TwunchApplication.LOG_TAG, "Refreshing twunches");
         DataManager.getInstance().loadTwunches();
@@ -227,8 +147,47 @@ public class HomeActivity extends BaseActivity implements ActionBar.TabListener,
     }
 
     @Subscribe
-    public void onTwunchClicked(OnTwunchClickedEvent event) {
+    public void onTwunchClicked(TwunchClickedEvent event) {
         TwunchDetailsActivity.start(this, event.getTwunch().getId());
+    }
+
+    private void showWhatsNew() {
+        final int currentVersion = BuildConfig.VERSION_CODE;
+        if (currentVersion > PrefsUtils.getLastRunVersion()) {
+            showDialog(DIALOG_WHATS_NEW);
+        }
+        PrefsUtils.setLastRunVersion(currentVersion);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog;
+        switch (id) {
+            case DIALOG_WHATS_NEW:
+                dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW);
+                break;
+            case DIALOG_ABOUT:
+                dialog = createHtmlDialog(getString(R.string.about, BuildConfig.VERSION_NAME), R.raw.about,
+                        AnalyticsUtils.Pages.ABOUT);
+                break;
+            default:
+                dialog = null;
+        }
+        return dialog;
+    }
+
+    private Dialog createHtmlDialog(String title, int contentResourceId, String pageName) {
+        AnalyticsUtils.trackPageView(pageName);
+        WebView webView = new WebView(this);
+        webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
+        return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.rate, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                    }
+                }).create();
     }
 
 }

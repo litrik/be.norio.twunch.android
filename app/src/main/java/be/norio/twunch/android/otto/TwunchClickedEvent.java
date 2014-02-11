@@ -19,11 +19,11 @@ package be.norio.twunch.android.otto;
 
 import be.norio.twunch.android.data.model.Twunch;
 
-public class OnTwunchClickedEvent {
+public class TwunchClickedEvent {
 
     private Twunch mTwunch;
 
-    public OnTwunchClickedEvent(Twunch twunch) {
+    public TwunchClickedEvent(Twunch twunch) {
         super();
         mTwunch = twunch;
     }

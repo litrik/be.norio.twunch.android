@@ -1,5 +1,5 @@
 /**
- *	Copyright 2010-2012 Norio bvba
+ *	Copyright 2012-2014 Norio bvba
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import be.norio.twunch.android.ui.fragment.TwunchDetailsFragment;
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
-public class TwunchDetailsActivity extends BaseActivity {
+import be.norio.twunch.android.R;
+import be.norio.twunch.android.util.AnalyticsUtils;
 
-    private static final String EXTRA_ID = "EXTRA_ID";
+public class MapActivity extends BaseActivity {
 
-    public static void start(Context context, String id) {
-        Intent intent = new Intent(context, TwunchDetailsActivity.class);
-        intent.putExtra(EXTRA_ID, id);
+    public static void start(Context context) {
+        Intent intent = new Intent(context, MapActivity.class);
         context.startActivity(intent);
     }
 
@@ -37,7 +37,9 @@ public class TwunchDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().add(android.R.id.content, TwunchDetailsFragment.newInstance(getIntent().getStringExtra(EXTRA_ID))).commit();
+        setContentView(R.layout.activity_map);
+
+        GoogleAnalyticsTracker.getInstance().trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
     }
 
 }
