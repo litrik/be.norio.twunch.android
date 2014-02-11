@@ -19,7 +19,10 @@ package be.norio.twunch.android.util;
 
 import android.text.TextUtils;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
 
 public class AnalyticsUtils {
 
@@ -49,7 +52,17 @@ public class AnalyticsUtils {
 			return;
 		}
 		try {
-			GoogleAnalyticsTracker.getInstance().trackPageView(page);
+            Tracker tracker = EasyTracker.getInstance(PrefsUtils.getContext());
+            tracker.set(Fields.SCREEN_NAME, page);
+            tracker.send(MapBuilder.createAppView().build());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void trackEvent(String category, String action, String label, long value) {
+		try {
+            Tracker tracker = EasyTracker.getInstance(PrefsUtils.getContext());
+            tracker.send(MapBuilder.createEvent(category, action,label, value).build());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

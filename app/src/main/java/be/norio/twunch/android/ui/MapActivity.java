@@ -21,8 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
-
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.util.AnalyticsUtils;
 

@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import be.norio.twunch.android.otto.BusProvider;
 import butterknife.ButterKnife;
 
@@ -30,21 +32,23 @@ public abstract class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        // FIXME
-		// GoogleAnalyticsSessionManager.getInstance(getApplication()).incrementActivityCount();
 		if (!(this instanceof HomeActivity)) {
 			getActionBar().setHomeButtonEnabled(true);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-        // FIXME
-		//GoogleAnalyticsTracker.getInstance().dispatch();
-        // GoogleAnalyticsSessionManager.getInstance().decrementActivityCount();
-	}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(this).activityStop(this);
+    }
 
 	@Override
 	protected void onPause() {

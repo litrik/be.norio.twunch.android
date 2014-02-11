@@ -49,7 +49,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
@@ -158,8 +157,7 @@ public class TwunchDetailsFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 try {
-                    GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-                            AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
+                    AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
                     Intent intent = new Intent(Intent.ACTION_INSERT)
                             .setData(Events.CONTENT_URI)
                             .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
@@ -228,8 +226,7 @@ public class TwunchDetailsFragment extends BaseFragment {
      * Show the location of this Twunch on a map.
      */
     private void doMap() {
-        GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-                AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
         final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
                 + mTwunch.getLatitude() + "," + mTwunch.getLongitude()));
         startActivity(myIntent);
@@ -239,8 +236,7 @@ public class TwunchDetailsFragment extends BaseFragment {
      * Show the directions to this Twunch.
      */
     private void doDirections() {
-        GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-                AnalyticsUtils.EventActions.SHOW_DIRECTIONS, null, 1);
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.SHOW_DIRECTIONS, null, 1);
         startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="
                 + mTwunch.getLatitude() + "," + mTwunch.getLongitude())));
     }
@@ -261,8 +257,7 @@ public class TwunchDetailsFragment extends BaseFragment {
             builder.create().show();
 
         } else {
-            GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
-                    AnalyticsUtils.EventActions.REGISTER, null, 1);
+            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.REGISTER, null, 1);
             final Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT,
@@ -276,7 +271,7 @@ public class TwunchDetailsFragment extends BaseFragment {
      * Share information about this Twunch.
      */
     private void doShare() {
-        GoogleAnalyticsTracker.getInstance().trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
                 AnalyticsUtils.EventActions.SHARE, null, 1);
 
         final Intent intent = new Intent(Intent.ACTION_SEND);
