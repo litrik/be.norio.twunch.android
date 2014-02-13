@@ -124,8 +124,8 @@ public class TwunchDetailsFragment extends BaseFragment {
         mAddressView.setText(mTwunch.getAddress());
 
         // Distance
-        long distance = (long) mTwunch.getDistance();
-        if (distance > 0) {
+        if (mTwunch.hasLocation()) {
+            long distance = (long) mTwunch.getDistance();
             mDistanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
             mDistanceView.setOnClickListener(new OnClickListener() {
 

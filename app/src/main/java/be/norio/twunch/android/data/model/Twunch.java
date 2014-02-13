@@ -1,7 +1,5 @@
 package be.norio.twunch.android.data.model;
 
-import android.text.format.DateUtils;
-
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -41,7 +39,7 @@ public class Twunch {
     @Element(required = false)
     boolean sponsored;
 
-    float distance;
+    float distance = Float.MAX_VALUE;
 
     public String getId() {
         return id;
@@ -107,8 +105,7 @@ public class Twunch {
 
         @Override
         public int compare(Twunch lhs, Twunch rhs) {
-            final long dateDiff = (lhs.getDate() - rhs.getDate()) / DateUtils.MINUTE_IN_MILLIS;
-            return (int) dateDiff;
+            return Long.valueOf(lhs.getDate()).compareTo(Long.valueOf(rhs.getDate()));
         }
     };
 
@@ -116,7 +113,7 @@ public class Twunch {
 
         @Override
         public int compare(Twunch lhs, Twunch rhs) {
-            return (int) (lhs.getDistance() - rhs.getDistance());
+            return Float.valueOf(lhs.getDistance()).compareTo(Float.valueOf(rhs.getDistance()));
         }
     };
 
@@ -133,4 +130,7 @@ public class Twunch {
         }
     };
 
+    public boolean hasLocation() {
+        return latitude != 0 && longitude != 0;
+    }
 }

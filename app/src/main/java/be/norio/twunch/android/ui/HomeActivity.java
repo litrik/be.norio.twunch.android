@@ -55,40 +55,11 @@ public class HomeActivity extends BaseActivity {
     private final int DIALOG_WHATS_NEW = 56479952;
     private final int DIALOG_ABOUT = 3267613;
 
-    LocationManager locationManager;
-    LocationListener locationListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-        // GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS
-
-        // Acquire a reference to the system Location Manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                if (location != null) {
-                    // FIXME
-                    // new UpdateDistancesTask().execute(location);
-                }
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                // Do nothing
-            }
-
-            public void onProviderEnabled(String provider) {
-                // Do nothing
-            }
-
-            public void onProviderDisabled(String provider) {
-                // Do nothing
-            }
-        };
 
         if (PrefsUtils.getTwitterToken() == null) {
             TwitterUtils.getToken();
@@ -124,17 +95,6 @@ public class HomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         DataManager.getInstance().loadTwunches(false);
-        // Start listening for location updates
-        String provider = locationManager.getBestProvider(new Criteria(), true);
-        if (provider != null) {
-            locationManager.requestLocationUpdates(provider, 300000, 500, locationListener);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        locationManager.removeUpdates(locationListener);
     }
 
     @Subscribe

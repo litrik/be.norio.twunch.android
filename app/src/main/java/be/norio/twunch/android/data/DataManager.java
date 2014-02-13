@@ -1,6 +1,7 @@
 package be.norio.twunch.android.data;
 
 import android.content.Context;
+import android.location.Location;
 import android.text.format.DateUtils;
 
 import com.squareup.otto.Produce;
@@ -29,13 +30,15 @@ public class DataManager {
     private final TwunchServer mServer;
     private final TwunchData mTwunchData;
     private int mOutstandingNetworkCalls = 0;
+    private Location mLocation;
 
     public static DataManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new DataManager();
         }
         return instance;
     }
+
     protected DataManager() {
         mContext = PrefsUtils.getContext();
         mServer = new RestAdapter.Builder().setServer("http://twunch.be/").setConverter(new SimpleXMLConverter()).build().create(TwunchServer.class);
@@ -51,8 +54,8 @@ public class DataManager {
     public Twunch getTwunch(String id) {
         final List<Twunch> twunches = mTwunchData.getTwunches();
         for (int i = 0; i < twunches.size(); i++) {
-            final Twunch twunch =  twunches.get(i);
-            if(id.equals(twunch.getId())) {
+            final Twunch twunch = twunches.get(i);
+            if (id.equals(twunch.getId())) {
                 return twunch;
             }
         }
@@ -74,6 +77,7 @@ public class DataManager {
             @Override
             public void success(Twunches twunches, Response response) {
                 mTwunchData.setTwunches(twunches.twunches);
+                updateLocation(mLocation);
                 PrefsUtils.setData(mTwunchData);
                 BusProvider.getInstance().post(new TwunchesAvailableEvent(mTwunchData.getTwunches()));
                 decrementOutstandingNetworkCalls();
@@ -111,6 +115,25 @@ public class DataManager {
     interface TwunchServer {
         @GET("/events.xml?when=future")
         void loadTwunches(Callback<Twunches> callback);
+    }
+
+    public void updateLocation(Location location) {
+        if (location == null) {
+            return;
+        }
+        mLocation = location;
+        final List<Twunch> twunches = mTwunchData.getTwunches();
+        final Location twunchLocation = new Location("");
+        for (int i = 0; i < twunches.size(); i++) {
+            Twunch twunch = twunches.get(i);
+            if (twunch.hasLocation()) {
+                twunchLocation.setLatitude(twunch.getLatitude());
+                twunchLocation.setLongitude(twunch.getLongitude());
+                twunch.setDistance(twunchLocation.distanceTo(location));
+            } else {
+                twunch.setDistance(Float.MAX_VALUE);
+            }
+        }
     }
 
 }
