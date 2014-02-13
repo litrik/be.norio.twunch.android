@@ -32,6 +32,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.webkit.WebView;
 
 import com.squareup.otto.Subscribe;
@@ -42,6 +43,7 @@ import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.TwunchApplication;
 import be.norio.twunch.android.data.DataManager;
+import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
@@ -138,6 +140,11 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void onTwunchClicked(TwunchClickedEvent event) {
         TwunchDetailsActivity.start(this, event.getTwunch().getId());
+    }
+
+    @Subscribe
+    public void onNetworkStatusUpdated(NetworkStatusUpdatedEvent event) {
+        setProgressBarIndeterminateVisibility(event.getOustandingNetworkCalls() > 0);
     }
 
     private void showWhatsNew() {

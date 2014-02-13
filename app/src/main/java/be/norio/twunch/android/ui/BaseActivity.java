@@ -20,6 +20,7 @@ package be.norio.twunch.android.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -32,7 +33,9 @@ public abstract class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (!(this instanceof HomeActivity)) {
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        if (!(this instanceof HomeActivity)) {
 			getActionBar().setHomeButtonEnabled(true);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
