@@ -28,7 +28,6 @@ dependencies {
     compile 'org.twitter4j:twitter4j-async:3.0.5'
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.squareup.retrofit:converter-simplexml:1.4.1'
-    compile 'com.github.frankiesardo:icepick:2.3'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
 }
 

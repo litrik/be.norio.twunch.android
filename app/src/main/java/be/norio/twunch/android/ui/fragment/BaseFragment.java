@@ -7,26 +7,13 @@ import android.view.View;
 
 import be.norio.twunch.android.otto.BusProvider;
 import butterknife.ButterKnife;
-import icepick.Icepick;
 
 public class BaseFragment extends Fragment {
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
