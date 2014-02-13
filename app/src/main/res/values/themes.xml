@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Twunch" parent="Theme.AppCompat.Light">
+    <style name="Theme.Twunch" parent="android:Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ActionBarIPS</item>
     </style>
 
-    <style name="ActionBarIPS" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="android:indeterminateProgressStyle">@android:style/Widget.ProgressBar.Small</item>
+    <style name="ActionBarIPS" parent="android:Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:indeterminateProgressStyle">@android:style/Widget.ProgressBar.Small
+        </item>
     </style>
 
 </resources>
