@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -69,7 +70,7 @@ import twitter4j.TwitterMethod;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class TwunchDetailsFragment extends BaseFragment {
+public class DetailsFragment extends BaseFragment {
 
     private static final String ARG_ID = "ARG_ID";
     Twunch mTwunch;
@@ -78,21 +79,21 @@ public class TwunchDetailsFragment extends BaseFragment {
     @InjectView(R.id.twunchAddress)
     public TextView mAddressView;
     @InjectView(R.id.twunchDistance)
-    public TextView mDistanceView;
+    public Button mDistanceView;
     @InjectView(R.id.twunchDate)
     public TextView mDateView;
     @InjectView(R.id.twunchDays)
-    public TextView mDaysView;
+    public Button mDaysView;
     @InjectView(R.id.twunchNote)
     public TextView mNoteView;
     @InjectView(R.id.twunchNumberParticipants)
-    public TextView mNumParticipantsView;
+    public Button mNumParticipantsView;
     @InjectView(R.id.twunchParticipants)
     public ListView mParticipantsView;
     private ParticipantAdapter mAdapter;
 
-    public static TwunchDetailsFragment newInstance(String id) {
-        TwunchDetailsFragment f = new TwunchDetailsFragment();
+    public static DetailsFragment newInstance(String id) {
+        DetailsFragment f = new DetailsFragment();
         Bundle args = new Bundle(1);
         args.putString(ARG_ID, id);
         f.setArguments(args);
@@ -108,7 +109,7 @@ public class TwunchDetailsFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_twunch_details, container, false);
+        return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
     @Override
@@ -192,7 +193,7 @@ public class TwunchDetailsFragment extends BaseFragment {
                         participants.length)));
 
         // Participants
-        mAdapter = new ParticipantAdapter(getActivity(), R.layout.listitem_participant, participants);
+        mAdapter = new ParticipantAdapter(getActivity(), R.layout.item_participant, participants);
         mParticipantsView.setAdapter(mAdapter);
 
     }
@@ -200,7 +201,7 @@ public class TwunchDetailsFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_twunch_details, menu);
+        inflater.inflate(R.menu.fragment_details, menu);
     }
 
     @Override
@@ -329,7 +330,7 @@ public class TwunchDetailsFragment extends BaseFragment {
             final View view;
             if (convertView == null) {
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
-                view = inflater.inflate(R.layout.listitem_participant, null);
+                view = inflater.inflate(R.layout.item_participant, null);
                 new ViewHolder(view);
             } else {
                 view = convertView;
@@ -350,7 +351,7 @@ public class TwunchDetailsFragment extends BaseFragment {
                         rawTwitterContact.moveToFirst();
                         final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI,
                                 rawTwitterContact.getString(rawTwitterContact.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-                        QuickContact.showQuickContact(TwunchDetailsFragment.this.getActivity(), vh.name, contactUri,
+                        QuickContact.showQuickContact(DetailsFragment.this.getActivity(), vh.name, contactUri,
                                 ContactsContract.QuickContact.MODE_LARGE, null);
                     } else {
                         // Show the mTwitter profile

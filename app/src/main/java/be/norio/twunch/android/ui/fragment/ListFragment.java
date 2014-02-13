@@ -76,7 +76,7 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new TwunchAdapter(getActivity(), R.layout.listitem_twunch);
+        mAdapter = new TwunchAdapter(getActivity(), R.layout.item_twunch);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
 
@@ -154,7 +154,7 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
             final View view;
             if (convertView == null) {
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
-                view = inflater.inflate(R.layout.listitem_twunch, null);
+                view = inflater.inflate(R.layout.item_twunch, null);
                 new ViewHolder(view);
             } else {
                 view = convertView;

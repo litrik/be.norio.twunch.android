@@ -4,4 +4,4 @@
     android:id="@+id/fragment_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="be.norio.twunch.android.ui.fragment.TwunchMapFragment" />
+    android:name="be.norio.twunch.android.ui.fragment.MapFragment" />

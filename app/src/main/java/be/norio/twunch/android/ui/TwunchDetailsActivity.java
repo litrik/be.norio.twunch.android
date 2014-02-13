@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import be.norio.twunch.android.ui.fragment.TwunchDetailsFragment;
+import be.norio.twunch.android.ui.fragment.DetailsFragment;
 
 public class TwunchDetailsActivity extends BaseActivity {
 
@@ -37,7 +37,7 @@ public class TwunchDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().add(android.R.id.content, TwunchDetailsFragment.newInstance(getIntent().getStringExtra(EXTRA_ID))).commit();
+        getFragmentManager().beginTransaction().add(android.R.id.content, DetailsFragment.newInstance(getIntent().getStringExtra(EXTRA_ID))).commit();
     }
 
 }

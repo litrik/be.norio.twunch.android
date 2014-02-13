@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/background_light"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/twunchTitle"
@@ -39,27 +39,27 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
-        <TextView
+        <Button
             android:id="@+id/twunchDays"
-            style="@style/TwunchClickable.DetailAction"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|left"
             android:drawableLeft="@drawable/ic_action_content_event" />
 
-        <TextView
+        <Button
             android:id="@+id/twunchNumberParticipants"
-            style="@style/TwunchClickable.DetailAction"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_action_social_group" />
 
-        <TextView
+        <Button
             android:id="@+id/twunchDistance"
-            style="@style/TwunchClickable.DetailAction"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|right"
@@ -67,9 +67,8 @@
     </FrameLayout>
 
     <ListView
-        android:id="@+id/twunchParticipants"
+        android:id="@+id/twunchParticipants" android:clickable="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
