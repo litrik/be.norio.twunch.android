@@ -354,8 +354,8 @@ public class DetailsFragment extends BaseFragment {
                         QuickContact.showQuickContact(DetailsFragment.this.getActivity(), vh.name, contactUri,
                                 ContactsContract.QuickContact.MODE_LARGE, null);
                     } else {
-                        // Show the mTwitter profile
-                        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://mTwitter.com/"
+                        // Show the Twitter profile
+                        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://twitter.com/"
                                 + participant));
                         startActivity(myIntent);
                     }
