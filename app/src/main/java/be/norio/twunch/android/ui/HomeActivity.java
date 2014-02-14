@@ -19,6 +19,7 @@ package be.norio.twunch.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.WebView;
 
+import com.google.android.gms.maps.internal.IMapFragmentDelegate;
 import com.squareup.otto.Subscribe;
 
 import java.util.Date;
@@ -49,6 +51,7 @@ import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.TwitterUtils;
 import be.norio.twunch.android.util.Util;
+import butterknife.InjectView;
 
 public class HomeActivity extends BaseActivity {
 
@@ -72,6 +75,7 @@ public class HomeActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.activity_home, menu);
+        menu.findItem(R.id.action_map).setVisible(findViewById(R.id.fragment_map) == null);
         return true;
     }
 
