@@ -50,27 +50,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.data.model.Twunch;
+import be.norio.twunch.android.otto.AvatarAvailableEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
-import be.norio.twunch.android.util.PrefsUtils;
+import be.norio.twunch.android.util.AvatarManager;
 import butterknife.InjectView;
-import twitter4j.AsyncTwitter;
-import twitter4j.AsyncTwitterFactory;
-import twitter4j.TwitterAdapter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterMethod;
-import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class DetailsFragment extends BaseFragment {
 
@@ -93,8 +85,6 @@ public class DetailsFragment extends BaseFragment {
     @InjectView(R.id.twunchParticipants)
     public ListView mParticipantsView;
     private ParticipantAdapter mAdapter;
-    private AsyncTwitter mTwitter;
-    private Map<String, String> mAvatars = new HashMap<String, String>();
 
     public static DetailsFragment newInstance(String id) {
         DetailsFragment f = new DetailsFragment();
@@ -108,34 +98,6 @@ public class DetailsFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        ConfigurationBuilder cb2 = new ConfigurationBuilder();
-        cb2.setApplicationOnlyAuthEnabled(true);
-        cb2.setOAuthConsumerKey(BuildConfig.TWITTER_CONSUMER_KEY);
-        cb2.setOAuthConsumerSecret(BuildConfig.TWITTER_CONSUMER_KEY);
-        cb2.setOAuth2TokenType("bearer");
-        cb2.setOAuth2AccessToken(PrefsUtils.getTwitterToken());
-        mTwitter = new AsyncTwitterFactory(cb2.build()).getInstance();
-        mTwitter.addListener(new TwitterAdapter() {
-            @Override
-            public void gotUserDetail(User user) {
-                super.gotUserDetail(user);
-                mAvatars.put(user.getScreenName(), user.getBiggerProfileImageURL());
-                mParticipantsView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-
-            @Override
-            public void onException(TwitterException te, TwitterMethod method) {
-                super.onException(te, method);
-                System.out.println(te.toString());
-                te.printStackTrace();
-            }
-        });
 
         AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_DETAILS);
     }
@@ -382,14 +344,24 @@ public class DetailsFragment extends BaseFragment {
                 }
             });
 
-            String url = mAvatars.get(participant);
-            if (url == null) {
-                mTwitter.showUser(participant);
+            if (AvatarManager.getInstance().isAvatarAvailable(participant)) {
+                vh.avatar.setVisibility(View.VISIBLE);
+                Picasso.with(getActivity()).load(AvatarManager.getInstance().getAvatar(participant)).into(vh.avatar);
             } else {
-                Picasso.with(getActivity()).load(url).into(vh.avatar);
+                vh.avatar.setVisibility(View.INVISIBLE);
+                AvatarManager.getInstance().addToQueue(participant);
             }
             return view;
         }
     }
+
+    @Subscribe
+    public void onAvatarAvailable(AvatarAvailableEvent event) {
+        System.out.println("ZZ:onAvatarAvailable");
+        mAdapter.notifyDataSetChanged();
+    }
+
+
+
 
 }
