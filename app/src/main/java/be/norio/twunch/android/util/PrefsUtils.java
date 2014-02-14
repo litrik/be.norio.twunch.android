@@ -28,6 +28,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import be.norio.twunch.android.data.TwunchData;
 
 public class PrefsUtils {
@@ -49,6 +52,7 @@ public class PrefsUtils {
 	private static final String KEY_TWITTER_TOKEN = "twitter_token";
     private static final String KEY_DATA = "data";
     private static final String KEY_SORT = "sort";
+    private static final String KEY_AVATARS= "avatars";
 
 	// Default values
 	public static final long DEFAULT_LAST_UPDATE = 0;
@@ -129,6 +133,21 @@ public class PrefsUtils {
 
     public static int getSort() {
         return getPrefs().getInt(KEY_SORT, SORT_DATE);
+    }
+
+    public static Map<String, String> getAvatars() {
+        final String string = getPrefs().getString(KEY_AVATARS, null);
+        if(TextUtils.isEmpty(string)){
+            return new HashMap<String, String>();
+        } else{
+            Map<String,String> map=new HashMap<String,String>();
+            return (new GsonBuilder()).create().fromJson(string, map.getClass());
+        }
+    }
+
+    public static void setAvatars(Map<String, String> avatars) {
+        final String string = new Gson().toJson(avatars);
+        getPrefs().edit().putString(KEY_AVATARS, string).apply();
     }
 
 }

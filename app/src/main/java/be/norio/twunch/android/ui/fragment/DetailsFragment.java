@@ -344,12 +344,12 @@ public class DetailsFragment extends BaseFragment {
                 }
             });
 
-            if (AvatarManager.getInstance().isAvatarAvailable(participant)) {
+            if (AvatarManager.isAvatarAvailable(participant)) {
                 vh.avatar.setVisibility(View.VISIBLE);
-                Picasso.with(getActivity()).load(AvatarManager.getInstance().getAvatar(participant)).into(vh.avatar);
+                Picasso.with(getActivity()).load(AvatarManager.getAvatar(participant)).into(vh.avatar);
             } else {
                 vh.avatar.setVisibility(View.INVISIBLE);
-                AvatarManager.getInstance().addToQueue(participant);
+                AvatarManager.addToQueue(participant);
             }
             return view;
         }
@@ -360,8 +360,5 @@ public class DetailsFragment extends BaseFragment {
         System.out.println("ZZ:onAvatarAvailable");
         mAdapter.notifyDataSetChanged();
     }
-
-
-
 
 }

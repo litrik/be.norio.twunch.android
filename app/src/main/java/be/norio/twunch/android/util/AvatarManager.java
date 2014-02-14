@@ -1,8 +1,11 @@
 package be.norio.twunch.android.util;
 
+import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -22,28 +25,26 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class AvatarManager {
 
-    private static AvatarManager instance = null;
+    private static Context mContext;
+    private static AsyncTwitter mTwitter;
+    private static Map<String, String> mAvatars;
+    private static Set mQueue = Collections.synchronizedSet(new LinkedHashSet<String>());
+    private static int mOutstandingNetworkCalls = 0;
+    private static final Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public static AvatarManager getInstance() {
-        if (instance == null) {
-            instance = new AvatarManager();
-        }
-        return instance;
-    }
 
-    private AsyncTwitter mTwitter;
-    Map<String, String> mAvatars = new HashMap<String, String>();
-    Set mQueue = Collections.synchronizedSet(new LinkedHashSet<String>());
-    int mOutstandingNetworkCalls = 0;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    public static void initialize(Application application) {
+        mContext = application;
 
-    AvatarManager() {
+        mAvatars = PrefsUtils.getAvatars();
+
         ConfigurationBuilder cb2 = new ConfigurationBuilder();
         cb2.setApplicationOnlyAuthEnabled(true);
         cb2.setOAuthConsumerKey(BuildConfig.TWITTER_CONSUMER_KEY);
         cb2.setOAuthConsumerSecret(BuildConfig.TWITTER_CONSUMER_KEY);
         cb2.setOAuth2TokenType("bearer");
         cb2.setOAuth2AccessToken(PrefsUtils.getTwitterToken());
+
         mTwitter = new AsyncTwitterFactory(cb2.build()).getInstance();
         mTwitter.addListener(new TwitterAdapter() {
             @Override
@@ -57,6 +58,7 @@ public class AvatarManager {
                         BusProvider.getInstance().post(new AvatarAvailableEvent());
                     }
                 });
+                PrefsUtils.setAvatars(mAvatars);
             }
 
             @Override
@@ -66,20 +68,21 @@ public class AvatarManager {
                 System.out.println(te.toString());
             }
         });
+
     }
 
-    private void decrementOutstandingNetworkCalls() {
+    private static void decrementOutstandingNetworkCalls() {
         mOutstandingNetworkCalls--;
         if (mOutstandingNetworkCalls == 0) {
             mQueue.clear();
         }
     }
 
-    public boolean isAvatarAvailable(String userid) {
+    public static boolean isAvatarAvailable(String userid) {
         return mAvatars.containsKey(userid);
     }
 
-    public void addToQueue(String userid) {
+    public static void addToQueue(String userid) {
         if (!mQueue.contains(userid)) {
             mOutstandingNetworkCalls++;
             mQueue.add(userid);
@@ -87,7 +90,7 @@ public class AvatarManager {
         }
     }
 
-    public String getAvatar(String userid) {
+    public static String getAvatar(String userid) {
         return mAvatars.get(userid);
     }
 }

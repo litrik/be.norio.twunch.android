@@ -20,6 +20,7 @@ package be.norio.twunch.android;
 import android.app.Application;
 
 import be.norio.twunch.android.data.DataManager;
+import be.norio.twunch.android.util.AvatarManager;
 import be.norio.twunch.android.util.PrefsUtils;
 
 /**
@@ -32,6 +33,7 @@ public class TwunchApplication extends Application {
 		super.onCreate();
 		PrefsUtils.initialize(this);
         DataManager.getInstance();
+        AvatarManager.initialize(this);
 	}
 
 }
