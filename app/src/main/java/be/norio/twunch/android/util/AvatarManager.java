@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.LruCache;
 
 import java.io.File;
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class AvatarManager {
 
     private static Context mContext;
     private static AsyncTwitter mTwitter;
-    private static Map<String, String> mAvatars;
+    private static LruCache<String,String> mAvatars;
     private static Set mQueue = Collections.synchronizedSet(new LinkedHashSet<String>());
     private static int mOutstandingNetworkCalls = 0;
     private static final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -79,7 +80,7 @@ public class AvatarManager {
     }
 
     public static boolean isAvatarAvailable(String userid) {
-        return mAvatars.containsKey(userid);
+        return mAvatars.get(userid) != null;
     }
 
     public static void addToQueue(String userid) {

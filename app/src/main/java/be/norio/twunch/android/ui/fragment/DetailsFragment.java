@@ -357,7 +357,6 @@ public class DetailsFragment extends BaseFragment {
 
     @Subscribe
     public void onAvatarAvailable(AvatarAvailableEvent event) {
-        System.out.println("ZZ:onAvatarAvailable");
         mAdapter.notifyDataSetChanged();
     }
 
