@@ -1,59 +1,42 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/twunch_item_root"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Theme.Twunch"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:paddingTop="@dimen/default_padding"
+    android:paddingRight="@dimen/default_padding"
+    android:paddingBottom="@dimen/default_padding">
 
-    <LinearLayout
-        android:layout_width="70sp"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:padding="10dp" >
+    <TextView
+        android:id="@+id/sorting"
+        android:layout_width="80sp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/default_padding"
+        android:gravity="center" />
 
-        <TextView
-            android:id="@+id/twunchDays"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:paddingBottom="7sp"
-            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/twunchDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp" >
+        android:paddingBottom="@dimen/default_padding"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/sorting" />
 
-        <TextView
-            android:id="@+id/twunchTitle"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:textSize="19sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/default_padding"
+        android:layout_below="@+id/title"
+        android:layout_toRightOf="@+id/sorting" />
 
-        <TextView
-            android:id="@+id/twunchDate"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp" />
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date"
+        android:layout_toRightOf="@+id/sorting" />
 
-        <TextView
-            android:id="@+id/twunchAddress"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="4dp" />
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

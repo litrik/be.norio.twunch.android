@@ -19,7 +19,11 @@ package be.norio.twunch.android.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -124,17 +128,14 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
     }
 
     static class ViewHolder {
-        public View rootView;
-        @InjectView(R.id.twunchTitle)
+        @InjectView(R.id.sorting)
+        public TextView sorting;
+        @InjectView(R.id.title)
         public TextView title;
-        @InjectView(R.id.twunchAddress)
+        @InjectView(R.id.address)
         public TextView address;
-        @InjectView(R.id.twunchDistance)
-        public TextView distance;
-        @InjectView(R.id.twunchDate)
+        @InjectView(R.id.date)
         public TextView date;
-        @InjectView(R.id.twunchDays)
-        public TextView days;
 
         public ViewHolder(View v) {
             ButterKnife.inject(this, v);
@@ -163,20 +164,40 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
 
             final Twunch twunch = getItem(position);
 
+            String sortText = null;
+            switch (mCurrentSorting) {
+                case PrefsUtils.SORT_DISTANCE:
+                    final double lat = twunch.getLatitude();
+                    final double lon = twunch.getLongitude();
+                    float distance = twunch.getDistance();
+                    if (lat != 0 && lon != 0 && distance > 0) {
+                        sortText = Util.formatDistance(getContext(), distance);
+                    }
+                    break;
+                case PrefsUtils.SORT_POPULARITY:
+                    final int size = twunch.getParticipants().size();
+                    sortText = getResources().getQuantityString(R.plurals.numberOfParticipants, size, size);
+                    break;
+                default:
+                    int days = (int) ((twunch.getDate() - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+                    sortText = getResources().getQuantityString(R.plurals.days_to_twunch, days, days);
+                    break;
+            }
+            if (TextUtils.isEmpty(sortText)) {
+                vh.sorting.setVisibility(View.INVISIBLE);
+            } else {
+                int split = sortText.indexOf(' ');
+                SpannableStringBuilder ssb = new SpannableStringBuilder(sortText.replace(' ', '\n'));
+                ssb.setSpan(new RelativeSizeSpan(2f), 0, split, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                vh.sorting.setText(ssb);
+                vh.sorting.setVisibility(View.VISIBLE);
+            }
+
             vh.title.setText(twunch.getTitle());
 
             vh.address.setText(twunch.getAddress());
             //vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
-            final double lat = twunch.getLatitude();
-            final double lon = twunch.getLongitude();
-            float distance = twunch.getDistance();
-            if (lat != 0 && lon != 0 && distance > 0) {
-                vh.distance.setText(String.format(view.getContext().getString(R.string.distance), distance / 1000f));
-                vh.distance.setVisibility(View.VISIBLE);
-            } else {
-                vh.distance.setVisibility(View.INVISIBLE);
-            }
 
             vh.date.setText(String.format(
                     view.getContext().getString(R.string.date),
@@ -185,9 +206,6 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
                     DateUtils.formatDateTime(view.getContext(), twunch.getDate(), DateUtils.FORMAT_SHOW_TIME)));
             //vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
-            int days = (int) ((twunch.getDate() - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
-            vh.days.setText(days == 0 ? getString(R.string.today) : String.format(
-                    getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
             return view;
         }
 
@@ -214,6 +232,7 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
 
 
     private void sortData(int sorting) {
+        mCurrentSorting = sorting;
         switch (sorting) {
             case PrefsUtils.SORT_DISTANCE:
                 mAdapter.sort(Twunch.COMPARATOR_DISTANCE);
