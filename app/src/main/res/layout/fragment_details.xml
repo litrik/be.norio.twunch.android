@@ -1,74 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/twunch"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@android:color/background_light"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/twunchTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding">
 
-    <TextView
-        android:id="@+id/twunchDate"
+        <include layout="@layout/details" />
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/participants"
+        android:stretchMode="columnWidth"
+        android:clickable="true"
+        android:numColumns="@integer/participants_columns"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-    <TextView
-        android:id="@+id/twunchAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-    <TextView
-        android:id="@+id/twunchNote"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/twunchDays"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:drawableLeft="@drawable/ic_action_content_event" />
-
-        <Button
-            android:id="@+id/twunchNumberParticipants"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_action_social_group" />
-
-        <Button
-            android:id="@+id/twunchDistance"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:drawableLeft="@drawable/ic_action_location_directions" />
-    </FrameLayout>
-
-    <ListView
-        android:id="@+id/twunchParticipants" android:clickable="true"
-        android:layout_width="match_parent"
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"
         android:layout_height="match_parent" />
 
 </LinearLayout>

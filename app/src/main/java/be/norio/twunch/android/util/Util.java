@@ -18,6 +18,7 @@
 package be.norio.twunch.android.util;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 
 import java.io.ByteArrayOutputStream;
@@ -62,5 +63,9 @@ public class Util {
         } else {
             return context.getString(R.string.distance_above_10km, distance / 1000f);
         }
+    }
+
+    public static String formatDate(Context context, long date) {
+        return context.getString(R.string.date, DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_TIME));
     }
 }

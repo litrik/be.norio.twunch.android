@@ -51,7 +51,7 @@ public class AvatarManager {
             @Override
             public void gotUserDetail(User user) {
                 super.gotUserDetail(user);
-                mAvatars.put(user.getScreenName(), user.getBiggerProfileImageURL());
+                mAvatars.put(user.getScreenName().toLowerCase(), user.getOriginalProfileImageURL());
                 decrementOutstandingNetworkCalls();
                 mHandler.post(new Runnable() {
                     @Override
@@ -80,7 +80,7 @@ public class AvatarManager {
     }
 
     public static boolean isAvatarAvailable(String userid) {
-        return mAvatars.get(userid) != null;
+        return mAvatars.get(userid.toLowerCase()) != null;
     }
 
     public static void addToQueue(String userid) {
@@ -92,6 +92,6 @@ public class AvatarManager {
     }
 
     public static String getAvatar(String userid) {
-        return mAvatars.get(userid);
+        return mAvatars.get(userid.toLowerCase());
     }
 }

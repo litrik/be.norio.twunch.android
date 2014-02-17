@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,7 +55,6 @@ import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
@@ -62,28 +62,29 @@ import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.AvatarAvailableEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.AvatarManager;
+import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
 
 public class DetailsFragment extends BaseFragment {
 
     private static final String ARG_ID = "ARG_ID";
     Twunch mTwunch;
-    @InjectView(R.id.twunchTitle)
-    public TextView mTitleView;
-    @InjectView(R.id.twunchAddress)
-    public TextView mAddressView;
-    @InjectView(R.id.twunchDistance)
-    public Button mDistanceView;
-    @InjectView(R.id.twunchDate)
-    public TextView mDateView;
-    @InjectView(R.id.twunchDays)
-    public Button mDaysView;
-    @InjectView(R.id.twunchNote)
-    public TextView mNoteView;
-    @InjectView(R.id.twunchNumberParticipants)
-    public Button mNumParticipantsView;
-    @InjectView(R.id.twunchParticipants)
-    public ListView mParticipantsView;
+    @InjectView(R.id.title)
+    public TextView mTitle;
+    @InjectView(R.id.address)
+    public TextView mAddress;
+    @InjectView(R.id.distance)
+    public Button mDistance;
+    @InjectView(R.id.date)
+    public TextView mDate;
+    @InjectView(R.id.days)
+    public Button mDays;
+    @InjectView(R.id.note)
+    public TextView mNote;
+    @InjectView(R.id.numberParticipants)
+    public Button mNumParticipants;
+    @InjectView(R.id.participants)
+    public AdapterView mParticipants;
     private ParticipantAdapter mAdapter;
 
     public static DetailsFragment newInstance(String id) {
@@ -114,16 +115,16 @@ public class DetailsFragment extends BaseFragment {
         mTwunch = DataManager.getInstance().getTwunch(getArguments().getString(ARG_ID));
 
         // Title
-        mTitleView.setText(mTwunch.getTitle());
+        mTitle.setText(mTwunch.getTitle());
 
         // Address
-        mAddressView.setText(mTwunch.getAddress());
+        mAddress.setText(mTwunch.getAddress());
 
         // Distance
         if (mTwunch.hasLocation()) {
             long distance = (long) mTwunch.getDistance();
-            mDistanceView.setText(String.format(getString(R.string.distance), distance / 1000f));
-            mDistanceView.setOnClickListener(new OnClickListener() {
+            mDistance.setText(Util.formatDistance(view.getContext(), distance));
+            mDistance.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -131,23 +132,17 @@ public class DetailsFragment extends BaseFragment {
                 }
             });
         } else {
-            mDistanceView.setVisibility(View.INVISIBLE);
+            mDistance.setVisibility(View.INVISIBLE);
         }
 
         // Date
         final long date = mTwunch.getDate();
-        mDateView.setText(String.format(
-                getString(R.string.date),
-                DateUtils.formatDateTime(getActivity(), date, DateUtils.FORMAT_SHOW_WEEKDAY
-                        | DateUtils.FORMAT_SHOW_DATE),
-                DateUtils.formatDateTime(getActivity(), date, DateUtils.FORMAT_SHOW_TIME)));
+        mDate.setText(Util.formatDate(view.getContext(), date));
 
         // Days
-        final long msInDay = 86400000;
-        int days = (int) (date / msInDay - new Date().getTime() / msInDay);
-        mDaysView.setText(days == 0 ? getString(R.string.today) : String.format(
-                getResources().getQuantityString(R.plurals.days_to_twunch, days), days));
-        mDaysView.setOnClickListener(new OnClickListener() {
+        int days = (int) ((date - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+        mDays.setText(getResources().getQuantityString(R.plurals.days_to_twunch, days, days));
+        mDays.setOnClickListener(new OnClickListener() {
 
             @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             @Override
@@ -173,23 +168,21 @@ public class DetailsFragment extends BaseFragment {
         // Note
         final String note = mTwunch.getNote();
         if (TextUtils.isEmpty(note)) {
-            mNoteView.setVisibility(View.GONE);
+            mNote.setVisibility(View.GONE);
         } else {
-            mNoteView.setMovementMethod(LinkMovementMethod.getInstance());
-            mNoteView.setText(Html.fromHtml(note));
-            mNoteView.setVisibility(View.VISIBLE);
+            mNote.setMovementMethod(LinkMovementMethod.getInstance());
+            mNote.setText(Html.fromHtml(note));
+            mNote.setVisibility(View.VISIBLE);
         }
 
         String[] participants = mTwunch.getParticipants().toArray(new String[mTwunch.getParticipants().size()]);
         Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
         // Number of participants
-        mNumParticipantsView.setText(String.format(
-                getResources().getQuantityString(R.plurals.numberOfParticipants, participants.length,
-                        participants.length)));
+        mNumParticipants.setText(getResources().getQuantityString(R.plurals.numberOfParticipants, participants.length, participants.length));
 
         // Participants
         mAdapter = new ParticipantAdapter(getActivity(), R.layout.item_participant, participants);
-        mParticipantsView.setAdapter(mAdapter);
+        mParticipants.setAdapter(mAdapter);
 
     }
 
@@ -256,8 +249,7 @@ public class DetailsFragment extends BaseFragment {
             AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.REGISTER, null, 1);
             final Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT,
-                    String.format(getString(R.string.register_text), mTwunch.getTitle(), mTwunch.getLink()));
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.register_text, mTwunch.getTitle(), mTwunch.getLink()));
             startActivity(Intent.createChooser(intent, getString(R.string.register_title)));
 
         }
@@ -274,11 +266,9 @@ public class DetailsFragment extends BaseFragment {
         intent.setType("text/plain");
         intent.putExtra(
                 Intent.EXTRA_TEXT,
-                String.format(
-                        getString(R.string.share_text),
+                        getString(R.string.share_text,
                         mTwunch.getTitle(),
-                        DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY
-                                | DateUtils.FORMAT_SHOW_DATE),
+                        DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
                         DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_TIME),
                         mTwunch.getLink()));
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
@@ -345,8 +335,8 @@ public class DetailsFragment extends BaseFragment {
             });
 
             if (AvatarManager.isAvatarAvailable(participant)) {
-                vh.avatar.setVisibility(View.VISIBLE);
                 Picasso.with(getActivity()).load(AvatarManager.getAvatar(participant)).into(vh.avatar);
+                vh.avatar.setVisibility(View.VISIBLE);
             } else {
                 vh.avatar.setVisibility(View.INVISIBLE);
                 AvatarManager.addToQueue(participant);

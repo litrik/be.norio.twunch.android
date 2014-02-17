@@ -198,12 +198,7 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
             vh.address.setText(twunch.getAddress());
             //vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
-
-            vh.date.setText(String.format(
-                    view.getContext().getString(R.string.date),
-                    DateUtils.formatDateTime(view.getContext(), twunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY
-                            | DateUtils.FORMAT_SHOW_DATE),
-                    DateUtils.formatDateTime(view.getContext(), twunch.getDate(), DateUtils.FORMAT_SHOW_TIME)));
+            vh.date.setText(Util.formatDate(view.getContext(), twunch.getDate()));
             //vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
             return view;

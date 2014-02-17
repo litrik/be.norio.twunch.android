@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menuRegister"
         android:icon="@drawable/ic_action_user_add"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_register"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_register" />
     <item
         android:id="@+id/menuShare"
         android:icon="@drawable/ic_action_share"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_share"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_share" />
     <item
         android:id="@+id/menuMap"
-        android:icon="@drawable/ic_action_location_map"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_map"/>
+        android:icon="@drawable/ic_action_map"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_map" />
     <item
         android:id="@+id/menuDirections"
         android:showAsAction="never"
-        android:title="@string/menu_directions"/>
+        android:title="@string/menu_directions" />
 
 </menu>
