@@ -23,12 +23,12 @@ import android.os.Bundle;
 
 import be.norio.twunch.android.ui.fragment.DetailsFragment;
 
-public class TwunchDetailsActivity extends BaseActivity {
+public class DetailsActivity extends BaseActivity {
 
     private static final String EXTRA_ID = "EXTRA_ID";
 
     public static void start(Context context, String id) {
-        Intent intent = new Intent(context, TwunchDetailsActivity.class);
+        Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_ID, id);
         context.startActivity(intent);
     }
@@ -37,7 +37,7 @@ public class TwunchDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().add(android.R.id.content, DetailsFragment.newInstance(getIntent().getStringExtra(EXTRA_ID))).commit();
+        getFragmentManager().beginTransaction().replace(android.R.id.content, DetailsFragment.newInstance(getIntent().getStringExtra(EXTRA_ID))).commit();
     }
 
 }

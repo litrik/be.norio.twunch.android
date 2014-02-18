@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MapActivity" />
-        <activity android:name=".ui.TwunchDetailsActivity" />
+        <activity android:name=".ui.DetailsActivity" />
 
     </application>
 

@@ -17,14 +17,12 @@
 
 package be.norio.twunch.android.ui.fragment;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
@@ -46,9 +44,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -64,6 +60,7 @@ import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.AvatarManager;
 import be.norio.twunch.android.util.Util;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 public class DetailsFragment extends BaseFragment {
 
@@ -73,16 +70,14 @@ public class DetailsFragment extends BaseFragment {
     public TextView mTitle;
     @InjectView(R.id.address)
     public TextView mAddress;
-    @InjectView(R.id.distance)
-    public Button mDistance;
     @InjectView(R.id.date)
     public TextView mDate;
-    @InjectView(R.id.days)
-    public Button mDays;
     @InjectView(R.id.note)
     public TextView mNote;
-    @InjectView(R.id.numberParticipants)
-    public Button mNumParticipants;
+    @InjectView(R.id.map)
+    public View mMap;
+    @InjectView(R.id.map_separator)
+    public View mMapSeparator;
     @InjectView(R.id.participants)
     public AdapterView mParticipants;
     private ParticipantAdapter mAdapter;
@@ -118,52 +113,21 @@ public class DetailsFragment extends BaseFragment {
         mTitle.setText(mTwunch.getTitle());
 
         // Address
-        mAddress.setText(mTwunch.getAddress());
-
-        // Distance
+        StringBuffer sb = new StringBuffer();
+        sb.append(mTwunch.getAddress());
         if (mTwunch.hasLocation()) {
-            long distance = (long) mTwunch.getDistance();
-            mDistance.setText(Util.formatDistance(view.getContext(), distance));
-            mDistance.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    doMap();
-                }
-            });
+            sb.append(" (");
+            sb.append(Util.formatDistance(view.getContext(), mTwunch.getDistance()));
+            sb.append(")");
         } else {
-            mDistance.setVisibility(View.INVISIBLE);
+            mMap.setVisibility(View.INVISIBLE);
+            mMapSeparator.setVisibility(View.INVISIBLE);
         }
+        mAddress.setText(sb.toString());
 
         // Date
         final long date = mTwunch.getDate();
         mDate.setText(Util.formatDate(view.getContext(), date));
-
-        // Days
-        int days = (int) ((date - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
-        mDays.setText(getResources().getQuantityString(R.plurals.days_to_twunch, days, days));
-        mDays.setOnClickListener(new OnClickListener() {
-
-            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            @Override
-            public void onClick(View v) {
-                try {
-                    AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
-                    Intent intent = new Intent(Intent.ACTION_INSERT)
-                            .setData(Events.CONTENT_URI)
-                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
-                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-                                    date + DateUtils.HOUR_IN_MILLIS)
-                            .putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle())
-                            .putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle())
-                            .putExtra(Events.EVENT_LOCATION, mTwunch.getAddress())
-                            .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    // FIXME: handle exception
-                }
-            }
-        });
 
         // Note
         final String note = mTwunch.getNote();
@@ -177,14 +141,33 @@ public class DetailsFragment extends BaseFragment {
 
         String[] participants = mTwunch.getParticipants().toArray(new String[mTwunch.getParticipants().size()]);
         Arrays.sort(participants, String.CASE_INSENSITIVE_ORDER);
-        // Number of participants
-        mNumParticipants.setText(getResources().getQuantityString(R.plurals.numberOfParticipants, participants.length, participants.length));
 
         // Participants
         mAdapter = new ParticipantAdapter(getActivity(), R.layout.item_participant, participants);
         mParticipants.setAdapter(mAdapter);
 
     }
+
+    @OnClick(R.id.add_calendar)
+    public void addToCalendar() {
+        try {
+            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
+            final long date = mTwunch.getDate();
+            Intent intent = new Intent(Intent.ACTION_INSERT)
+                    .setData(Events.CONTENT_URI)
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
+                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                            date + DateUtils.HOUR_IN_MILLIS)
+                    .putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle())
+                    .putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle())
+                    .putExtra(Events.EVENT_LOCATION, mTwunch.getAddress())
+                    .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+            startActivity(intent);
+        } catch (Exception e) {
+            // FIXME: handle exception
+        }
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -195,17 +178,11 @@ public class DetailsFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menuMap:
-                doMap();
-                return true;
             case R.id.menuRegister:
                 doRegister();
                 return true;
             case R.id.menuShare:
                 doShare();
-                return true;
-            case R.id.menuDirections:
-                doDirections();
                 return true;
         }
         return false;
@@ -214,20 +191,12 @@ public class DetailsFragment extends BaseFragment {
     /**
      * Show the location of this Twunch on a map.
      */
-    private void doMap() {
+    @OnClick(R.id.map)
+    public void doMap() {
         AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
         final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
                 + mTwunch.getLatitude() + "," + mTwunch.getLongitude()));
         startActivity(myIntent);
-    }
-
-    /**
-     * Show the directions to this Twunch.
-     */
-    private void doDirections() {
-        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.SHOW_DIRECTIONS, null, 1);
-        startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("google.navigation:q="
-                + mTwunch.getLatitude() + "," + mTwunch.getLongitude())));
     }
 
     /**
@@ -266,7 +235,7 @@ public class DetailsFragment extends BaseFragment {
         intent.setType("text/plain");
         intent.putExtra(
                 Intent.EXTRA_TEXT,
-                        getString(R.string.share_text,
+                getString(R.string.share_text,
                         mTwunch.getTitle(),
                         DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
                         DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_TIME),
