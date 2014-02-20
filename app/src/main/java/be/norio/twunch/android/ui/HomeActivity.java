@@ -52,7 +52,8 @@ public class HomeActivity extends BaseActivity {
 
         final int currentVersion = BuildConfig.VERSION_CODE;
         if (currentVersion > PrefsUtils.getLastRunVersion()) {
-            showWhatsNew();
+            // FIXME
+            // showWhatsNew();
         }
         PrefsUtils.setLastRunVersion(currentVersion);
     }
@@ -71,11 +72,8 @@ public class HomeActivity extends BaseActivity {
             case R.id.action_map:
                 MapActivity.start(this);
                 break;
-            case R.id.menuAbout:
-                showAbout();
-                break;
-            case R.id.menuWhatsNew:
-                showWhatsNew();
+            case R.id.action_settings:
+                SettingsActivity.start(this);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -95,15 +93,6 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void onNetworkStatusUpdated(NetworkStatusUpdatedEvent event) {
         setProgressBarIndeterminateVisibility(event.getOustandingNetworkCalls() > 0);
-    }
-
-    private void showWhatsNew() {
-        HtmlDialogFragment.newInstance(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW).show(getFragmentManager(), "whats_new");
-    }
-
-    private void showAbout() {
-        HtmlDialogFragment.newInstance(getString(R.string.about, BuildConfig.VERSION_NAME), R.raw.about,
-                AnalyticsUtils.Pages.ABOUT).show(getFragmentManager(), "whats_new");
     }
 
 }

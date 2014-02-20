@@ -41,7 +41,8 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Twunch">
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ui.HomeActivity">
@@ -53,6 +54,7 @@
         </activity>
         <activity android:name=".ui.MapActivity" />
         <activity android:name=".ui.DetailsActivity" />
+        <activity android:name=".ui.SettingsActivity" />
 
     </application>
 

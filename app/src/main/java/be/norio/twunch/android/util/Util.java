@@ -17,6 +17,7 @@
 
 package be.norio.twunch.android.util;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -25,7 +26,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.ui.fragment.HtmlDialogFragment;
 
 public class Util {
 
@@ -68,4 +71,5 @@ public class Util {
     public static String formatDate(Context context, long date) {
         return context.getString(R.string.date, DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(context, date, DateUtils.FORMAT_SHOW_TIME));
     }
+
 }

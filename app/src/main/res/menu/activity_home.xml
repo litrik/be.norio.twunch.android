@@ -7,14 +7,8 @@
         android:showAsAction="ifRoom"
         android:title="@string/menu_map" />
     <item
-        android:id="@+id/menuWhatsNew"
-        android:orderInCategory="10"
+        android:id="@+id/action_settings"
         android:showAsAction="never"
-        android:title="@string/whats_new" />
-    <item
-        android:id="@+id/menuAbout"
-        android:orderInCategory="11"
-        android:showAsAction="never"
-        android:title="@string/menu_about" />
+        android:title="@string/settings" />
 
 </menu>
