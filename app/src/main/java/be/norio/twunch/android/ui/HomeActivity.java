@@ -36,7 +36,6 @@ import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
-import be.norio.twunch.android.util.TwitterUtils;
 import be.norio.twunch.android.util.Util;
 
 public class HomeActivity extends BaseActivity {
@@ -49,10 +48,6 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-
-        if (PrefsUtils.getTwitterToken() == null) {
-            TwitterUtils.getToken();
-        }
 
         showWhatsNew();
     }
