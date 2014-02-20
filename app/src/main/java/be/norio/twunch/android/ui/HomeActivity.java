@@ -34,6 +34,7 @@ import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
+import be.norio.twunch.android.ui.fragment.HtmlDialogFragment;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
@@ -49,7 +50,11 @@ public class HomeActivity extends BaseActivity {
 
         setContentView(R.layout.activity_home);
 
-        showWhatsNew();
+        final int currentVersion = BuildConfig.VERSION_CODE;
+        if (currentVersion > PrefsUtils.getLastRunVersion()) {
+            showWhatsNew();
+        }
+        PrefsUtils.setLastRunVersion(currentVersion);
     }
 
     @Override
@@ -67,10 +72,10 @@ public class HomeActivity extends BaseActivity {
                 MapActivity.start(this);
                 break;
             case R.id.menuAbout:
-                showDialog(DIALOG_ABOUT);
+                showAbout();
                 break;
             case R.id.menuWhatsNew:
-                showDialog(DIALOG_WHATS_NEW);
+                showWhatsNew();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -93,42 +98,12 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void showWhatsNew() {
-        final int currentVersion = BuildConfig.VERSION_CODE;
-        if (currentVersion > PrefsUtils.getLastRunVersion()) {
-            showDialog(DIALOG_WHATS_NEW);
-        }
-        PrefsUtils.setLastRunVersion(currentVersion);
+        HtmlDialogFragment.newInstance(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW).show(getFragmentManager(), "whats_new");
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog;
-        switch (id) {
-            case DIALOG_WHATS_NEW:
-                dialog = createHtmlDialog(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW);
-                break;
-            case DIALOG_ABOUT:
-                dialog = createHtmlDialog(getString(R.string.about, BuildConfig.VERSION_NAME), R.raw.about,
-                        AnalyticsUtils.Pages.ABOUT);
-                break;
-            default:
-                dialog = null;
-        }
-        return dialog;
-    }
-
-    private Dialog createHtmlDialog(String title, int contentResourceId, String pageName) {
-        AnalyticsUtils.trackPageView(pageName);
-        WebView webView = new WebView(this);
-        webView.loadDataWithBaseURL(null, Util.readTextFromResource(this, contentResourceId), "text/html", "utf-8", null);
-        return new AlertDialog.Builder(this).setTitle(title).setView(webView).setPositiveButton(android.R.string.ok, null)
-                .setNeutralButton(R.string.rate, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-                    }
-                }).create();
+    private void showAbout() {
+        HtmlDialogFragment.newInstance(getString(R.string.about, BuildConfig.VERSION_NAME), R.raw.about,
+                AnalyticsUtils.Pages.ABOUT).show(getFragmentManager(), "whats_new");
     }
 
 }
