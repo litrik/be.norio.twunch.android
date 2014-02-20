@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding">
+
+        <include layout="@layout/details" />
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/participants"
+        android:stretchMode="columnWidth"
+        android:clickable="true"
+        android:numColumns="@integer/participants_columns"
+        android:layout_width="match_parent"
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
