@@ -17,15 +17,9 @@
 
 package be.norio.twunch.android.ui;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 
 import com.squareup.otto.Subscribe;
 
@@ -34,10 +28,11 @@ import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
-import be.norio.twunch.android.ui.fragment.HtmlDialogFragment;
+import be.norio.twunch.android.otto.TwunchesFailedEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
-import be.norio.twunch.android.util.Util;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class HomeActivity extends BaseActivity {
 
@@ -92,6 +87,11 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void onNetworkStatusUpdated(NetworkStatusUpdatedEvent event) {
         setProgressBarIndeterminateVisibility(event.getOustandingNetworkCalls() > 0);
+    }
+
+    @Subscribe
+    public void onTwunchesFailed(TwunchesFailedEvent event) {
+        Crouton.makeText(this, R.string.download_error, Style.ALERT).show();
     }
 
 }

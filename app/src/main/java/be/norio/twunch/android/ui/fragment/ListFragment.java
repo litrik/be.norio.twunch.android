@@ -43,6 +43,7 @@ import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
+import be.norio.twunch.android.otto.TwunchesFailedEvent;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
 import butterknife.ButterKnife;
@@ -229,6 +230,10 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
         mPullToRefresh.setRefreshComplete();
     }
 
+    @Subscribe
+    public void onTwunchesFailedEvent(TwunchesFailedEvent event) {
+        mPullToRefresh.setRefreshComplete();
+    }
 
     private void sortData(int sorting) {
         mCurrentSorting = sorting;

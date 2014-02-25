@@ -15,8 +15,11 @@ import be.norio.twunch.android.data.model.Twunches;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
+import be.norio.twunch.android.otto.TwunchesFailedEvent;
 import be.norio.twunch.android.util.PrefsUtils;
 import be.norio.twunch.android.util.Util;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -101,9 +104,9 @@ public class DataManager {
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                // FIXME: Show error in the UI
                 retrofitError.printStackTrace();
                 decrementOutstandingNetworkCalls();
+                BusProvider.getInstance().post(new TwunchesFailedEvent());
             }
         });
     }

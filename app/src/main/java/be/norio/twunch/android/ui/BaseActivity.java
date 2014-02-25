@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationClient;
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.otto.BusProvider;
 import butterknife.ButterKnife;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public abstract class BaseActivity extends Activity implements GooglePlayServicesClient.OnConnectionFailedListener, GooglePlayServicesClient.ConnectionCallbacks {
 
@@ -76,6 +77,12 @@ public abstract class BaseActivity extends Activity implements GooglePlayService
         if (mLocationClient.isConnected()) {
             DataManager.getInstance().updateLocation(mLocationClient.getLastLocation());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Crouton.cancelAllCroutons();
     }
 
     @Override

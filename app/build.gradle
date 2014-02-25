@@ -27,6 +27,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.squareup.retrofit:converter-simplexml:1.4.1'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.3'
 }
 
 configurations {
