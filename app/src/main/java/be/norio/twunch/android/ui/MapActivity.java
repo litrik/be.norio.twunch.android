@@ -37,7 +37,7 @@ public class MapActivity extends BaseActivity {
 
         setContentView(R.layout.activity_map);
 
-        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_MAP);
+        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.MAP);
     }
 
 }

@@ -36,8 +36,8 @@
     <string name="popularity">Popularity</string>
     <string name="settings">Settings</string>
 
+    <string name="today">Today</string>
     <plurals name="days_to_twunch">
-        <item quantity="zero">Today</item>
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>

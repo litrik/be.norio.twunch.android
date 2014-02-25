@@ -41,9 +41,6 @@ import be.norio.twunch.android.util.Util;
 
 public class HomeActivity extends BaseActivity {
 
-    private final int DIALOG_WHATS_NEW = 56479952;
-    private final int DIALOG_ABOUT = 3267613;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +49,12 @@ public class HomeActivity extends BaseActivity {
 
         final int currentVersion = BuildConfig.VERSION_CODE;
         if (currentVersion > PrefsUtils.getLastRunVersion()) {
-            // FIXME
+            // TODO
             // showWhatsNew();
         }
         PrefsUtils.setLastRunVersion(currentVersion);
+
+        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.HOME);
     }
 
     @Override

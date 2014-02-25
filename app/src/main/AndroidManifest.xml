@@ -12,7 +12,7 @@
     <uses-permission android:name="be.norio.twunch.android.permission.MAPS_RECEIVE" />
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
     <supports-screens

@@ -27,21 +27,19 @@ import com.google.analytics.tracking.android.Tracker;
 public class AnalyticsUtils {
 
 	public interface Pages {
-		public static final String TWUNCH_LIST_DATE = "TwunchListByDate";
-		public static final String TWUNCH_LIST_DISTANCE = "TwunchListByDistance";
-		public static final String TWUNCH_DETAILS = "TwunchDetails";
-		public static final String TWUNCH_MAP = "TwunchMap";
+		public static final String HOME = "Home";
+		public static final String DETAILS = "Details";
+		public static final String MAP = "Map";
 		public static final String ABOUT = "About";
 		public static final String WHATS_NEW = "WhatsNew";
 	}
 
 	public interface EventCategories {
-		public static final String TWUNCH_DETAILS = "TwunchDetails";
+		public static final String DETAILS = "Details";
 	}
 
 	public interface EventActions {
 		public static final String SHOW_MAP = "ShowMap";
-		public static final String SHOW_DIRECTIONS = "ShowDirections";
 		public static final String ADD_TO_CALENDAR = "AddToCalendar";
 		public static final String SHARE = "Share";
 		public static final String REGISTER = "Register";
@@ -53,8 +51,7 @@ public class AnalyticsUtils {
 		}
 		try {
             Tracker tracker = EasyTracker.getInstance(PrefsUtils.getContext());
-            tracker.set(Fields.SCREEN_NAME, page);
-            tracker.send(MapBuilder.createAppView().build());
+            tracker.send(MapBuilder.createAppView().set(Fields.SCREEN_NAME, page).build());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

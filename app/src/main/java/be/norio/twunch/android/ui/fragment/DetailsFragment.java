@@ -95,7 +95,7 @@ public class DetailsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.TWUNCH_DETAILS);
+        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.DETAILS);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class DetailsFragment extends BaseFragment {
     @OnClick(R.id.add_calendar)
     public void addToCalendar() {
         try {
-            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
+            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
             final long date = mTwunch.getDate();
             Intent intent = new Intent(Intent.ACTION_INSERT)
                     .setData(Events.CONTENT_URI)
@@ -173,15 +173,16 @@ public class DetailsFragment extends BaseFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_details, menu);
+        menu.findItem(R.id.action_register).setVisible(!mTwunch.isClosed());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menuRegister:
+            case R.id.action_register:
                 doRegister();
                 return true;
-            case R.id.menuShare:
+            case R.id.action_share:
                 doShare();
                 return true;
         }
@@ -193,7 +194,7 @@ public class DetailsFragment extends BaseFragment {
      */
     @OnClick(R.id.map)
     public void doMap() {
-        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
         final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
                 + mTwunch.getLatitude() + "," + mTwunch.getLongitude()));
         startActivity(myIntent);
@@ -215,7 +216,7 @@ public class DetailsFragment extends BaseFragment {
             builder.create().show();
 
         } else {
-            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS, AnalyticsUtils.EventActions.REGISTER, null, 1);
+            AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.REGISTER, null, 1);
             final Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.register_text, mTwunch.getTitle(), mTwunch.getLink()));
@@ -228,7 +229,7 @@ public class DetailsFragment extends BaseFragment {
      * Share information about this Twunch.
      */
     private void doShare() {
-        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.TWUNCH_DETAILS,
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS,
                 AnalyticsUtils.EventActions.SHARE, null, 1);
 
         final Intent intent = new Intent(Intent.ACTION_SEND);
