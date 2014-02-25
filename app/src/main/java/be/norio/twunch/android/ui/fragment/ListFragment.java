@@ -177,8 +177,10 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
                     sortText = getResources().getQuantityString(R.plurals.numberOfParticipants, size, size);
                     break;
                 default:
-                    int days = (int) ((twunch.getDate() - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
-                    if (days == 0) {
+                    int days = (int) ((Util.getStartOfDay(twunch.getDate()) - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
+                    if (days < 0) {
+                        // Do nothing
+                    } else if (days == 0) {
                         sortText = getString(R.string.today);
                     } else {
                         sortText = getResources().getQuantityString(R.plurals.days_to_twunch, days, days);
@@ -190,7 +192,7 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
             } else {
                 int split = sortText.indexOf(' ');
                 SpannableStringBuilder ssb = new SpannableStringBuilder(sortText.replace(' ', '\n'));
-                if(split != -1) {
+                if (split != -1) {
                     ssb.setSpan(new RelativeSizeSpan(2f), 0, split, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
                 vh.sorting.setText(ssb);

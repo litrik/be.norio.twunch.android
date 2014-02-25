@@ -58,6 +58,15 @@ public class Util {
         return t.toMillis(false);
     }
 
+    public static long getStartOfDay(long time) {
+        Time t = new Time();
+        t.set(time);
+        t.hour = 0;
+        t.minute = 0;
+        t.second = 0;
+        return t.toMillis(false);
+    }
+
     public static String formatDistance(Context context, float distance) {
         if (distance < 1000) {
             return context.getString(R.string.distance_below_1km, distance);

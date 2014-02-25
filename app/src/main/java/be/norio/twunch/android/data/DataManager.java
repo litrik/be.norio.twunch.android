@@ -16,6 +16,7 @@ import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
 import be.norio.twunch.android.util.PrefsUtils;
+import be.norio.twunch.android.util.Util;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -63,7 +64,22 @@ public class DataManager {
     }
 
     public List<Twunch> getTwunches() {
-        return new ArrayList<Twunch>(mTwunchData.getTwunches());
+        final long startOfToday = Util.getStartOfToday();
+        final List<Twunch> twunches = new ArrayList<Twunch>(mTwunchData.getTwunches());
+        boolean listUpdated = false;
+        for (int i = 0; i < twunches.size(); i++) {
+            Twunch twunch = twunches.get(i);
+            final int days = (int) ((Util.getStartOfDay(twunch.getDate()) - startOfToday) / DateUtils.DAY_IN_MILLIS);
+            if (days < 0) {
+                twunches.remove(i);
+                listUpdated = true;
+            }
+        }
+        if (listUpdated) {
+            mTwunchData.setTwunches(twunches);
+            PrefsUtils.setData(mTwunchData);
+        }
+        return twunches;
     }
 
     public void loadTwunches(boolean force) {
@@ -104,7 +120,7 @@ public class DataManager {
 
     @Produce
     public TwunchesAvailableEvent produceTwunches() {
-        return new TwunchesAvailableEvent(mTwunchData.getTwunches());
+        return new TwunchesAvailableEvent(getTwunches());
     }
 
     @Produce
