@@ -68,7 +68,6 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
         setHasOptionsMenu(true);
 
         mCurrentSorting = PrefsUtils.getSort();
-
     }
 
     @Override
@@ -145,7 +144,6 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
 
     private class TwunchAdapter extends ArrayAdapter<Twunch> {
 
-
         public TwunchAdapter(Context context, int resource) {
             super(context, resource);
         }
@@ -180,7 +178,11 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
                     break;
                 default:
                     int days = (int) ((twunch.getDate() - Util.getStartOfToday()) / DateUtils.DAY_IN_MILLIS);
-                    sortText = getResources().getQuantityString(R.plurals.days_to_twunch, days, days);
+                    if (days == 0) {
+                        sortText = getString(R.string.today);
+                    } else {
+                        sortText = getResources().getQuantityString(R.plurals.days_to_twunch, days, days);
+                    }
                     break;
             }
             if (TextUtils.isEmpty(sortText)) {
@@ -188,7 +190,9 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
             } else {
                 int split = sortText.indexOf(' ');
                 SpannableStringBuilder ssb = new SpannableStringBuilder(sortText.replace(' ', '\n'));
-                ssb.setSpan(new RelativeSizeSpan(2f), 0, split, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if(split != -1) {
+                    ssb.setSpan(new RelativeSizeSpan(2f), 0, split, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
                 vh.sorting.setText(ssb);
                 vh.sorting.setVisibility(View.VISIBLE);
             }
@@ -196,10 +200,8 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
             vh.title.setText(twunch.getTitle());
 
             vh.address.setText(twunch.getAddress());
-            //vh.address.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
             vh.date.setText(Util.formatDate(view.getContext(), twunch.getDate()));
-            //vh.date.setTypeface(null, cursor.getInt(Query.NEW) == 1 ? Typeface.BOLD : Typeface.NORMAL);
 
             return view;
         }
