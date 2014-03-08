@@ -1,7 +1,12 @@
 package be.norio.twunch.android.data;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.format.DateUtils;
 
 import com.squareup.otto.Produce;
@@ -10,16 +15,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import be.norio.twunch.android.R;
 import be.norio.twunch.android.data.model.Twunch;
 import be.norio.twunch.android.data.model.Twunches;
 import be.norio.twunch.android.otto.BusProvider;
 import be.norio.twunch.android.otto.NetworkStatusUpdatedEvent;
 import be.norio.twunch.android.otto.TwunchesAvailableEvent;
 import be.norio.twunch.android.otto.TwunchesFailedEvent;
+import be.norio.twunch.android.ui.DetailsActivity;
 import be.norio.twunch.android.util.PrefsUtils;
-import be.norio.twunch.android.util.Util;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -35,6 +39,7 @@ public class DataManager {
     private final TwunchData mTwunchData;
     private int mOutstandingNetworkCalls = 0;
     private Location mLocation;
+    private int mNotificationId = 1;
 
     public static DataManager getInstance() {
         if (instance == null) {
@@ -67,22 +72,8 @@ public class DataManager {
     }
 
     public List<Twunch> getTwunches() {
-        final long startOfToday = Util.getStartOfToday();
-        final List<Twunch> twunches = new ArrayList<Twunch>(mTwunchData.getTwunches());
-        boolean listUpdated = false;
-        for (int i = 0; i < twunches.size(); i++) {
-            Twunch twunch = twunches.get(i);
-            final int days = (int) ((Util.getStartOfDay(twunch.getDate()) - startOfToday) / DateUtils.DAY_IN_MILLIS);
-            if (days < 0) {
-                twunches.remove(i);
-                listUpdated = true;
-            }
-        }
-        if (listUpdated) {
-            mTwunchData.setTwunches(twunches);
-            PrefsUtils.setData(mTwunchData);
-        }
-        return twunches;
+        mTwunchData.removeOldTwunches();
+        return new ArrayList<Twunch>(mTwunchData.getTwunches());
     }
 
     public void loadTwunches(boolean force) {
@@ -91,10 +82,17 @@ public class DataManager {
         if (!force && lastSync != 0 && (now - lastSync < DateUtils.HOUR_IN_MILLIS)) {
             return;
         }
+        mTwunchData.removeOldTwunches();
         incrementOutstandingNetworkCalls();
         mServer.loadTwunches(new Callback<Twunches>() {
             @Override
             public void success(Twunches twunches, Response response) {
+                for (int i = 0; i < twunches.twunches.size(); i++) {
+                    Twunch twunch = twunches.twunches.get(i);
+                    if (mTwunchData.add(twunch)) {
+                        showNotification(twunch);
+                    }
+                }
                 mTwunchData.setTwunches(twunches.twunches);
                 updateLocation(mLocation);
                 PrefsUtils.setData(mTwunchData);
@@ -109,6 +107,28 @@ public class DataManager {
                 BusProvider.getInstance().post(new TwunchesFailedEvent());
             }
         });
+    }
+
+    private void showNotification(Twunch twunch) {
+
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext)
+                .setContentTitle(twunch.getTitle())
+                .setContentText(twunch.getAddress())
+                .setSmallIcon(R.drawable.ic_stat_hamburger)
+                .setAutoCancel(true);
+
+        // Our parent activity
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+        stackBuilder.addParentStack(DetailsActivity.class);
+        Intent i = DetailsActivity.getIntent(mContext, twunch.getId());
+        stackBuilder.addNextIntent(i);
+        PendingIntent pi = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pi);
+
+        NotificationManager nm = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(mNotificationId, builder.getNotification());
+        mNotificationId++;
+
     }
 
     private void incrementOutstandingNetworkCalls() {

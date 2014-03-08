@@ -28,9 +28,14 @@ public class DetailsActivity extends BaseActivity {
     private static final String EXTRA_ID = "EXTRA_ID";
 
     public static void start(Context context, String id) {
+        Intent intent = getIntent(context, id);
+        context.startActivity(intent);
+    }
+
+    public static Intent getIntent(Context context, String id) {
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_ID, id);
-        context.startActivity(intent);
+        return intent;
     }
 
     @Override
