@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
+        android:key="category_notifications"
+        android:title="@string/notifications">
+        <SwitchPreference
+            android:key="notifications"
+            android:defaultValue="true"
+            android:title="@string/notifications" />
+        <CheckBoxPreference
+            android:dependency="notifications"
+            android:key="vibrate"
+            android:defaultValue="true"
+            android:title="@string/vibrate" />
+        <RingtonePreference
+            android:ringtoneType="notification"
+            android:dependency="notifications"
+            android:key="sound"
+            android:title="@string/sound" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="category_about"
         android:title="@string/about">
         <Preference android:key="version" />

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.format.DateUtils;
@@ -40,6 +41,7 @@ public class DataManager {
     private int mOutstandingNetworkCalls = 0;
     private Location mLocation;
     private int mNotificationId = 1;
+    private long[] mVibratePattern = new long[]{0, 250, 250, 250};
 
     public static DataManager getInstance() {
         if (instance == null) {
@@ -87,10 +89,13 @@ public class DataManager {
         mServer.loadTwunches(new Callback<Twunches>() {
             @Override
             public void success(Twunches twunches, Response response) {
+                final boolean notificationEnabled = PrefsUtils.isNotificationEnabled();
                 for (int i = 0; i < twunches.twunches.size(); i++) {
                     Twunch twunch = twunches.twunches.get(i);
                     if (mTwunchData.add(twunch)) {
-                        showNotification(twunch);
+                        if (notificationEnabled) {
+                            showNotification(twunch);
+                        }
                     }
                 }
                 mTwunchData.setTwunches(twunches.twunches);
@@ -116,6 +121,14 @@ public class DataManager {
                 .setContentText(twunch.getAddress())
                 .setSmallIcon(R.drawable.ic_stat_hamburger)
                 .setAutoCancel(true);
+
+        if (PrefsUtils.isVibrateEnabled()) {
+            builder.setVibrate(mVibratePattern);
+        }
+        final Uri sound = PrefsUtils.getSound();
+        if (sound != null) {
+            builder.setSound(sound);
+        }
 
         // Our parent activity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);

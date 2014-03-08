@@ -20,6 +20,8 @@ package be.norio.twunch.android.util;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,6 +56,9 @@ public class PrefsUtils {
     private static final String KEY_DATA = "data";
     private static final String KEY_SORT = "sort";
     private static final String KEY_AVATARS = "avatars";
+    private static final String KEY_NOTIFICATION = "notification";
+    private static final String KEY_VIBRATE = "vibrate";
+    public static final String KEY_SOUND = "sound";
 
     // Default values
     public static final long DEFAULT_LAST_UPDATE = 0;
@@ -155,6 +160,19 @@ public class PrefsUtils {
     public static void setAvatars(LruCache<String, String> avatars) {
         final String string = new Gson().toJson(avatars.snapshot());
         getPrefs().edit().putString(KEY_AVATARS, string).apply();
+    }
+
+    public static boolean isVibrateEnabled() {
+        return getPrefs().getBoolean(KEY_VIBRATE, true);
+    }
+
+    public static boolean isNotificationEnabled() {
+        return getPrefs().getBoolean(KEY_NOTIFICATION, true);
+    }
+
+    public static Uri getSound() {
+        String s = getPrefs().getString(KEY_SOUND, null);
+        return s == null ? RingtoneManager.getActualDefaultRingtoneUri(CONTEXT, RingtoneManager.TYPE_NOTIFICATION) : Uri.parse(s);
     }
 
 }

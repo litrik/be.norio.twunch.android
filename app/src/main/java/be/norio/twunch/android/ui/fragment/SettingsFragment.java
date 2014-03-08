@@ -1,5 +1,9 @@
 package be.norio.twunch.android.ui.fragment;
 
+import android.app.Activity;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -8,8 +12,11 @@ import android.view.MenuItem;
 import be.norio.twunch.android.BuildConfig;
 import be.norio.twunch.android.R;
 import be.norio.twunch.android.util.AnalyticsUtils;
+import be.norio.twunch.android.util.PrefsUtils;
 
 public class SettingsFragment extends PreferenceFragment {
+
+    private Preference mSoundPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,10 +45,34 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        mSoundPref = findPreference(PrefsUtils.KEY_SOUND);
+
+        refreshSummaries();
 //        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        refreshSummaries();
+    }
+
+
+    void refreshSummaries()
+    {
+        final Activity context = getActivity();
+        final Uri sound = PrefsUtils.getSound();
+        if (sound != null)
+        {
+            Ringtone ringtone = RingtoneManager.getRingtone(context, sound);
+            if (ringtone != null)
+            {
+                mSoundPref.setSummary(ringtone.getTitle(context));
+            }
+        }
+    }
 
     private void showWhatsNew() {
         HtmlDialogFragment.newInstance(getString(R.string.whats_new), R.raw.whats_new, AnalyticsUtils.Pages.WHATS_NEW).show(getFragmentManager(), "whats_new");
