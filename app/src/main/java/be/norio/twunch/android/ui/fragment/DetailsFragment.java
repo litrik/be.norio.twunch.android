@@ -305,10 +305,11 @@ public class DetailsFragment extends BaseFragment {
             });
 
             if (AvatarManager.isAvatarAvailable(participant)) {
-                Picasso.with(getActivity()).load(AvatarManager.getAvatar(participant)).into(vh.avatar);
+                Picasso.with(getActivity()).load(AvatarManager.getAvatar(participant)).error(R.drawable.blank_avatar).into(vh.avatar);
                 vh.avatar.setVisibility(View.VISIBLE);
             } else {
-                vh.avatar.setVisibility(View.INVISIBLE);
+                Picasso.with(getActivity()).load(R.drawable.blank_avatar).into(vh.avatar);
+//                vh.avatar.setVisibility(View.INVISIBLE);
                 AvatarManager.addToQueue(participant);
             }
             return view;
