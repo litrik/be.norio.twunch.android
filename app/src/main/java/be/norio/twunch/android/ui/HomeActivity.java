@@ -17,10 +17,17 @@
 
 package be.norio.twunch.android.ui;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.AccountPicker;
 import com.squareup.otto.Subscribe;
 
 import be.norio.twunch.android.BuildConfig;
@@ -36,6 +43,52 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class HomeActivity extends BaseActivity {
 
+    // Constants
+    // The authority for the sync adapter's content provider
+    public static final String AUTHORITY = "be.norio.twunch.provider";
+    // An account type, in the form of a domain name
+    public static final String ACCOUNT_TYPE = "twunch.be";
+    // The account name
+    public static final String ACCOUNT = "Twunch";
+    // Sync interval constants
+    public static final long HOUR_IN_SECONDS = 3600;
+    Account mAccount;
+
+    /**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    public static Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call context.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+            // Turn on periodic syncing
+            ContentResolver.setIsSyncable(newAccount, AUTHORITY, 1);
+            ContentResolver.setSyncAutomatically(newAccount, AUTHORITY, true);
+            ContentResolver.addPeriodicSync(newAccount, AUTHORITY, Bundle.EMPTY, HOUR_IN_SECONDS);
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        }
+        return newAccount;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +103,10 @@ public class HomeActivity extends BaseActivity {
         PrefsUtils.setLastRunVersion(currentVersion);
 
         AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.HOME);
+
+        // Create the dummy account
+        mAccount = CreateSyncAccount(this);
+
     }
 
     @Override

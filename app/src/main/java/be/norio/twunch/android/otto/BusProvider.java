@@ -24,7 +24,7 @@ import com.squareup.otto.Bus;
  * interested classes.
  */
 public final class BusProvider {
-	private static final Bus BUS = new Bus();
+	private static final Bus BUS = new MainBus();
 
 	public static Bus getInstance() {
 		return BUS;
