@@ -82,5 +82,8 @@ android {
 android.productFlavors.each { flavor ->
     if (flavor.name != "prd") {
         flavor.packageName = android.defaultConfig.packageName + "." + flavor.name
+    } else {
+        flavor.packageName = android.defaultConfig.packageName
     }
+    flavor.resValue "string", "package_name", "\"" + flavor.packageName + "\""
 }

@@ -85,10 +85,9 @@
 
         <provider
             android:name="be.norio.twunch.android.syncadapter.StubProvider"
-            android:authorities="be.norio.twunch.provider"
+            android:authorities="@string/package_name"
             android:exported="false"
             android:syncable="true" />
-
 
     </application>
 

@@ -43,11 +43,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class HomeActivity extends BaseActivity {
 
-    // Constants
-    // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "be.norio.twunch.provider";
-    // An account type, in the form of a domain name
-    public static final String ACCOUNT_TYPE = "twunch.be";
     // The account name
     public static final String ACCOUNT = "Twunch";
     // Sync interval constants
@@ -61,7 +56,7 @@ public class HomeActivity extends BaseActivity {
      */
     public static Account CreateSyncAccount(Context context) {
         // Create the account type and default account
-        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        Account newAccount = new Account(ACCOUNT, BuildConfig.PACKAGE_NAME);
         // Get an instance of the Android account manager
         AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         /*
@@ -76,9 +71,9 @@ public class HomeActivity extends BaseActivity {
              * here.
              */
             // Turn on periodic syncing
-            ContentResolver.setIsSyncable(newAccount, AUTHORITY, 1);
-            ContentResolver.setSyncAutomatically(newAccount, AUTHORITY, true);
-            ContentResolver.addPeriodicSync(newAccount, AUTHORITY, Bundle.EMPTY, HOUR_IN_SECONDS);
+            ContentResolver.setIsSyncable(newAccount, BuildConfig.PACKAGE_NAME, 1);
+            ContentResolver.setSyncAutomatically(newAccount, BuildConfig.PACKAGE_NAME, true);
+            ContentResolver.addPeriodicSync(newAccount, BuildConfig.PACKAGE_NAME, Bundle.EMPTY, HOUR_IN_SECONDS);
         } else {
             /*
              * The account exists or some other error occurred. Log this, report it,
@@ -128,12 +123,6 @@ public class HomeActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DataManager.getInstance().loadTwunches(false);
     }
 
     @Subscribe
