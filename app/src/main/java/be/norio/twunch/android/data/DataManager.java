@@ -79,11 +79,7 @@ public class DataManager {
     }
 
     public void loadTwunches(boolean force) {
-        long lastSync = mTwunchData.getTimestamp();
-        long now = (new Date()).getTime();
-        if (!force && lastSync != 0 && (now - lastSync < DateUtils.HOUR_IN_MILLIS)) {
-            return;
-        }
+        final long lastSync = mTwunchData.getTimestamp();
         mTwunchData.removeOldTwunches();
         incrementOutstandingNetworkCalls();
         mServer.loadTwunches(new Callback<Twunches>() {
@@ -93,7 +89,7 @@ public class DataManager {
                 for (int i = 0; i < twunches.twunches.size(); i++) {
                     Twunch twunch = twunches.twunches.get(i);
                     if (mTwunchData.add(twunch)) {
-                        if (notificationEnabled) {
+                        if (notificationEnabled && lastSync != 0) {
                             showNotification(twunch);
                         }
                     }
