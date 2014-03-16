@@ -169,8 +169,10 @@ public class ListFragment extends BaseFragment implements OnRefreshListener, Ada
                     final double lat = twunch.getLatitude();
                     final double lon = twunch.getLongitude();
                     float distance = twunch.getDistance();
-                    if (lat != 0 && lon != 0 && distance > 0) {
+                    if (lat != 0 && lon != 0 && distance < Float.MAX_VALUE) {
                         sortText = Util.formatDistance(getContext(), distance);
+                    } else {
+                        sortText = "?? km";
                     }
                     break;
                 case PrefsUtils.SORT_POPULARITY:

@@ -116,9 +116,11 @@ public class DetailsFragment extends BaseFragment {
         StringBuffer sb = new StringBuffer();
         sb.append(mTwunch.getAddress());
         if (mTwunch.hasLocation()) {
-            sb.append(" (");
-            sb.append(Util.formatDistance(view.getContext(), mTwunch.getDistance()));
-            sb.append(")");
+            if (mTwunch.getDistance() < Float.MAX_VALUE) {
+                sb.append(" (");
+                sb.append(Util.formatDistance(view.getContext(), mTwunch.getDistance()));
+                sb.append(")");
+            }
         } else {
             mMap.setVisibility(View.INVISIBLE);
             mMapSeparator.setVisibility(View.INVISIBLE);
@@ -153,21 +155,12 @@ public class DetailsFragment extends BaseFragment {
         try {
             AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.ADD_TO_CALENDAR, null, 1);
             final long date = mTwunch.getDate();
-            Intent intent = new Intent(Intent.ACTION_INSERT)
-                    .setData(Events.CONTENT_URI)
-                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date)
-                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-                            date + DateUtils.HOUR_IN_MILLIS)
-                    .putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle())
-                    .putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle())
-                    .putExtra(Events.EVENT_LOCATION, mTwunch.getAddress())
-                    .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
+            Intent intent = new Intent(Intent.ACTION_INSERT).setData(Events.CONTENT_URI).putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date).putExtra(CalendarContract.EXTRA_EVENT_END_TIME, date + DateUtils.HOUR_IN_MILLIS).putExtra(Events.TITLE, "Twunch " + mTwunch.getTitle()).putExtra(Events.DESCRIPTION, "Twunch " + mTwunch.getTitle()).putExtra(Events.EVENT_LOCATION, mTwunch.getAddress()).putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY);
             startActivity(intent);
         } catch (Exception e) {
             // FIXME: handle exception
         }
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -195,8 +188,7 @@ public class DetailsFragment extends BaseFragment {
     @OnClick(R.id.map)
     public void doMap() {
         AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.SHOW_MAP, null, 1);
-        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q="
-                + mTwunch.getLatitude() + "," + mTwunch.getLongitude()));
+        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q=" + mTwunch.getLatitude() + "," + mTwunch.getLongitude()));
         startActivity(myIntent);
     }
 
@@ -229,18 +221,11 @@ public class DetailsFragment extends BaseFragment {
      * Share information about this Twunch.
      */
     private void doShare() {
-        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS,
-                AnalyticsUtils.EventActions.SHARE, null, 1);
+        AnalyticsUtils.trackEvent(AnalyticsUtils.EventCategories.DETAILS, AnalyticsUtils.EventActions.SHARE, null, 1);
 
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(
-                Intent.EXTRA_TEXT,
-                getString(R.string.share_text,
-                        mTwunch.getTitle(),
-                        DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE),
-                        DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_TIME),
-                        mTwunch.getLink()));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text, mTwunch.getTitle(), DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE), DateUtils.formatDateTime(getActivity(), mTwunch.getDate(), DateUtils.FORMAT_SHOW_TIME), mTwunch.getLink()));
         intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
         intent.putExtra(Intent.EXTRA_EMAIL, "");
         startActivity(Intent.createChooser(intent, getString(R.string.share_title)));
@@ -261,7 +246,6 @@ public class DetailsFragment extends BaseFragment {
     }
 
     private class ParticipantAdapter extends ArrayAdapter<String> {
-
 
         public ParticipantAdapter(Context context, int resource, String[] objects) {
             super(context, resource, objects);
@@ -286,19 +270,15 @@ public class DetailsFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     String[] projection = new String[]{ContactsContract.Contacts._ID, ContactsContract.Contacts.LOOKUP_KEY};
-                    Cursor rawTwitterContact = getActivity().getContentResolver().query(Data.CONTENT_URI, projection,
-                            Nickname.NAME + " = ?", new String[]{participant}, null);
+                    Cursor rawTwitterContact = getActivity().getContentResolver().query(Data.CONTENT_URI, projection, Nickname.NAME + " = ?", new String[]{participant}, null);
                     if (rawTwitterContact.getCount() > 0) {
                         // Show the QuickContact action bar
                         rawTwitterContact.moveToFirst();
-                        final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI,
-                                rawTwitterContact.getString(rawTwitterContact.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
-                        QuickContact.showQuickContact(DetailsFragment.this.getActivity(), vh.name, contactUri,
-                                ContactsContract.QuickContact.MODE_LARGE, null);
+                        final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, rawTwitterContact.getString(rawTwitterContact.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)));
+                        QuickContact.showQuickContact(DetailsFragment.this.getActivity(), vh.name, contactUri, ContactsContract.QuickContact.MODE_LARGE, null);
                     } else {
                         // Show the Twitter profile
-                        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://twitter.com/"
-                                + participant));
+                        final Intent myIntent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://twitter.com/" + participant));
                         startActivity(myIntent);
                     }
                 }
@@ -309,7 +289,7 @@ public class DetailsFragment extends BaseFragment {
                 vh.avatar.setVisibility(View.VISIBLE);
             } else {
                 Picasso.with(getActivity()).load(R.drawable.blank_avatar).into(vh.avatar);
-//                vh.avatar.setVisibility(View.INVISIBLE);
+                // vh.avatar.setVisibility(View.INVISIBLE);
                 AvatarManager.addToQueue(participant);
             }
             return view;

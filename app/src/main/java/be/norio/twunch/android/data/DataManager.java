@@ -8,12 +8,10 @@ import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.format.DateUtils;
 
 import com.squareup.otto.Produce;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import be.norio.twunch.android.R;
@@ -25,6 +23,7 @@ import be.norio.twunch.android.otto.TwunchesAvailableEvent;
 import be.norio.twunch.android.otto.TwunchesFailedEvent;
 import be.norio.twunch.android.ui.DetailsActivity;
 import be.norio.twunch.android.util.PrefsUtils;
+import hugo.weaving.DebugLog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -165,16 +164,13 @@ public class DataManager {
         void loadTwunches(Callback<Twunches> callback);
     }
 
+    @DebugLog
     public void updateLocation(Location location) {
-        if (location == null) {
-            return;
-        }
-        mLocation = location;
         final List<Twunch> twunches = mTwunchData.getTwunches();
         final Location twunchLocation = new Location("");
         for (int i = 0; i < twunches.size(); i++) {
             Twunch twunch = twunches.get(i);
-            if (twunch.hasLocation()) {
+            if (location != null && twunch.hasLocation()) {
                 twunchLocation.setLatitude(twunch.getLatitude());
                 twunchLocation.setLongitude(twunch.getLongitude());
                 twunch.setDistance(twunchLocation.distanceTo(location));
@@ -182,6 +178,7 @@ public class DataManager {
                 twunch.setDistance(Float.MAX_VALUE);
             }
         }
+        mLocation = location;
     }
 
 }
