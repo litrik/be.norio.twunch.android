@@ -3,26 +3,28 @@
 
     <string name="app_name">Twunch</string>
     <string name="rate">Beoordeel Deze App</string>
-    <string name="menu_refresh">Vernieuwen</string>
-    <string name="menu_about">Over</string>
+    <string name="about">Over</string>
     <string name="menu_share">Delen</string>
-    <string name="menu_directions">Route</string>
+    <string name="menu_directions">Navigatie</string>
     <string name="tab_date">Datum</string>
     <string name="tab_distance">Afstand</string>
     <string name="menu_map">Kaart</string>
     <string name="menu_register">Inschrijven</string>
-    <string name="about">Over Twunch %1$s</string>
+    <string name="about_title">Over Twunch %1$s</string>
     <string name="no_twunches">Geen Twunches gevonden.</string>
     <string name="register_closed">De inschrijvingen voor deze Twunch zijn gesloten.</string>
     <string name="register_title">Schrijf in via Twitter</string>
     <string name="register_text">(%1$s) @twunch Ik zal er zijn! %2$s</string>
     <string name="date">%1$s op %2$s</string>
-    <string name="distance">%1$.1f km</string>
+    <string name="distance_below_1km">%1$.0f m</string>
+    <string name="distance_below_10km">%1$.1f km</string>
+    <string name="distance_above_10km">%1$.0f km</string>
     <string name="share_title">Deel Twunch via…</string>
     <string name="share_subject">Twunch</string>
     <string name="share_text">Er is een Twunch in %1$s op %2$s om %3$s: %4$s</string>
     <string name="download_done">De Twunch gegevens zijn nu bijgewerkt.</string>
-    <string name="download_error">Er trad een fout tijdens het bijwerken van de Twunch gegevens. Probeer het later opnieuw.</string>
+    <string name="download_error">Er trad een fout tijdens het bijwerken van de Twunch gegevens.
+        Probeer het later opnieuw.</string>
     <string name="whats_new">Wat is er nieuw?</string>
 
     <plurals name="numberOfParticipants">
@@ -30,8 +32,15 @@
         <item quantity="other">%d personen</item>
     </plurals>
 
-    <string name="today">Vandaag</string>
+    <string name="sort">Sorteren</string>
+    <string name="popularity">Populariteit</string>
+    <string name="settings">Instellingen</string>
 
+    <string name="today">Vandaag</string>
+    <string name="notifications">Meldingen</string>
+    <string name="sound">Geluid</string>
+    <string name="vibrate">Trillen</string>
+    
     <plurals name="days_to_twunch">
         <item quantity="one">%d dag</item>
         <item quantity="other">%d dagen</item>
