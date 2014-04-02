@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="be.norio.twunch.android"
-    android:installLocation="auto"
-    android:versionCode="0"
-    android:versionName="0">
+    android:installLocation="auto">
 
     <permission
         android:name="be.norio.twunch.android.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="be.norio.twunch.android.permission.MAPS_RECEIVE" />
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
 
     <supports-screens
         android:anyDensity="true"

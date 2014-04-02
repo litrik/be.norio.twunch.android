@@ -9,6 +9,7 @@ import android.util.LruCache;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import be.norio.twunch.android.BuildConfig;
@@ -84,7 +85,7 @@ public class AvatarManager {
             @Override
             public void gotUserDetail(User user) {
                 super.gotUserDetail(user);
-                mAvatars.put(user.getScreenName().toLowerCase(), user.getOriginalProfileImageURL());
+                mAvatars.put(user.getScreenName().toLowerCase(Locale.US), user.getOriginalProfileImageURL());
                 decrementOutstandingNetworkCalls();
                 mHandler.post(new Runnable() {
                     @Override
@@ -116,7 +117,7 @@ public class AvatarManager {
     }
 
     public static boolean isAvatarAvailable(String userid) {
-        return mAvatars.get(userid.toLowerCase()) != null;
+        return mAvatars.get(userid.toLowerCase(Locale.US)) != null;
     }
 
     public static void addToQueue(String userid) {
@@ -128,6 +129,6 @@ public class AvatarManager {
     }
 
     public static String getAvatar(String userid) {
-        return mAvatars.get(userid.toLowerCase());
+        return mAvatars.get(userid.toLowerCase(Locale.US));
     }
 }
