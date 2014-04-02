@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="be.norio.twunch.android"
     android:installLocation="auto">
 
@@ -58,7 +59,9 @@
         </activity>
         <activity android:name="be.norio.twunch.android.ui.SettingsActivity" />
 
-        <service android:name="be.norio.twunch.android.syncadapter.AuthenticatorService">
+        <service
+            android:name="be.norio.twunch.android.syncadapter.AuthenticatorService"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
     <string name="ga_trackingId">UA-1839065-14</string>
-    <bool name="ga_autoActivityTracking">true</bool>
+    <string name="ga_logLevel">verbose</string>
     <bool name="ga_reportUncaughtExceptions">false</bool>
 </resources>

@@ -2,7 +2,6 @@
 <resources>
 
     <dimen name="default_padding">8dp</dimen>
-    <dimen name="double_padding">16dp</dimen>
     <dimen name="map_padding">32dp</dimen>
 
 </resources>

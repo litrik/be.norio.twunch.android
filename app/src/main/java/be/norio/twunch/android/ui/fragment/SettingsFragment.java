@@ -50,6 +50,8 @@ public class SettingsFragment extends PreferenceFragment {
         refreshSummaries();
 //        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
 
+        AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.SETTINGS);
+
     }
 
     @Override
