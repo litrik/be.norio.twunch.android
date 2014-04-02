@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
@@ -53,7 +52,6 @@ public abstract class BaseActivity extends Activity implements GooglePlayService
     @Override
     protected void onStart() {
         super.onStart();
-        EasyTracker.getInstance(this).activityStart(this);
         mLocationClient.connect();
     }
 
@@ -61,7 +59,6 @@ public abstract class BaseActivity extends Activity implements GooglePlayService
     protected void onStop() {
         mLocationClient.disconnect();
         super.onStop();
-        EasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override

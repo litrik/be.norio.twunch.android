@@ -2,16 +2,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="version" tools:ignore="MissingTranslation">Version %1$s (%2$d)</string>
-    <string name="rate">Rate This App</string>
     <string name="about">About</string>
     <string name="menu_share">Share</string>
-    <string name="menu_directions">Directions</string>
     <string name="tab_date">Date</string>
     <string name="tab_distance">Distance</string>
     <string name="menu_map">Map</string>
     <string name="menu_register">Register</string>
     <string name="about_title">About Twunch %1$s</string>
-    <string name="no_twunches">No Twunches found.</string>
     <string name="register_closed">Registration for this Twunch is closed.</string>
     <string name="register_title">Register via Twitter</string>
     <string name="register_text">(%1$s) @twunch I\'ll be there! %2$s</string>
@@ -22,7 +19,6 @@
     <string name="share_title">Share Twunch via…</string>
     <string name="share_subject">Twunch</string>
     <string name="share_text">There\'s a Twunch in %1$s on %2$s at %3$s: %4$s</string>
-    <string name="download_done">Twunch data is now up-to-date</string>
     <string name="download_error">There was an error downloading Twunch data. Please
 		try again later.</string>
     <string name="whats_new">What\'s new?</string>
