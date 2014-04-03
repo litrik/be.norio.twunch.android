@@ -92,10 +92,6 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
 
         final int currentVersion = BuildConfig.VERSION_CODE;
-        if (currentVersion > PrefsUtils.getLastRunVersion()) {
-            // TODO
-            // showWhatsNew();
-        }
         PrefsUtils.setLastRunVersion(currentVersion);
 
         AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.HOME);
