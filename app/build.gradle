@@ -30,6 +30,7 @@ dependencies {
     compile 'com.squareup.retrofit:converter-simplexml:1.4.1'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.3'
+    compile 'fr.nicolaspomepuy:discreetapprate:1.0.5@aar'
 }
 
 configurations {

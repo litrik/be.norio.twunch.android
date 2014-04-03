@@ -40,6 +40,7 @@ import be.norio.twunch.android.util.AnalyticsUtils;
 import be.norio.twunch.android.util.PrefsUtils;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import fr.nicolaspomepuy.discreetapprate.AppRate;
 
 public class HomeActivity extends BaseActivity {
 
@@ -102,6 +103,7 @@ public class HomeActivity extends BaseActivity {
         // Create the dummy account
         mAccount = CreateSyncAccount(this);
 
+        AppRate.with(this).text(R.string.rate).checkAndShow();
     }
 
     @Override

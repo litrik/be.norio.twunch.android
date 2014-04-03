@@ -3,6 +3,7 @@
 
     <string name="app_name">Twunch</string>
     <string name="about">Over</string>
+    <string name="rate">Beoordeel deze app</string>
     <string name="menu_share">Delen</string>
     <string name="tab_date">Datum</string>
     <string name="tab_distance">Afstand</string>
