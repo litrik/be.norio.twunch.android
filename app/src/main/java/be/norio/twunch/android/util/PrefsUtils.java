@@ -56,7 +56,7 @@ public class PrefsUtils {
     private static final String KEY_DATA = "data";
     private static final String KEY_SORT = "sort";
     private static final String KEY_AVATARS = "avatars";
-    private static final String KEY_NOTIFICATION = "notification";
+    private static final String KEY_NOTIFICATION = "notifications";
     private static final String KEY_VIBRATE = "vibrate";
     public static final String KEY_SOUND = "sound";
 
