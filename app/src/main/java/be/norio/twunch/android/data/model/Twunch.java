@@ -6,14 +6,20 @@ import org.simpleframework.xml.Root;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 @Root(strict = false)
 public class Twunch {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US);
+
+    static {
+        sdf.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+    }
 
     @Element
     String id;
