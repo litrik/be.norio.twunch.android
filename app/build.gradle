@@ -1,6 +1,3 @@
-apply from: "$System.env.HOME" + "/norio.gradle"
-apply from: "local.twitter.gradle"
-
 buildscript {
     repositories {
         mavenCentral()
@@ -8,6 +5,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:0.9.+'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.0.1'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.9.+'
     }
 }
 
@@ -16,8 +14,12 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'android-sdk-manager'
 apply plugin: 'android'
 apply plugin: 'hugo'
+
+apply from: "$System.env.HOME" + "/norio.gradle"
+apply from: "local.twitter.gradle"
 
 project.archivesBaseName="$appPackageName" + "-$appVersionName"
 
