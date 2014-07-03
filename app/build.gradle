@@ -3,8 +3,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
-        classpath 'com.jakewharton.hugo:hugo-plugin:1.0.1'
+        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.9.+'
     }
 }
@@ -15,7 +15,7 @@ repositories {
 }
 
 apply plugin: 'android-sdk-manager'
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 
 apply from: "$System.env.HOME" + "/norio.gradle"
@@ -44,11 +44,11 @@ configurations {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
         versionCode Integer.valueOf("$appVersionCode")
-        packageName "$appPackageName"
+        applicationId "$appPackageName"
         versionName "$appVersionName"
         minSdkVersion 14
         targetSdkVersion 19
