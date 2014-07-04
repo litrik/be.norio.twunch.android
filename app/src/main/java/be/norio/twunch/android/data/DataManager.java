@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -115,6 +116,7 @@ public class DataManager {
                 .setContentTitle(twunch.getTitle())
                 .setContentText(twunch.getAddress())
                 .setSmallIcon(R.drawable.ic_stat_hamburger)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.hamburger_square))
                 .setAutoCancel(true);
 
         if (PrefsUtils.isVibrateEnabled()) {
