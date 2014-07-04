@@ -4,3 +4,6 @@ local.properties
 *.iml
 **/build
 app/local.twitter.gradle
+app/crashlytics.properties
+app/src/main/assets/
+app/src/main/res/values/com_crashlytics_export_strings.xml
