@@ -44,6 +44,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="33c9e2260f3ad64d3d2cdaa6d7490a3e52aa82e2" />
+
         <activity android:name="be.norio.twunch.android.ui.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

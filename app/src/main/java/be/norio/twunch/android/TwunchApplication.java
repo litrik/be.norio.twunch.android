@@ -19,6 +19,8 @@ package be.norio.twunch.android;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+
 import be.norio.twunch.android.data.DataManager;
 import be.norio.twunch.android.util.AvatarManager;
 import be.norio.twunch.android.util.PrefsUtils;
@@ -31,6 +33,7 @@ public class TwunchApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+        Crashlytics.start(this);
 		PrefsUtils.initialize(this);
         DataManager.getInstance();
         AvatarManager.initialize(this);

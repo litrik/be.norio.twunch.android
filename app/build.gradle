@@ -1,21 +1,25 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.+'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.9.+'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
     }
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url 'http://download.crashlytics.com/maven' }
 }
 
 apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
+apply plugin: 'crashlytics'
 apply plugin: 'hugo'
 
 apply from: "$System.env.HOME" + "/norio.gradle"
@@ -33,6 +37,7 @@ dependencies {
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.3'
     compile 'fr.nicolaspomepuy:discreetapprate:1.0.5@aar'
+    compile 'com.crashlytics.android:crashlytics:1.+'
 }
 
 configurations {
