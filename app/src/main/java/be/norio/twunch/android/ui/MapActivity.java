@@ -21,7 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.squareup.otto.Subscribe;
+
 import be.norio.twunch.android.R;
+import be.norio.twunch.android.otto.TwunchClickedEvent;
 import be.norio.twunch.android.util.AnalyticsUtils;
 
 public class MapActivity extends BaseActivity {
@@ -39,5 +42,11 @@ public class MapActivity extends BaseActivity {
 
         AnalyticsUtils.trackPageView(AnalyticsUtils.Pages.MAP);
     }
+
+    @Subscribe
+    public void onTwunchClicked(TwunchClickedEvent event) {
+        DetailsActivity.start(this, event.getTwunch().getId());
+    }
+
 
 }
