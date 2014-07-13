@@ -22,8 +22,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
 apply plugin: 'hugo'
 
-apply from: "$System.env.HOME" + "/norio.gradle"
-apply from: "local.twitter.gradle"
+apply from: "$System.env.NORIO_PARAM_DIR" + "norio.gradle"
+apply from: "$System.env.NORIO_PARAM_DIR" + "twunch.twitter.gradle"
 
 project.archivesBaseName="$appPackageName" + "-$appVersionName"
 
