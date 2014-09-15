@@ -109,9 +109,11 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
 
             @Override
             public void run() {
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(builder.build(),
-                        getResources().getDimensionPixelSize(R.dimen.map_padding));
-                mMap.animateCamera(cu);
+                if (MapFragment.this.isAdded()) {
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(builder.build(),
+                            getResources().getDimensionPixelSize(R.dimen.map_padding));
+                    mMap.animateCamera(cu);
+                }
             }
         });
 
