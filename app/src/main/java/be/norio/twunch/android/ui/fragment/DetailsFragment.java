@@ -109,6 +109,10 @@ public class DetailsFragment extends BaseFragment {
 
         mTwunch = DataManager.getInstance().getTwunch(getArguments().getString(ARG_ID));
 
+        if(mTwunch == null) {
+            return;
+        }
+
         // Title
         mTitle.setText(mTwunch.getTitle());
 
